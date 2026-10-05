@@ -1,0 +1,216 @@
+// FL Auto – databázové schéma (PostgreSQL)
+// Změny schématu: `npm run db:migrate` (vytvoří migraci a aplikuje ji)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum VehicleStatus {
+  DOSTUPNE
+  REZERVOVANO
+  PRODANO
+  SKRYTE
+}
+
+enum Fuel {
+  BENZIN
+  DIESEL
+  HYBRID
+  PLUGIN_HYBRID
+  ELEKTRO
+  LPG_CNG
+}
+
+enum Transmission {
+  MANUAL
+  AUTOMAT
+}
+
+enum Drive {
+  PREDNI
+  ZADNI
+  AWD
+}
+
+enum BodyType {
+  HATCHBACK
+  SEDAN
+  KOMBI
+  SUV
+  MPV
+  KUPE
+  KABRIOLET
+  UZITKOVE
+}
+
+enum EquipmentCategory {
+  BEZPECNOST
+  KOMFORT
+  MULTIMEDIA
+  EXTERIER
+}
+
+/// Připraveno na video a 360° prohlídku (fáze 2), zatím se používá jen IMAGE.
+enum MediaType {
+  IMAGE
+  VIDEO
+  PANO360
+}
+
+enum LeadType {
+  INTEREST
+  TEST_DRIVE
+  RESERVATION
+  FINANCING
+  TRADE_IN
+  CALLBACK
+  SERVICE
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  NEGOTIATION
+  RESERVED
+  SOLD
+  LOST
+}
+
+model Vehicle {
+  id               Int           @id @default(autoincrement())
+  brand            String
+  model            String
+  version          String?
+  price            Int
+  salePrice        Int?          @map("sale_price")
+  /// Aktuální cena = sale_price ?? price. Udržuje ji aplikace, slouží pro filtr a řazení.
+  currentPrice     Int           @map("current_price")
+  year             Int
+  registrationDate DateTime?     @map("registration_date") @db.Date
+  mileage          Int
+  fuel             Fuel
+  transmission     Transmission
+  drive            Drive?
+  bodyType         BodyType      @map("body_type")
+  /// Objem motoru v ccm
+  engineVolume     Int?          @map("engine_volume")
+  /// Výkon v kW
+  power            Int?
+  color            String?
+  /// Celý VIN – veřejně se nikdy neposílá, jen maskovaný
+  vin              String?
+  /// Platnost STK (ukládá se první den měsíce)
+  stk              DateTime?     @db.Date
+  owners           Int?
+  origin           String?
+  consumption      String?
+  emissions        String?
+  seats            Int?
+  doors            Int?
+  description      String?       @db.Text
+  status           VehicleStatus @default(DOSTUPNE)
+  slug             String        @unique
+  /// Staré slugy – při změně URL se z nich dělá 301 redirect
+  previousSlugs    String[]      @default([]) @map("previous_slugs")
+  featured         Boolean       @default(false)
+  soldAt           DateTime?     @map("sold_at")
+  archivedAt       DateTime?     @map("archived_at")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  images    VehicleImage[]
+  equipment VehicleEquipment[]
+  leads     Lead[]
+
+  @@index([status, archivedAt])
+  @@index([brand, model])
+  @@index([currentPrice])
+  @@index([year])
+  @@index([mileage])
+  @@map("vehicles")
+}
+
+model VehicleImage {
+  id         Int       @id @default(autoincrement())
+  vehicleId  Int       @map("vehicle_id")
+  /// URL největší varianty (1920 px)
+  url        String
+  /// Základ klíče v úložišti; varianty jsou `${storageKey}-{400|1024|1920}.webp`
+  storageKey String    @map("storage_key")
+  width      Int
+  height     Int
+  alt        String?
+  mediaType  MediaType @default(IMAGE) @map("media_type")
+  sortOrder  Int       @default(0) @map("sort_order")
+  isMain     Boolean   @default(false) @map("is_main")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId, sortOrder])
+  @@map("vehicle_images")
+}
+
+model Equipment {
+  id        Int               @id @default(autoincrement())
+  name      String
+  category  EquipmentCategory
+  sortOrder Int               @default(0) @map("sort_order")
+
+  vehicles VehicleEquipment[]
+
+  @@unique([category, name])
+  @@map("equipment")
+}
+
+model VehicleEquipment {
+  vehicleId   Int @map("vehicle_id")
+  equipmentId Int @map("equipment_id")
+
+  vehicle   Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  equipment Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  @@id([vehicleId, equipmentId])
+  @@map("vehicle_equipment")
+}
+
+model Lead {
+  id        Int        @id @default(autoincrement())
+  vehicleId Int?       @map("vehicle_id")
+  name      String
+  phone     String
+  email     String?
+  type      LeadType
+  message   String?    @db.Text
+  status    LeadStatus @default(NEW)
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  vehicle Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([type])
+  @@map("leads")
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("admins")
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
