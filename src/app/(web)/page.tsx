@@ -4,6 +4,7 @@ import { CarIcon, PhoneIcon, ShieldIcon, SparkleIcon, WrenchIcon } from "@/compo
 import { Logo } from "@/components/ui/Logo";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { VehicleGrid } from "@/components/vehicles/VehicleCard";
+import { ABOUT_INTRO } from "@/lib/content";
 import { phoneDigits } from "@/lib/format";
 import { getSettings } from "@/lib/settings";
 import { getBrandModels, getHomeVehicles } from "@/lib/vehicles/queries";
@@ -136,7 +137,7 @@ export default async function HomePage() {
 
       <section className="card p-6 md:p-8">
         <SectionTitle className="mb-3">O autobazaru FL Auto</SectionTitle>
-        <p className="max-w-2xl text-muted">[DOPLNIT: krátké představení autobazaru – kdo jsme, jak vybíráme a kontrolujeme vozy]</p>
+        <p className="max-w-2xl text-muted">{ABOUT_INTRO}</p>
         <Link href="/o-nas" className="mt-4 inline-block text-sm underline underline-offset-4">
           Více o nás
         </Link>
