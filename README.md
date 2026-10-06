@@ -2,6 +2,30 @@
 
 Veřejný web autobazaru (katalog, detail vozu, poptávky, servis) a administrace pro správu vozů, fotek a poptávek. Funkční zadání je v [docs/zadani.md](docs/zadani.md), technická specifikace v [docs/specifikace.md](docs/specifikace.md).
 
+## Novinky (říjen 2026) – co je nového a kde to najdete
+
+**Služby a ceníky** ([PR #2](https://github.com/FilipZapletal/FLAutoWeb/pull/2))
+- V administraci je sekce **Služby**. Upravíte v ní texty, odrážky a ceník každé služby, pořadí a skrytí služby.
+- Každá služba má vlastní stránku `/servis/<název-služby>`.
+- Dokud cenu nevyplníte, web ukazuje „Cena na dotaz“.
+
+**Online objednávka do servisu** ([PR #3](https://github.com/FilipZapletal/FLAutoWeb/pull/3))
+- Zákazník na stránce Servis (nebo na stránce služby) vybere službu, den (od zítřka, nejdéle 60 dní dopředu) a **dopoledne** nebo **odpoledne**.
+- Objednávky najdete v administraci na **nástěnce** (tabulka Nadcházející servisní termíny) a v **Poptávkách** (sloupec Termín).
+- O každé objednávce přijde e-mail vám i zákazníkovi, včetně termínu.
+
+**Recenze zákazníků a hodnocení z Googlu** ([PR #1](https://github.com/FilipZapletal/FLAutoWeb/pull/1))
+- V administraci je sekce **Recenze**: přidáte recenzi a zvolíte, jestli se ukáže na úvodní stránce, na stránce Servis, nebo na obou.
+- Hodnocení z Googlu (počet hvězd, počet recenzí, odkaz) vyplníte ručně v **Nastavení**.
+
+**Při nasazení:** tyto změny přidaly do databáze nové tabulky. Po nasazení nové verze proto jednou spusťte proti produkční databázi:
+
+```bash
+DATABASE_URL="…" npm run db:deploy
+```
+
+**Zbývá doplnit v administraci:** ceny služeb (Služby) a hodnocení z Googlu (Nastavení).
+
 ## Použité technologie
 
 | Vrstva | Technologie |
@@ -101,8 +125,8 @@ Build databázi nepotřebuje, všechny stránky s daty se renderují při požad
 prisma/              schéma, migrace, seed
 scripts/local-db.mjs lokální PostgreSQL bez Dockeru
 src/app/(web)/       veřejné stránky (homepage, /vozy, /vozy/[slug], /servis, /o-nas, /kontakt, právní stránky)
-src/app/admin/       přihlášení a administrace (dashboard, vozidla, fotky, poptávky, nastavení)
-src/app/api/         REST API (vehicles, leads, settings, auth, equipment)
+src/app/admin/       přihlášení a administrace (dashboard, vozidla, fotky, poptávky, služby, recenze, nastavení)
+src/app/api/         REST API (vehicles, leads, services, reviews, settings, auth, equipment)
 src/app/media/       servírování fotek při lokálním úložišti
 src/components/      UI komponenty (layout, vehicles, forms, admin, ui)
 src/lib/             databáze, dotazy, validace, auth, obrázky, notifikace, SEO
@@ -123,6 +147,7 @@ src/proxy.ts         přesměrování nepřihlášených z /admin
 | `POST /api/leads` | veřejné | poptávka u vozu (`kind: "vehicle"`) nebo servis (`kind: "service"`); validace, honeypot, rate limit 5 / 10 min |
 | `PUT /api/leads/:id` | admin | změna stavu |
 | `GET/PUT /api/settings` | admin | kontakt, otevírací doba, sociální sítě, hodnocení na Googlu |
+| `POST /api/services`, `PUT/DELETE /api/services/:id` | admin | služby a ceníky |
 | `GET/POST /api/reviews`, `PUT/DELETE /api/reviews/:id` | admin | recenze zákazníků |
 
 Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani kontakty z poptávek. Zápisy do admin API kontrolují přihlášení i hlavičku `Origin` (ochrana proti CSRF).
@@ -133,9 +158,9 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Katalog s kombinovatelnými filtry nad databází (základní, technické, karoserie, další), 7 způsobů řazení, stránkování po 12. Prodané vozy jsou na konci, dají se skrýt.
 - Detail vozu: SEO URL, galerie (náhledy, šipky, fullscreen, klávesnice, swipe, lazy loading), aktuální cena, štítek statusu, technické údaje ve 4 skupinách, výbava podle kategorií, maskovaný VIN, poptávkový formulář, Zavolat a WhatsApp, na mobilu spodní lišta.
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.
-- Servis: služby spravované v administraci (výchozí 4 vytvoří migrace), každá s vlastní stránkou `/servis/[slug]` a ceníkem; objednávkový formulář (lead typu `SERVICE`, volitelně s vybranou službou).
+- Servis: služby spravované v administraci (výchozí 4 vytvoří migrace), každá s vlastní stránkou `/servis/[slug]` a ceníkem; online objednávka termínu (služba, den, dopoledne/odpoledne; lead typu `SERVICE`).
 - Kontakt (mapa až po kliknutí, odkaz na navigaci), O nás s texty klienta, právní stránky (návrh, firemní údaje z Nastavení).
-- Administrace: přihlášení, dashboard se statistikami a posledními poptávkami, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, služby (texty, odrážky, ceník, pořadí, skrytí, SEO titulek a popis), nastavení kontaktů a otevírací doby, recenze zákazníků (zobrazení na úvodu a/nebo na Servisu, pořadí) a ručně zadané hodnocení na Googlu.
+- Administrace: přihlášení, dashboard se statistikami, posledními poptávkami a nadcházejícími servisními termíny, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, služby (texty, odrážky, ceník, pořadí, skrytí, SEO titulek a popis), nastavení kontaktů a otevírací doby, recenze zákazníků (zobrazení na úvodu a/nebo na Servisu, pořadí) a ručně zadané hodnocení na Googlu.
 - SEO: title, meta description, canonical, Open Graph (hlavní fotka), schema.org `Car` + `Offer` a `Service` s ceníkem, `sitemap.xml`, `robots.txt`, 301 přesměrování po změně URL vozu i služby, 404 stránka.
 - Světlý i tmavý režim (přepínač ve stylu iOS, bez probliknutí při načtení), mobile-first.
 
