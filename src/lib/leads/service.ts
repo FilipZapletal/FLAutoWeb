@@ -1,5 +1,6 @@
 import "server-only";
 import type { LeadStatus, LeadType, Prisma } from "@/generated/prisma/client";
+import { pragueToday } from "@/lib/booking";
 import { db } from "@/lib/db";
 import { getPublishedService } from "@/lib/services/public";
 import type { LeadInput } from "@/lib/validation/lead";
@@ -8,6 +9,7 @@ import { PUBLIC_VEHICLE_WHERE } from "@/lib/vehicles/public";
 export class LeadVehicleNotFoundError extends Error {}
 
 const vehicleSelect = { select: { brand: true, model: true, version: true, slug: true } } as const;
+const serviceSelect = { select: { title: true } } as const;
 
 export async function createLead(input: LeadInput) {
   let data: Prisma.LeadUncheckedCreateInput;
@@ -23,10 +25,14 @@ export async function createLead(input: LeadInput) {
       phone: input.phone,
       email: input.email,
       type: "SERVICE",
-      message: [service && `Služba: ${service.title}`, `Vůz: ${input.car}`, input.message].filter(Boolean).join("\n\n"),
+      message: input.message,
+      car: input.car,
+      serviceId: service?.id ?? null,
+      preferredDate: input.preferredDate,
+      preferredSlot: input.preferredSlot,
     };
   }
-  return db.lead.create({ data, include: { vehicle: vehicleSelect } });
+  return db.lead.create({ data, include: { vehicle: vehicleSelect, service: serviceSelect } });
 }
 
 export type LeadListFilters = { status?: LeadStatus; type?: LeadType };
@@ -36,12 +42,26 @@ export async function getLeads(f: LeadListFilters = {}, take = 200) {
     where: { ...(f.status && { status: f.status }), ...(f.type && { type: f.type }) },
     orderBy: { createdAt: "desc" },
     take,
-    include: { vehicle: vehicleSelect },
+    include: { vehicle: vehicleSelect, service: serviceSelect },
+  });
+}
+
+/** Servisní objednávky s termínem od dneška, které ještě nejsou uzavřené (dashboard). */
+export async function getUpcomingBookings(take = 10) {
+  return db.lead.findMany({
+    where: {
+      type: "SERVICE",
+      preferredDate: { gte: new Date(`${pragueToday()}T00:00:00.000Z`) },
+      status: { notIn: ["SOLD", "LOST"] },
+    },
+    orderBy: [{ preferredDate: "asc" }, { preferredSlot: "asc" }, { createdAt: "asc" }],
+    take,
+    include: { service: serviceSelect },
   });
 }
 
 export async function getLead(id: number) {
-  return db.lead.findUnique({ where: { id }, include: { vehicle: vehicleSelect } });
+  return db.lead.findUnique({ where: { id }, include: { vehicle: vehicleSelect, service: serviceSelect } });
 }
 
 export async function updateLeadStatus(id: number, status: LeadStatus) {
@@ -51,13 +71,14 @@ export async function updateLeadStatus(id: number, status: LeadStatus) {
 export async function getDashboardStats() {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const [activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads] = await Promise.all([
+  const [activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads, upcomingBookings] = await Promise.all([
     db.vehicle.count({ where: { status: "DOSTUPNE", archivedAt: null } }),
     db.lead.count({ where: { status: "NEW" } }),
     db.vehicle.count({ where: { status: "REZERVOVANO", archivedAt: null } }),
     db.lead.count({ where: { type: "SERVICE", status: { in: ["NEW", "CONTACTED", "NEGOTIATION"] } } }),
     db.vehicle.count({ where: { status: "PRODANO", soldAt: { gte: monthStart } } }),
     getLeads({}, 10),
+    getUpcomingBookings(),
   ]);
-  return { activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads };
+  return { activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads, upcomingBookings };
 }

@@ -70,13 +70,14 @@ vehicle_equipment vehicle_id, equipment_id
 leads
   id, vehicle_id (nullable), name, phone, email,
   type (INTEREST|TEST_DRIVE|RESERVATION|FINANCING|TRADE_IN|CALLBACK|SERVICE),
-  message, status (NEW|CONTACTED|NEGOTIATION|RESERVED|SOLD|LOST), created_at
+  message, status (NEW|CONTACTED|NEGOTIATION|RESERVED|SOLD|LOST), created_at,
+  car, service_id (nullable → services), preferred_date, preferred_slot (DOPOLEDNE|ODPOLEDNE)
 
 admins           id, email, password_hash, created_at
 settings         key, value   (kontakt, otevírací doba, texty)
 ```
 
-Poptávka ze Servisu se ukládá jako lead typu `SERVICE` s `vehicle_id = NULL` (do `name` jde značka a model vozu, do `message` poznámka).
+Objednávka ze Servisu se ukládá jako lead typu `SERVICE` s `vehicle_id = NULL`: služba (`service_id`, nepovinná), značka a model vozu (`car`), preferovaný pracovní den (`preferred_date`, od zítřka max. 60 dní dopředu) a část dne (`preferred_slot`), do `message` poznámka. Termín je přání zákazníka, admin ho potvrzuje telefonicky; nadcházející termíny jsou na dashboardu.
 
 ## 6. API
 ```

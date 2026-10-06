@@ -3,6 +3,7 @@ import { LeadStatusSelect } from "@/components/admin/LeadStatusSelect";
 import { LeadTypeLabel, PageHead, tableClass } from "@/components/admin/ui";
 import { GetForm } from "@/components/ui/GetForm";
 import { LeadStatus, LeadType } from "@/generated/prisma/enums";
+import { formatBooking } from "@/lib/booking";
 import { formatDateTime, phoneDigits } from "@/lib/format";
 import { LEAD_STATUS_LABELS, LEAD_TYPE_LABELS } from "@/lib/labels";
 import { getLeads } from "@/lib/leads/service";
@@ -50,6 +51,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
               <th>Kontakt</th>
               <th>Vůz</th>
               <th>Typ</th>
+              <th>Termín</th>
               <th>Stav</th>
             </tr>
           </thead>
@@ -65,14 +67,15 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
                   <a href={`tel:${phoneDigits(l.phone)}`} className="hover:text-acc">{l.phone}</a>
                   {l.email && <div className="text-xs text-muted">{l.email}</div>}
                 </td>
-                <td>{l.vehicle ? `${l.vehicle.brand} ${l.vehicle.model}` : "—"}</td>
+                <td>{l.vehicle ? `${l.vehicle.brand} ${l.vehicle.model}` : (l.car ?? "—")}</td>
                 <td><LeadTypeLabel type={l.type} /></td>
+                <td className="whitespace-nowrap">{formatBooking(l) ?? "—"}</td>
                 <td><LeadStatusSelect key={l.status} id={l.id} status={l.status} /></td>
               </tr>
             ))}
             {leads.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-muted">Žádné poptávky.</td>
+                <td colSpan={7} className="text-muted">Žádné poptávky.</td>
               </tr>
             )}
           </tbody>
