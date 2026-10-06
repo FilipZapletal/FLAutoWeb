@@ -1,6 +1,7 @@
 import "server-only";
 import { FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/labels";
 import { absoluteUrl, siteUrl } from "@/lib/site";
+import type { PublicService } from "@/lib/services/public";
 import type { VehicleDetailData } from "@/lib/vehicles/public";
 
 export function vehicleTitle(v: Pick<VehicleDetailData, "brand" | "model" | "version" | "year">) {
@@ -62,3 +63,40 @@ export function vehicleDescription(v: VehicleDetailData) {
 
 /** JSON do <script type="application/ld+json"> bez možnosti ukončit tag. */
 export const jsonLdString = (data: unknown) => JSON.stringify(data).replace(/</g, "\\u003c");
+
+/** schema.org Service s ceníkem a drobečkovou navigací. */
+export function serviceJsonLd(s: PublicService) {
+  const url = siteUrl(`/servis/${s.slug}`);
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: s.title,
+      description: s.summary,
+      url,
+      provider: { "@type": "AutoDealer", name: "FL Auto", url: siteUrl() },
+      ...(s.prices.length > 0 && {
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: `Ceník – ${s.title}`,
+          itemListElement: s.prices.map((p) => ({
+            "@type": "Offer",
+            name: p.label,
+            priceCurrency: "CZK",
+            ...(p.from
+              ? { priceSpecification: { "@type": "PriceSpecification", minPrice: p.price, priceCurrency: "CZK" } }
+              : { price: p.price }),
+          })),
+        },
+      }),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Servis", item: siteUrl("/servis") },
+        { "@type": "ListItem", position: 2, name: s.title, item: url },
+      ],
+    },
+  ];
+}

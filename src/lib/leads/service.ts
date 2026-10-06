@@ -1,6 +1,7 @@
 import "server-only";
 import type { LeadStatus, LeadType, Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { getPublishedService } from "@/lib/services/public";
 import type { LeadInput } from "@/lib/validation/lead";
 import { PUBLIC_VEHICLE_WHERE } from "@/lib/vehicles/public";
 
@@ -15,13 +16,14 @@ export async function createLead(input: LeadInput) {
     if (!vehicle) throw new LeadVehicleNotFoundError();
     data = { vehicleId: vehicle.id, name: input.name, phone: input.phone, email: input.email, type: input.type, message: input.message };
   } else {
+    const service = input.serviceId ? await getPublishedService(input.serviceId) : null;
     data = {
       vehicleId: null,
       name: input.name,
       phone: input.phone,
       email: input.email,
       type: "SERVICE",
-      message: [`Vůz: ${input.car}`, input.message].filter(Boolean).join("\n\n"),
+      message: [service && `Služba: ${service.title}`, `Vůz: ${input.car}`, input.message].filter(Boolean).join("\n\n"),
     };
   }
   return db.lead.create({ data, include: { vehicle: vehicleSelect } });
