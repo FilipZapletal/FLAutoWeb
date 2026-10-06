@@ -214,3 +214,41 @@ model Setting {
 
   @@map("settings")
 }
+
+enum ServiceIcon {
+  CAR
+  WRENCH
+  SPARKLE
+  SHIELD
+}
+
+/// Služba na stránce Servis – každá má vlastní stránku /servis/[slug].
+model Service {
+  id              Int         @id @default(autoincrement())
+  title           String
+  slug            String      @unique
+  /// Staré slugy – při změně URL se z nich dělá 301 redirect
+  previousSlugs   String[]    @default([]) @map("previous_slugs")
+  /// Krátký štítek na kartě, např. „Dovoz na klíč“
+  tag             String?
+  icon            ServiceIcon @default(WRENCH)
+  /// Krátký popis na kartě v přehledu
+  summary         String
+  /// Odrážky – co služba zahrnuje
+  items           String[]    @default([])
+  /// Delší text na stránce služby
+  description     String?     @db.Text
+  /// Ceník: [{ label, price, from }], cena v Kč; `from` = „od“
+  prices          Json        @default("[]")
+  /// Poznámka k ceníku, např. „Ceny jsou včetně DPH.“
+  priceNote       String?     @map("price_note")
+  metaTitle       String?     @map("meta_title")
+  metaDescription String?     @map("meta_description")
+  published       Boolean     @default(true)
+  sortOrder       Int         @default(0) @map("sort_order")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@index([published, sortOrder])
+  @@map("services")
+}
