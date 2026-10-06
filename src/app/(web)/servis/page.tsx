@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ServiceForm } from "@/components/forms/ServiceForm";
+import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { ServiceCard } from "@/components/services/ServiceCard";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { getPublicServices } from "@/lib/services/public";
@@ -25,6 +26,8 @@ export default async function ServicePage() {
           ))}
         </div>
       )}
+
+      <ReviewsSection placement="service" className="mb-12" />
 
       <SectionTitle className="mb-3">Objednat se do servisu</SectionTitle>
       <ServiceForm services={services.map(({ id, title }) => ({ id, title }))} />

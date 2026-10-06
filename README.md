@@ -122,7 +122,8 @@ src/proxy.ts         přesměrování nepřihlášených z /admin
 | `GET /api/leads` | admin | poptávky (`?status=`, `?type=`) |
 | `POST /api/leads` | veřejné | poptávka u vozu (`kind: "vehicle"`) nebo servis (`kind: "service"`); validace, honeypot, rate limit 5 / 10 min |
 | `PUT /api/leads/:id` | admin | změna stavu |
-| `GET/PUT /api/settings` | admin | kontakt, otevírací doba, sociální sítě |
+| `GET/PUT /api/settings` | admin | kontakt, otevírací doba, sociální sítě, hodnocení na Googlu |
+| `GET/POST /api/reviews`, `PUT/DELETE /api/reviews/:id` | admin | recenze zákazníků |
 
 Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani kontakty z poptávek. Zápisy do admin API kontrolují přihlášení i hlavičku `Origin` (ochrana proti CSRF).
 
@@ -134,7 +135,7 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.
 - Servis: služby spravované v administraci (výchozí 4 vytvoří migrace), každá s vlastní stránkou `/servis/[slug]` a ceníkem; objednávkový formulář (lead typu `SERVICE`, volitelně s vybranou službou).
 - Kontakt (mapa až po kliknutí, odkaz na navigaci), O nás s texty klienta, právní stránky (návrh, firemní údaje z Nastavení).
-- Administrace: přihlášení, dashboard se statistikami a posledními poptávkami, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, služby (texty, odrážky, ceník, pořadí, skrytí, SEO titulek a popis), nastavení kontaktů a otevírací doby.
+- Administrace: přihlášení, dashboard se statistikami a posledními poptávkami, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, služby (texty, odrážky, ceník, pořadí, skrytí, SEO titulek a popis), nastavení kontaktů a otevírací doby, recenze zákazníků (zobrazení na úvodu a/nebo na Servisu, pořadí) a ručně zadané hodnocení na Googlu.
 - SEO: title, meta description, canonical, Open Graph (hlavní fotka), schema.org `Car` + `Offer` a `Service` s ceníkem, `sitemap.xml`, `robots.txt`, 301 přesměrování po změně URL vozu i služby, 404 stránka.
 - Světlý i tmavý režim (přepínač ve stylu iOS, bez probliknutí při načtení), mobile-first.
 

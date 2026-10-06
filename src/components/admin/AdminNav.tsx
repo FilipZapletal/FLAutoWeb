@@ -8,6 +8,7 @@ const ITEMS = [
   { href: "/admin/vozidla", label: "Vozidla" },
   { href: "/admin/poptavky", label: "Poptávky" },
   { href: "/admin/sluzby", label: "Služby" },
+  { href: "/admin/recenze", label: "Recenze" },
   { href: "/admin/nastaveni", label: "Nastavení" },
 ];
 

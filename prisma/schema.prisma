@@ -267,3 +267,22 @@ model Service {
   @@index([published, sortOrder])
   @@map("services")
 }
+
+/// Recenze zákazníků – zadává je admin (např. přepisem z Googlu), na webu se zobrazují jen zvolené.
+model Review {
+  id            Int      @id @default(autoincrement())
+  author        String
+  text          String   @db.Text
+  /// Počet hvězd 1–5
+  rating        Int
+  /// Odkud recenze pochází, např. „Google“
+  source        String?
+  showOnHome    Boolean  @default(true) @map("show_on_home")
+  showOnService Boolean  @default(false) @map("show_on_service")
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([sortOrder])
+  @@map("reviews")
+}
