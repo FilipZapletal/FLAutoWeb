@@ -44,6 +44,13 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
         <InputField label="Facebook (URL)" name="facebookUrl" type="url" defaultValue={initial.facebookUrl ?? ""} error={fields.facebookUrl} />
         <InputField label="Instagram (URL)" name="instagramUrl" type="url" defaultValue={initial.instagramUrl ?? ""} error={fields.instagramUrl} />
       </fieldset>
+      <fieldset className="card grid gap-3 p-5 sm:grid-cols-3">
+        <h2 className="text-base sm:col-span-3">Hodnocení na Googlu</h2>
+        <p className="text-xs text-muted sm:col-span-3">Opište aktuální hodnocení z profilu firmy na Googlu. Zobrazí se u recenzí na úvodní stránce a na stránce Servis. Když hodnocení necháte prázdné, nezobrazí se.</p>
+        <InputField label="Hodnocení (1–5)" name="googleRating" inputMode="decimal" defaultValue={initial.googleRating?.toLocaleString("cs-CZ") ?? ""} error={fields.googleRating} hint="Např. 4,8" />
+        <InputField label="Počet recenzí" name="googleReviewCount" inputMode="numeric" defaultValue={initial.googleReviewCount ?? ""} error={fields.googleReviewCount} />
+        <InputField label="Odkaz na recenze (URL)" name="googleReviewsUrl" type="url" defaultValue={initial.googleReviewsUrl ?? ""} error={fields.googleReviewsUrl} hint="Odkaz na profil firmy v Mapách Google" />
+      </fieldset>
       <FormError message={error} />
       <div className="flex items-center gap-3">
         <button className="btn" disabled={sending}>{sending ? "Ukládám…" : "Uložit nastavení"}</button>

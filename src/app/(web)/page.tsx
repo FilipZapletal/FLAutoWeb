@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GetForm } from "@/components/ui/GetForm";
 import { CarIcon, PhoneIcon, ShieldIcon, SparkleIcon, WrenchIcon } from "@/components/ui/icons";
+import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { Logo } from "@/components/ui/Logo";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { VehicleGrid } from "@/components/vehicles/VehicleCard";
@@ -103,6 +104,8 @@ export default async function HomePage() {
         </div>
         {newest.length > 0 ? <VehicleGrid vehicles={newest} /> : <p className="text-muted">Nabídku právě připravujeme.</p>}
       </section>
+
+      <ReviewsSection placement="home" className="mb-12" />
 
       <section className="mb-12 grid gap-4 md:grid-cols-2">
         <div className="card p-6">

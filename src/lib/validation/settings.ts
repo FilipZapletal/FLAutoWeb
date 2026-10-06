@@ -1,9 +1,20 @@
 import { z } from "zod";
-import { optionalText, requiredText } from "./helpers";
+import { optionalInt, optionalText, requiredText } from "./helpers";
 
 const optionalUrl = z.preprocess(
   (v) => (typeof v === "string" ? v.trim() || null : v ?? null),
   z.url({ protocol: /^https?$/, error: "Zadejte celou adresu včetně https://" }).max(300).nullable(),
+);
+
+/** Hodnocení s jedním desetinným místem, přijímá i čárku („4,8“). */
+const optionalRating = z.preprocess(
+  (v) => (typeof v === "string" ? (v.trim() ? Number(v.trim().replace(",", ".")) : null) : v ?? null),
+  z
+    .number({ error: "Zadejte číslo, např. 4,8" })
+    .min(1, { error: "Minimum je 1" })
+    .max(5, { error: "Maximum je 5" })
+    .transform((n) => Math.round(n * 10) / 10)
+    .nullable(),
 );
 
 export const siteSettingsSchema = z.object({
@@ -24,6 +35,10 @@ export const siteSettingsSchema = z.object({
   registryEntry: optionalText(300),
   tradeOffice: optionalText(200),
   legalEffectiveDate: optionalText(40),
+  // Hodnocení na Googlu – zadává se ručně podle profilu firmy; bez hodnocení se nezobrazuje
+  googleRating: optionalRating,
+  googleReviewCount: optionalInt(0, 100000),
+  googleReviewsUrl: optionalUrl,
 });
 
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;

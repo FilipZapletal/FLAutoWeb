@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ServiceForm } from "@/components/forms/ServiceForm";
+import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { CarIcon, CheckIcon, ShieldIcon, SparkleIcon, WrenchIcon } from "@/components/ui/icons";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 
@@ -62,7 +63,7 @@ const SERVICES = [
   },
 ];
 
-export default function ServicePage() {
+export default async function ServicePage() {
   return (
     <>
       <SectionTitle as="h1" className="mb-2">Servis</SectionTitle>
@@ -90,6 +91,8 @@ export default function ServicePage() {
           </article>
         ))}
       </div>
+
+      <ReviewsSection placement="service" className="mb-12" />
 
       <SectionTitle className="mb-3">Objednat se do servisu</SectionTitle>
       <ServiceForm />
