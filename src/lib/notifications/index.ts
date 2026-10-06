@@ -1,11 +1,15 @@
 import "server-only";
 import type { Lead } from "@/generated/prisma/client";
+import { formatBooking } from "@/lib/booking";
 import { LEAD_TYPE_LABELS } from "@/lib/labels";
 import { getSettings } from "@/lib/settings";
 import { siteUrl } from "@/lib/site";
 import { sendEmail } from "./email";
 
-type LeadWithVehicle = Lead & { vehicle: { brand: string; model: string; version: string | null; slug: string } | null };
+type LeadWithVehicle = Lead & {
+  vehicle: { brand: string; model: string; version: string | null; slug: string } | null;
+  service: { title: string } | null;
+};
 
 /**
  * Notifikace po nové poptávce. Zatím jen e-mail; další kanály (SMS, WhatsApp)
@@ -15,17 +19,22 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
   const settings = await getSettings();
   const vehicleName = lead.vehicle ? [lead.vehicle.brand, lead.vehicle.model, lead.vehicle.version].filter(Boolean).join(" ") : null;
   const adminTo = process.env.ADMIN_NOTIFY_EMAIL || settings.email;
+  const service = lead.service?.title ?? null;
+  const booking = formatBooking(lead);
 
   const jobs: Promise<void>[] = [
     sendEmail({
       to: adminTo,
       replyTo: lead.email ?? undefined,
-      subject: `Nová poptávka – ${vehicleName ?? LEAD_TYPE_LABELS[lead.type]}`,
+      subject: booking ? `Objednávka do servisu – ${booking}` : `Nová poptávka – ${vehicleName ?? LEAD_TYPE_LABELS[lead.type]}`,
       text: [
         "Nová poptávka z webu FL Auto",
         "",
         vehicleName ? `Vůz: ${vehicleName} (${siteUrl(`/vozy/${lead.vehicle!.slug}`)})` : null,
         `Typ: ${LEAD_TYPE_LABELS[lead.type]}`,
+        service ? `Služba: ${service}` : null,
+        booking ? `Preferovaný termín: ${booking}` : null,
+        lead.car ? `Vůz zákazníka: ${lead.car}` : null,
         `Jméno: ${lead.name}`,
         `Telefon: ${lead.phone}`,
         `E-mail: ${lead.email ?? "—"}`,
@@ -43,12 +52,16 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
       sendEmail({
         to: lead.email,
         replyTo: settings.email,
-        subject: "Děkujeme za váš zájem – FL Auto",
+        subject: booking ? "Přijali jsme vaši objednávku do servisu – FL Auto" : "Děkujeme za váš zájem – FL Auto",
         text: [
           "Dobrý den,",
           "",
-          "děkujeme za váš zájem. Autobazar vás bude kontaktovat.",
+          booking
+            ? "děkujeme za objednávku. Termín je zatím předběžný, ozveme se vám a potvrdíme ho."
+            : "děkujeme za váš zájem. Autobazar vás bude kontaktovat.",
           vehicleName ? `\nVaše poptávka: ${vehicleName}` : null,
+          service ? `\nSlužba: ${service}` : null,
+          booking ? `Preferovaný termín: ${booking}` : null,
           "",
           "FL Auto",
           settings.address,

@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
+import type { ComponentProps, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 type Common = { label: string; name: string; error?: string; hint?: ReactNode; className?: string };
 
@@ -24,7 +24,7 @@ const aria = (name: string, error?: string) => ({
   "aria-describedby": error ? `fld-${name}-err` : undefined,
 });
 
-export function InputField({ label, name, error, hint, className, ...rest }: Common & InputHTMLAttributes<HTMLInputElement>) {
+export function InputField({ label, name, error, hint, className, ...rest }: Common & ComponentProps<"input">) {
   return (
     <Wrapper label={label} name={name} error={error} hint={hint} className={className}>
       <input className="field" {...aria(name, error)} {...rest} />
