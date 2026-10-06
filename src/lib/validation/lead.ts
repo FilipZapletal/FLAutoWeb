@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { LeadStatus } from "@/generated/prisma/enums";
 import { VEHICLE_LEAD_TYPES } from "@/lib/labels";
-import { optionalText, requiredText } from "./helpers";
+import { optionalInt, optionalText, requiredText } from "./helpers";
 
 const phone = z
   .string({ error: "Zadejte telefon" })
@@ -30,6 +30,8 @@ export const vehicleLeadSchema = z.object({
 
 export const serviceLeadSchema = z.object({
   kind: z.literal("service"),
+  /** Vybraná služba (nepovinné) */
+  serviceId: optionalInt(1, 2_147_483_647),
   name: requiredText(120),
   car: requiredText(120),
   phone,

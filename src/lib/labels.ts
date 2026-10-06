@@ -6,6 +6,7 @@ import type {
   Fuel,
   LeadStatus,
   LeadType,
+  ServiceIcon,
   Transmission,
   VehicleStatus,
 } from "@/generated/prisma/enums";
@@ -92,3 +93,10 @@ export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
 };
 
 export const ORIGIN_OPTIONS = ["ČR", "Dovoz"] as const;
+
+export const SERVICE_ICON_LABELS: Record<ServiceIcon, string> = {
+  CAR: "Auto",
+  WRENCH: "Klíč (servis)",
+  SPARKLE: "Jiskra (mytí)",
+  SHIELD: "Štít (STK)",
+};

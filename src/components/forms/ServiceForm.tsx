@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import type { FormEvent } from "react";
-import { FormError, Honeypot, InputField, TextareaField } from "./Field";
+import { FormError, Honeypot, InputField, SelectField, TextareaField } from "./Field";
 import { useJsonSubmit } from "./useJsonSubmit";
 
-/** Objednávka do servisu → lead typu SERVICE. */
-export function ServiceForm() {
+type Props = { services?: { id: number; title: string }[]; serviceId?: number };
+
+/** Objednávka do servisu → lead typu SERVICE (volitelně s vybranou službou). */
+export function ServiceForm({ services = [], serviceId }: Props) {
   const { submit, sending, done, error, fields, reset } = useJsonSubmit("/api/leads");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -29,6 +31,14 @@ export function ServiceForm() {
   return (
     <form onSubmit={onSubmit} className="card relative grid max-w-2xl gap-3 p-5 md:grid-cols-2" noValidate>
       <Honeypot />
+      {services.length > 0 && (
+        <SelectField label="Služba" name="serviceId" defaultValue={serviceId ?? ""} error={fields.serviceId} className="md:col-span-2">
+          <option value="">Nevím / více služeb</option>
+          {services.map((s) => (
+            <option key={s.id} value={s.id}>{s.title}</option>
+          ))}
+        </SelectField>
+      )}
       <InputField label="Jméno" name="name" required autoComplete="name" error={fields.name} />
       <InputField label="Značka a model vozu" name="car" required error={fields.car} />
       <InputField label="Telefon" name="phone" type="tel" required autoComplete="tel" inputMode="tel" error={fields.phone} />
