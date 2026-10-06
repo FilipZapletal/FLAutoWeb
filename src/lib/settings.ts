@@ -16,6 +16,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   facebookUrl: null,
   instagramUrl: null,
   mapNote: null,
+  companyName: null,
+  ico: null,
+  dic: null,
+  registeredOffice: null,
+  registryEntry: null,
+  tradeOffice: null,
+  legalEffectiveDate: null,
 };
 
 /** Nastavení webu (jedno čtení z DB na request). */

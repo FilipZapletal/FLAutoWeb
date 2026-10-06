@@ -16,6 +16,14 @@ export const siteSettingsSchema = z.object({
   facebookUrl: optionalUrl,
   instagramUrl: optionalUrl,
   mapNote: optionalText(300),
+  // Firemní údaje pro Obchodní údaje, Ochranu osobních údajů a Reklamační řád
+  companyName: optionalText(200),
+  ico: optionalText(20),
+  dic: optionalText(20),
+  registeredOffice: optionalText(200),
+  registryEntry: optionalText(300),
+  tradeOffice: optionalText(200),
+  legalEffectiveDate: optionalText(40),
 });
 
 export type SiteSettings = z.infer<typeof siteSettingsSchema>;

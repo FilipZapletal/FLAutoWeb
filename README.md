@@ -133,7 +133,7 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Detail vozu: SEO URL, galerie (náhledy, šipky, fullscreen, klávesnice, swipe, lazy loading), aktuální cena, štítek statusu, technické údaje ve 4 skupinách, výbava podle kategorií, maskovaný VIN, poptávkový formulář, Zavolat a WhatsApp, na mobilu spodní lišta.
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.
 - Servis: 4 služby a objednávkový formulář (lead typu `SERVICE`).
-- Kontakt (mapa až po kliknutí, odkaz na navigaci), O nás a právní stránky s `[DOPLNIT …]`.
+- Kontakt (mapa až po kliknutí, odkaz na navigaci), O nás s texty klienta, právní stránky (návrh, firemní údaje z Nastavení).
 - Administrace: přihlášení, dashboard se statistikami a posledními poptávkami, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, nastavení kontaktů a otevírací doby.
 - SEO: title, meta description, canonical, Open Graph (hlavní fotka), schema.org `Car` + `Offer`, `sitemap.xml`, `robots.txt`, 301 přesměrování po změně URL vozu, 404 stránka.
 - Světlý i tmavý režim (přepínač ve stylu iOS, bez probliknutí při načtení), mobile-first.
@@ -153,7 +153,8 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Stránky se renderují při každém požadavku (bez cache). Pro desítky vozů je to rychlé; při vyšší návštěvnosti lze doplnit cache s revalidací po změně v adminu.
 - **Fotky HEIC** (iPhone): Safari je před nahráním převede na JPEG. Chrome na počítači HEIC neumí a server takový soubor odmítne – je potřeba nahrát JPG.
 - Adresa provozovny je bez města a PSČ. Doplňte je v **Nastavení → Upřesnění k adrese**, nebo přímo do adresy.
-- Texty O nás, právní stránky, fotografie provozovny a týmu dodá klient (`[DOPLNIT …]`).
+- Právní stránky (ochrana osobních údajů, cookies, obchodní údaje, reklamační řád, ADR) jsou **návrh** podle aktuální legislativy a skutečného fungování webu – před spuštěním je nechte zkontrolovat právníkem. Firemní údaje (IČO, sídlo, zápis…) se vyplňují v **Nastavení → Firemní údaje**; dokud chybí, stránky ukazují `[DOPLNIT …]`. Doplnit je třeba i dobu uložení poptávek, zvolenou dobu odpovědnosti za vady (12/24 měsíců) a konkrétní poskytovatele hostingu.
+- Fotografie provozovny a týmu dodá klient (`[DOPLNIT …]`).
 - Admin má jednu roli; změna hesla se dělá přes seed (viz výše), v administraci formulář na změnu hesla není.
 - Web používá jen nezbytnou cookie (přihlášení do adminu) a `localStorage` pro motiv, proto nemá cookie lištu. Při přidání analytiky (fáze 2) bude lišta se souhlasem potřeba.
 - E-maily přes Resend vyžadují ověřenou odesílací doménu.

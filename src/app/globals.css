@@ -307,3 +307,60 @@
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Právní a delší textové stránky */
+@layer components {
+  .legal {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+  .legal h2 {
+    font-size: 1.15rem;
+    margin: 2rem 0 0.6rem;
+  }
+  .legal h2:first-child {
+    margin-top: 0;
+  }
+  .legal h3 {
+    font-size: 0.95rem;
+    margin: 1.2rem 0 0.4rem;
+  }
+  .legal p,
+  .legal ul,
+  .legal ol,
+  .legal dl,
+  .legal table {
+    margin-bottom: 0.8rem;
+  }
+  .legal ul {
+    list-style: disc;
+    padding-left: 1.3rem;
+  }
+  .legal ol {
+    list-style: decimal;
+    padding-left: 1.3rem;
+  }
+  .legal li + li {
+    margin-top: 0.3rem;
+  }
+  .legal a {
+    color: var(--acc);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .legal th,
+  .legal td {
+    border: 1px solid var(--line);
+    padding: 0.5rem 0.7rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .legal th {
+    background: var(--card2);
+  }
+}
