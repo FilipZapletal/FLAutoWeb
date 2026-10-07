@@ -23,6 +23,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   registryEntry: null,
   tradeOffice: null,
   legalEffectiveDate: null,
+  googleRating: null,
+  googleReviewCount: null,
+  googleReviewsUrl: null,
 };
 
 /** Nastavení webu (jedno čtení z DB na request). */

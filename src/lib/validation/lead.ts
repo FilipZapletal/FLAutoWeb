@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { LeadStatus } from "@/generated/prisma/enums";
+import { LeadStatus, TimeSlot } from "@/generated/prisma/enums";
+import { bookingRange, isWeekend } from "@/lib/booking";
 import { VEHICLE_LEAD_TYPES } from "@/lib/labels";
-import { optionalText, requiredText } from "./helpers";
+import { optionalInt, optionalText, requiredText } from "./helpers";
 
 const phone = z
   .string({ error: "Zadejte telefon" })
@@ -28,10 +29,29 @@ export const vehicleLeadSchema = z.object({
   website: honeypot,
 });
 
+/** Preferovaný den servisu "RRRR-MM-DD" → Date (UTC půlnoc). Pracovní den od zítřka do 60 dní. */
+const preferredDate = z
+  .string({ error: "Vyberte datum" })
+  .regex(/^\d{4}-\d{2}-\d{2}$/, { error: "Vyberte datum" })
+  .superRefine((s, ctx) => {
+    const { min, max } = bookingRange();
+    // Neexistující den (např. 30. 2.) by Date tiše posunul na další měsíc.
+    const d = new Date(`${s}T00:00:00.000Z`);
+    if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== s) ctx.addIssue({ code: "custom", message: "Vyberte platné datum" });
+    else if (s < min) ctx.addIssue({ code: "custom", message: "Vyberte datum nejdříve od zítřka" });
+    else if (s > max) ctx.addIssue({ code: "custom", message: "Termín lze vybrat nejvýše 60 dní dopředu" });
+    else if (isWeekend(s)) ctx.addIssue({ code: "custom", message: "Vyberte pracovní den (sobota jen po telefonické domluvě)" });
+  })
+  .transform((s) => new Date(`${s}T00:00:00.000Z`));
+
 export const serviceLeadSchema = z.object({
   kind: z.literal("service"),
+  /** Vybraná služba (nepovinné) */
+  serviceId: optionalInt(1, 2_147_483_647),
   name: requiredText(120),
   car: requiredText(120),
+  preferredDate,
+  preferredSlot: z.enum(TimeSlot, { error: "Vyberte dopoledne, nebo odpoledne" }),
   phone,
   email,
   message: optionalText(3000),

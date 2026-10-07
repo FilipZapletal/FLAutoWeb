@@ -4,6 +4,7 @@ import { LeadStatusSelect } from "@/components/admin/LeadStatusSelect";
 import { LeadStatusBadge, LeadTypeLabel, PageHead } from "@/components/admin/ui";
 import { MailIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { parseId } from "@/lib/api";
+import { formatBooking } from "@/lib/booking";
 import { formatDateTime, phoneDigits, whatsappLink } from "@/lib/format";
 import { getLead } from "@/lib/leads/service";
 
@@ -14,9 +15,13 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
   const lead = id ? await getLead(id) : null;
   if (!lead) notFound();
 
-  const rows: [string, React.ReactNode][] = [
+  const booking = formatBooking(lead);
+  // Prázdné hodnoty (false/null) jsou řádky, které se u daného typu poptávky nezobrazují.
+  const rows: ([string, React.ReactNode] | false | null | "")[] = [
     ["Datum", formatDateTime(lead.createdAt)],
     ["Typ", <LeadTypeLabel key="t" type={lead.type} />],
+    lead.service && ["Služba", lead.service.title],
+    booking && ["Termín", <span key="b" className="font-semibold">{booking} <span className="font-normal text-muted">(přání zákazníka)</span></span>],
     [
       "Vůz",
       lead.vehicle ? (
@@ -24,7 +29,7 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
           {[lead.vehicle.brand, lead.vehicle.model, lead.vehicle.version].filter(Boolean).join(" ")} ↗
         </Link>
       ) : (
-        "—"
+        (lead.car ?? "—")
       ),
     ],
     ["Telefon", <a key="p" href={`tel:${phoneDigits(lead.phone)}`} className="font-semibold hover:text-acc">{lead.phone}</a>],
@@ -39,7 +44,7 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className="card p-5">
           <dl className="divide-y divide-line text-sm">
-            {rows.map(([label, value]) => (
+            {rows.filter((r) => !!r).map(([label, value]) => (
               <div key={label} className="grid grid-cols-[120px_1fr] gap-3 py-2">
                 <dt className="text-muted">{label}</dt>
                 <dd>{value}</dd>

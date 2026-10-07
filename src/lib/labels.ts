@@ -6,6 +6,8 @@ import type {
   Fuel,
   LeadStatus,
   LeadType,
+  ServiceIcon,
+  TimeSlot,
   Transmission,
   VehicleStatus,
 } from "@/generated/prisma/enums";
@@ -82,6 +84,11 @@ export const VEHICLE_LEAD_TYPE_OPTIONS: Record<(typeof VEHICLE_LEAD_TYPES)[numbe
   CALLBACK: "Chci zavolat zpět",
 };
 
+export const TIME_SLOT_LABELS: Record<TimeSlot, string> = {
+  DOPOLEDNE: "Dopoledne",
+  ODPOLEDNE: "Odpoledne",
+};
+
 export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   NEW: "Nová",
   CONTACTED: "Kontaktováno",
@@ -92,3 +99,10 @@ export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
 };
 
 export const ORIGIN_OPTIONS = ["ČR", "Dovoz"] as const;
+
+export const SERVICE_ICON_LABELS: Record<ServiceIcon, string> = {
+  CAR: "Auto",
+  WRENCH: "Klíč (servis)",
+  SPARKLE: "Jiskra (mytí)",
+  SHIELD: "Štít (STK)",
+};
