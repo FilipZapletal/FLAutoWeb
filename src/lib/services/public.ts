@@ -20,6 +20,7 @@ function toPublicService(s: Service) {
     description: s.description,
     prices: parseServicePrices(s.prices),
     priceNote: s.priceNote,
+    contactPhone: s.contactPhone,
     metaTitle: s.metaTitle,
     metaDescription: s.metaDescription,
   };
@@ -43,7 +44,12 @@ export async function findServiceSlugRedirect(slug: string) {
 }
 
 export async function getPublishedService(id: number) {
-  return db.service.findFirst({ where: { id, ...PUBLIC_SERVICE_WHERE }, select: { id: true, title: true } });
+  return db.service.findFirst({ where: { id, ...PUBLIC_SERVICE_WHERE }, select: { id: true, title: true, contactPhone: true } });
+}
+
+/** Služby, které se dají objednat online (služba s vlastním telefonním kontaktem se objednává jen telefonicky). */
+export function bookableServices(services: PublicService[]) {
+  return services.filter((s) => !s.contactPhone).map(({ id, title }) => ({ id, title }));
 }
 
 export async function getSitemapServices() {
@@ -52,7 +58,10 @@ export async function getSitemapServices() {
 
 /** Nejnižší cena z ceníku pro kartu služby („od X Kč“), nebo null. */
 export function lowestPrice(prices: ServicePrice[]) {
-  if (!prices.length) return null;
-  const min = Math.min(...prices.map((p) => p.price));
+  // Doplňky (např. příplatek za vosk) se do ceny „od“ nepočítají, pokud existují i hlavní položky.
+  const main = prices.filter((p) => !p.addon);
+  const base = main.length ? main : prices;
+  if (!base.length) return null;
+  const min = Math.min(...base.map((p) => p.price));
   return { price: min, from: prices.length > 1 || prices.some((p) => p.from) };
 }

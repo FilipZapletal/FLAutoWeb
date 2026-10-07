@@ -74,7 +74,10 @@ export function serviceJsonLd(s: PublicService) {
       name: s.title,
       description: s.summary,
       url,
-      provider: { "@type": "AutoDealer", name: "FL Auto", url: siteUrl() },
+      // Služba s vlastním kontaktem (Crystal Finish) má vlastního poskytovatele s vlastním telefonem.
+      provider: s.contactPhone
+        ? { "@type": "LocalBusiness", name: `${s.title} Ostrava`, telephone: s.contactPhone, url: siteUrl(`/servis/${s.slug}`) }
+        : { "@type": "AutoDealer", name: "FL Auto", url: siteUrl() },
       ...(s.prices.length > 0 && {
         hasOfferCatalog: {
           "@type": "OfferCatalog",

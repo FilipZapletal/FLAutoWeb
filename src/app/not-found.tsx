@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { ownerContacts } from "@/lib/contacts";
 import { getSettings } from "@/lib/settings";
 
 export default async function NotFound() {
@@ -10,7 +11,7 @@ export default async function NotFound() {
   const settings = await getSettings();
   return (
     <>
-      <Header phone={settings.phone} />
+      <Header contacts={ownerContacts(settings)} />
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-20 text-center">
         <p className="font-display text-6xl font-bold text-acc">404</p>
         <h1 className="mt-2 text-2xl">Stránka nenalezena</h1>

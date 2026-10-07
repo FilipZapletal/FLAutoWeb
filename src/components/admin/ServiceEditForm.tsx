@@ -15,22 +15,26 @@ export type ServiceFormValues = {
   items: string;
   description: string;
   priceNote: string;
+  contactPhone: string;
   metaTitle: string;
   metaDescription: string;
   published: boolean;
   sortOrder: string;
   slug: string;
-  prices: { label: string; price: number; from: boolean }[];
+  prices: { label: string; price: number; from: boolean; group?: string | null; note?: string | null; addon?: boolean }[];
 };
 
-type PriceRow = { key: number; label: string; price: string; from: boolean };
+type PriceRow = { key: number; label: string; price: string; from: boolean; group: string; note: string; addon: boolean };
 
 let nextKey = 1;
-const priceRow = (p?: { label: string; price: number; from: boolean }): PriceRow => ({
+const priceRow = (p?: ServiceFormValues["prices"][number]): PriceRow => ({
   key: nextKey++,
   label: p?.label ?? "",
   price: p ? String(p.price) : "",
   from: p?.from ?? false,
+  group: p?.group ?? "",
+  note: p?.note ?? "",
+  addon: p?.addon ?? false,
 });
 
 export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; initial: ServiceFormValues }) {
@@ -49,7 +53,7 @@ export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; in
     const result = await submit({
       ...data,
       published: data.published === "on",
-      prices: rows.map((p) => ({ label: p.label, price: p.price, from: p.from })),
+      prices: rows.map((p) => ({ label: p.label, price: p.price, from: p.from, group: p.group, note: p.note, addon: p.addon })),
     });
     if (!result) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -85,7 +89,7 @@ export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; in
 
       <fieldset className="card p-5">
         <h2 className="mb-1 text-base">Ceník</h2>
-        <p className="mb-4 text-xs text-muted">Bez položek se na webu zobrazí „Cena na dotaz“. Ceny zadávejte v Kč.</p>
+        <p className="mb-4 text-xs text-muted">Bez položek se na webu zobrazí „Cena na dotaz“. Ceny zadávejte v Kč. Položky se stejným nadpisem sekce po sobě se na webu seskupí pod jeden nadpis.</p>
         <div className="grid gap-2">
           {prices.map((p, i) => (
             <div key={p.key} className="grid items-start gap-2 sm:grid-cols-[minmax(0,1fr)_140px_auto_auto]">
@@ -118,6 +122,13 @@ export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; in
               <button type="button" className="btn-outline btn-sm self-center text-acc" onClick={() => setPrices((list) => list.filter((x) => x.key !== p.key))} aria-label={`Odebrat položku ${i + 1}`}>
                 Odebrat
               </button>
+              <div className="grid gap-2 sm:col-span-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <input aria-label={`Položka ${i + 1} – nadpis sekce`} placeholder="Nadpis sekce (nepovinné, např. Exteriér)" value={p.group} onChange={(e) => update(p.key, { group: e.target.value })} className="field py-1.5 text-sm" />
+                <input aria-label={`Položka ${i + 1} – popisek`} placeholder="Popisek pod položkou (nepovinné)" value={p.note} onChange={(e) => update(p.key, { note: e.target.value })} className="field py-1.5 text-sm" />
+                <label className="flex items-center gap-2 py-1.5 text-sm" title="Doplněk se nezapočítává do ceny „od“ na kartě služby">
+                  <input type="checkbox" checked={p.addon} onChange={(e) => update(p.key, { addon: e.target.checked })} className="accent-[var(--acc)]" /> doplněk
+                </label>
+              </div>
             </div>
           ))}
         </div>
@@ -125,6 +136,11 @@ export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; in
           + Přidat položku ceníku
         </button>
         <InputField label="Poznámka k ceníku" name="priceNote" defaultValue={v.priceNote} error={fields.priceNote} className="mt-4" placeholder="např. Ceny jsou orientační, přesnou cenu sdělíme po prohlídce vozu." />
+      </fieldset>
+
+      <fieldset className="card grid gap-3 p-5">
+        <h2 className="text-base">Vlastní kontakt služby</h2>
+        <InputField label="Telefon služby" name="contactPhone" defaultValue={v.contactPhone} error={fields.contactPhone} placeholder="např. +420 735 231 876" hint="Nepovinné. Je-li vyplněn, je to na stránce služby jediný kontakt a online objednávka se pro službu nenabízí (objednává se jen telefonicky). Kontakty majitelů se tam nezobrazí." />
       </fieldset>
 
       <fieldset className="card grid gap-3 p-5 sm:grid-cols-2">

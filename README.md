@@ -106,6 +106,7 @@ Demo vozy ze seedu jsou označené „DEMO“ (v popisu i na fotkách). Před sp
 | `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL` | při `s3` | S3-kompatibilní úložiště fotek, `S3_PUBLIC_URL` = veřejná URL bucketu |
 | `RESEND_API_KEY` | ne | bez něj se e-maily jen vypíšou do konzole |
 | `EMAIL_FROM` | s Resend | odesílatel, doména musí být ověřená v Resend |
+| `CRON_SECRET` | na Vercelu | tajemství pro denní úklid poptávek (`/api/cron/purge-leads`, plánuje `vercel.json`); bez něj je endpoint vypnutý |
 | `ADMIN_NOTIFY_EMAIL` | ne | kam chodí upozornění na poptávky (jinak e-mail z Nastavení webu). Upozornění dostává vždy i odpovědná osoba z Nastavení (druhý majitel). |
 
 ## Nasazení (Vercel + Supabase)
@@ -160,12 +161,15 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Katalog s kombinovatelnými filtry nad databází (základní, technické, karoserie, další), 7 způsobů řazení, stránkování po 12. Prodané vozy jsou na konci, dají se skrýt.
 - Detail vozu: SEO URL, galerie (náhledy, šipky, fullscreen, klávesnice, swipe, lazy loading), aktuální cena, štítek statusu, technické údaje ve 4 skupinách, výbava podle kategorií, maskovaný VIN, poptávkový formulář, Zavolat a WhatsApp, na mobilu spodní lišta.
 - Hledané auto na přání: vyskakovací okno „Nenašli jste, co hledáte?“ pro zákazníka, který si z nabídky nevybral (prázdný katalog, návrat zpět z katalogu, odchod ze stránky); poptávka jde e-mailem oběma majitelům. Logika v `src/components/wanted/`.
+- Ochrana dat: poptávky bez obchodu se **30 dní od posledního kontaktu automaticky mažou** (denní úklid přes Vercel Cron + pojistka při každé nové poptávce). Rezervace a Prodáno se nemažou; servisní objednávka s budoucím termínem se nemaže před termínem. Logika v `src/lib/leads/retention.ts`.
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.
 - Servis: služby spravované v administraci (výchozí 4 vytvoří migrace), každá s vlastní stránkou `/servis/[slug]` a ceníkem; online objednávka termínu (služba, den, dopoledne/odpoledne; lead typu `SERVICE`).
 - Kontakt (mapa až po kliknutí, odkaz na navigaci), O nás s texty klienta, právní stránky (návrh, firemní údaje z Nastavení).
 - Administrace: přihlášení, dashboard se statistikami, posledními poptávkami a nadcházejícími servisními termíny, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, služby (texty, odrážky, ceník, pořadí, skrytí, SEO titulek a popis), nastavení kontaktů a otevírací doby, recenze zákazníků (zobrazení na úvodu a/nebo na Servisu, pořadí) a ručně zadané hodnocení na Googlu.
 - SEO: title, meta description, canonical, Open Graph (hlavní fotka), schema.org `Car` + `Offer` a `Service` s ceníkem, `sitemap.xml`, `robots.txt`, 301 přesměrování po změně URL vozu i služby, 404 stránka.
 - Světlý i tmavý režim (přepínač ve stylu iOS, bez probliknutí při načtení), mobile-first.
+
+- Crystal Finish: samostatná služba s vlastním kontaktem (pole „Telefon služby“ v administraci) a ceníkem rozděleným do sekcí; kontakty obou majitelů se zobrazují všude jinde společně (`src/lib/contacts.ts`).
 
 ## Připraveno pro fázi 2 (zatím neimplementováno)
 

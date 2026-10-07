@@ -16,11 +16,16 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
   return (
     <form onSubmit={onSubmit} className="grid max-w-3xl gap-5" noValidate>
       <fieldset className="card grid gap-3 p-5 sm:grid-cols-2">
-        <h2 className="text-base sm:col-span-2">Kontakt</h2>
-        <InputField label="Adresa" name="address" defaultValue={initial.address} error={fields.address} className="sm:col-span-2" />
-        <InputField label="Upřesnění k adrese / příjezdu" name="mapNote" defaultValue={initial.mapNote ?? ""} error={fields.mapNote} className="sm:col-span-2" hint="Např. město a PSČ, vjezd z ulice…" />
-        <InputField label="Telefon" name="phone" defaultValue={initial.phone} error={fields.phone} hint="Použije se i pro tlačítka Zavolat a WhatsApp." />
-        <InputField label="E-mail" name="email" type="email" defaultValue={initial.email} error={fields.email} hint="Sem chodí i upozornění na poptávky (pokud není nastaven ADMIN_NOTIFY_EMAIL)." />
+        <h2 className="text-base sm:col-span-2">Provozovna</h2>
+        <InputField label="Adresa" name="address" defaultValue={initial.address} error={fields.address} className="sm:col-span-2" hint="Včetně města a PSČ – podle ní se hledá mapa a navigace." />
+        <InputField label="Upřesnění k adrese / příjezdu" name="mapNote" defaultValue={initial.mapNote ?? ""} error={fields.mapNote} className="sm:col-span-2" hint="Např. vjezd z ulice, patro…" />
+      </fieldset>
+      <fieldset className="card grid gap-3 p-5 sm:grid-cols-3">
+        <h2 className="text-base sm:col-span-3">Kontakt – první majitel</h2>
+        <p className="text-xs text-muted sm:col-span-3">Kontakty obou majitelů se zobrazují společně všude na webu (kromě služby s vlastním kontaktem, např. Crystal Finish).</p>
+        <InputField label="Jméno" name="contactName" defaultValue={initial.contactName ?? ""} error={fields.contactName} />
+        <InputField label="Telefon" name="phone" defaultValue={initial.phone} error={fields.phone} hint="Použije se i pro tlačítko WhatsApp." />
+        <InputField label="E-mail" name="email" type="email" defaultValue={initial.email} error={fields.email} hint="Chodí sem upozornění na poptávky." />
       </fieldset>
       <fieldset className="card grid gap-3 p-5 sm:grid-cols-2">
         <h2 className="text-base sm:col-span-2">Firemní údaje</h2>
@@ -34,7 +39,7 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
         <InputField label="Účinnost právních textů od" name="legalEffectiveDate" defaultValue={initial.legalEffectiveDate ?? ""} error={fields.legalEffectiveDate} hint="Např. 1. 11. 2026" />
       </fieldset>
       <fieldset className="card grid gap-3 p-5 sm:grid-cols-3">
-        <h2 className="text-base sm:col-span-3">Odpovědná osoba za provozovnu a správce osobních údajů</h2>
+        <h2 className="text-base sm:col-span-3">Kontakt – druhý majitel (odpovědná osoba za provozovnu a správce osobních údajů)</h2>
         <p className="text-xs text-muted sm:col-span-3">Zobrazuje se na Kontaktu, v Obchodních údajích a v Ochraně osobních údajů. Na tento e-mail a telefon se zákazníci obrací s žádostmi o osobní údaje.</p>
         <InputField label="Jméno" name="responsiblePerson" defaultValue={initial.responsiblePerson ?? ""} error={fields.responsiblePerson} />
         <InputField label="Telefon" name="responsiblePhone" defaultValue={initial.responsiblePhone ?? ""} error={fields.responsiblePhone} />

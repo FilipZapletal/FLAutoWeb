@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Fill } from "@/components/layout/LegalPage";
+import { ownerContacts } from "@/lib/contacts";
 import type { SiteSettings } from "@/lib/validation/settings";
 
 /** Identifikační údaje provozovatele a orgány dozoru. */
@@ -11,21 +12,15 @@ export function CompanyInfo({ s }: { s: SiteSettings }) {
     ["Sídlo", <Fill key="s" value={s.registeredOffice} label="sídlo / místo podnikání" />],
     ["Zápis v rejstříku", <Fill key="r" value={s.registryEntry} label="zápis v obchodním nebo živnostenském rejstříku" />],
     ["Provozovna", `${s.address}${s.mapNote ? `, ${s.mapNote}` : ""}`],
-    ["Telefon", <a key="p" href={`tel:${s.phone.replace(/[^\d+]/g, "")}`}>{s.phone}</a>],
-    ["E-mail", <a key="e" href={`mailto:${s.email}`}>{s.email}</a>],
+    ...ownerContacts(s).map((c): [string, React.ReactNode] => [
+      c.role ? `Kontakt – ${c.name} (${c.role})` : `Kontakt – ${c.name}`,
+      <span key={c.name}>
+        {c.phone && <a href={`tel:${c.tel}`}>{c.phone}</a>}
+        {c.phone && c.email && ", "}
+        {c.email && <a href={`mailto:${c.email}`}>{c.email}</a>}
+      </span>,
+    ]),
     ["Otevírací doba", s.openingHours],
-    [
-      "Odpovědná osoba za provozovnu a správce osobních údajů",
-      s.responsiblePerson ? (
-        <span key="r">
-          {s.responsiblePerson}
-          {s.responsiblePhone && <>, <a href={`tel:${s.responsiblePhone.replace(/[^\d+]/g, "")}`}>{s.responsiblePhone}</a></>}
-          {s.responsibleEmail && <>, <a href={`mailto:${s.responsibleEmail}`}>{s.responsibleEmail}</a></>}
-        </span>
-      ) : (
-        <Fill key="r" value={null} label="odpovědná osoba (jméno, telefon, e-mail)" />
-      ),
-    ],
   ];
 
   return (

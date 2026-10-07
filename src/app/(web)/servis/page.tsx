@@ -3,11 +3,11 @@ import { ServiceForm } from "@/components/forms/ServiceForm";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { ServiceCard } from "@/components/services/ServiceCard";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { getPublicServices } from "@/lib/services/public";
+import { bookableServices, getPublicServices } from "@/lib/services/public";
 
 export const metadata: Metadata = {
   title: "Servis",
-  description: "Dovoz aut z EU, autoservis a pneuservis, ruční mytí a čištění interiéru, příprava na STK a emise.",
+  description: "Dovoz aut z EU, autoservis a pneuservis, příprava na STK a emise a Crystal Finish – ruční mytí, čištění interiéru, renovace a ochrana laku.",
   alternates: { canonical: "/servis" },
 };
 
@@ -30,7 +30,7 @@ export default async function ServicePage() {
       <ReviewsSection placement="service" className="mb-12" />
 
       <SectionTitle className="mb-3">Objednat se do servisu</SectionTitle>
-      <ServiceForm services={services.map(({ id, title }) => ({ id, title }))} />
+      <ServiceForm services={bookableServices(services)} />
     </>
   );
 }

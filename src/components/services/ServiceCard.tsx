@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { CheckIcon } from "@/components/ui/icons";
+import { CheckIcon, PhoneIcon } from "@/components/ui/icons";
+import { phoneDigits } from "@/lib/format";
 import { lowestPrice, type PublicService } from "@/lib/services/public";
 import { priceText } from "./ServicePrice";
 import { ServiceIconView } from "./ServiceIconView";
@@ -27,6 +28,13 @@ export function ServiceCard({ service: s }: { service: PublicService }) {
             </li>
           ))}
         </ul>
+      )}
+      {s.contactPhone && (
+        <p className="mb-3 flex items-center gap-2 text-sm">
+          <PhoneIcon size={16} className="text-acc" />
+          <span className="text-muted">Objednávky:</span>
+          <a href={`tel:${phoneDigits(s.contactPhone)}`} className="font-semibold hover:text-acc">{s.contactPhone}</a>
+        </p>
       )}
       <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3">
         <span className="text-sm font-semibold">{low ? priceText(low) : <span className="font-normal text-muted">Cena na dotaz</span>}</span>

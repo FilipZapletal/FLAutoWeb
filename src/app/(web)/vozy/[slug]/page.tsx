@@ -9,7 +9,8 @@ import { MobileStickyBar } from "@/components/vehicles/MobileStickyBar";
 import { Price } from "@/components/vehicles/Price";
 import { SpecTable } from "@/components/vehicles/SpecTable";
 import { StatusBadge } from "@/components/vehicles/StatusBadge";
-import { formatKm, phoneDigits, whatsappLink } from "@/lib/format";
+import { ownerContacts } from "@/lib/contacts";
+import { formatKm, whatsappLink } from "@/lib/format";
 import { FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/labels";
 import { jsonLdString, vehicleDescription, vehicleJsonLd, vehicleTitle } from "@/lib/seo";
 import { getSettings } from "@/lib/settings";
@@ -56,6 +57,7 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
     ["Výkon", v.power ? `${v.power} kW` : null],
   ].filter(([, value]) => value) as [string, string | number][];
   const waText = `Dobrý den, mám zájem o vůz ${vehicleTitle(v)}.`;
+  const contacts = ownerContacts(settings).filter((c) => c.phone);
 
   return (
     <div className="pb-20 md:pb-0">
@@ -88,12 +90,11 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
                 Poptat vůz
               </a>
             )}
-            <a href={`tel:${phoneDigits(settings.phone)}`} className="btn-outline">
-              <PhoneIcon size={16} /> {settings.phone}
-            </a>
-            <a href={whatsappLink(settings.phone, waText)} target="_blank" rel="noopener noreferrer" className="btn-outline">
-              <WhatsAppIcon size={16} /> WhatsApp
-            </a>
+            {contacts.map((c) => (
+              <a key={c.name} href={`tel:${c.tel}`} className="btn-outline">
+                <PhoneIcon size={16} /> {c.firstName} {c.phone}
+              </a>
+            ))}
           </div>
           {sold && (
             <p className="card mt-5 border-sold/40 p-4 text-sm">
@@ -136,18 +137,22 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
             </div>
             <div className="flex flex-col gap-3 border-t border-line pt-5 md:border-l md:border-t-0 md:pl-6 md:pt-0">
               <p className="text-sm text-muted">Raději se domluvíte přímo?</p>
-              <a href={`tel:${phoneDigits(settings.phone)}`} className="btn">
-                <PhoneIcon size={16} /> Zavolat {settings.phone}
-              </a>
-              <a href={whatsappLink(settings.phone, waText)} target="_blank" rel="noopener noreferrer" className="btn-outline">
-                <WhatsAppIcon size={16} /> Napsat na WhatsApp
-              </a>
+              {contacts.map((c, i) => (
+                <div key={c.name} className="grid gap-2">
+                  <a href={`tel:${c.tel}`} className={i === 0 ? "btn" : "btn-outline"}>
+                    <PhoneIcon size={16} /> Zavolat – {c.firstName} {c.phone}
+                  </a>
+                  <a href={whatsappLink(c.phone!, waText)} target="_blank" rel="noopener noreferrer" className="btn-outline">
+                    <WhatsAppIcon size={16} /> WhatsApp – {c.firstName}
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
         </section>
       )}
 
-      <MobileStickyBar phone={settings.phone} showInquiry={!sold} />
+      <MobileStickyBar contacts={ownerContacts(settings)} showInquiry={!sold} />
     </div>
   );
 }

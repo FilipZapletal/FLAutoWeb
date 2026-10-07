@@ -6,7 +6,7 @@ import { Logo } from "@/components/ui/Logo";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { VehicleGrid } from "@/components/vehicles/VehicleCard";
 import { ABOUT_INTRO } from "@/lib/content";
-import { phoneDigits } from "@/lib/format";
+import { ownerContacts } from "@/lib/contacts";
 import { getSettings } from "@/lib/settings";
 import { getBrandModels, getHomeVehicles } from "@/lib/vehicles/queries";
 
@@ -128,9 +128,13 @@ export default async function HomePage() {
           <h2 className="mb-1 text-lg">Máte dotaz?</h2>
           <p className="mb-4 text-sm text-muted">Rádi vám poradíme s výběrem vozu.</p>
           <div className="flex flex-wrap gap-2">
-            <a href={`tel:${phoneDigits(settings.phone)}`} className="btn">
-              {settings.phone}
-            </a>
+            {ownerContacts(settings)
+              .filter((c) => c.phone)
+              .map((c) => (
+                <a key={c.name} href={`tel:${c.tel}`} className="btn">
+                  {c.firstName} {c.phone}
+                </a>
+              ))}
             <Link href="/kontakt" className="btn-outline">
               Kontaktovat nás
             </Link>

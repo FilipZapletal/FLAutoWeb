@@ -31,6 +31,7 @@ export default async function EditServicePage({ params }: PageProps<"/admin/sluz
           items: s.items.join("\n"),
           description: s.description ?? "",
           priceNote: s.priceNote ?? "",
+          contactPhone: s.contactPhone ?? "",
           metaTitle: s.metaTitle ?? "",
           metaDescription: s.metaDescription ?? "",
           published: s.published,

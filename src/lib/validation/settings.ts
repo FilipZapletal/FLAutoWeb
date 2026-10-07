@@ -19,6 +19,8 @@ const optionalRating = z.preprocess(
 
 export const siteSettingsSchema = z.object({
   address: requiredText(200),
+  // Kontakt prvního majitele (jméno, telefon, e-mail). Druhý majitel je níže v „responsible…“.
+  contactName: optionalText(120),
   phone: requiredText(40),
   email: z.email({ error: "Zadejte platný e-mail" }),
   // Otevírací doba – volný text (např. „Pouze po telefonické domluvě“)

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { phonesLine } from "@/lib/contacts";
 import type { SiteSettings } from "@/lib/validation/settings";
 
 /** Informace o mimosoudním řešení spotřebitelských sporů (§ 14 zákona o ochraně spotřebitele). */
@@ -11,7 +12,7 @@ export function AdrInfo({ s }: { s: SiteSettings }) {
 
       <h2>Nejdřív se obraťte na nás</h2>
       <p>
-        Pokud nejste spokojeni s vozidlem, servisní službou nebo vyřízením reklamace, napište nám na <a href={`mailto:${s.email}`}>{s.email}</a> nebo zavolejte na {s.phone}. Většinu situací dokážeme vyřešit přímou domluvou. Postup při reklamaci popisuje <Link href="/reklamacni-rad">reklamační řád</Link>.
+        Pokud nejste spokojeni s vozidlem, servisní službou nebo vyřízením reklamace, napište nám na <a href={`mailto:${s.email}`}>{s.email}</a>{s.responsibleEmail && <> nebo <a href={`mailto:${s.responsibleEmail}`}>{s.responsibleEmail}</a></>} či zavolejte ({phonesLine(s)}). Většinu situací dokážeme vyřešit přímou domluvou. Postup při reklamaci popisuje <Link href="/reklamacni-rad">reklamační řád</Link>.
       </p>
 
       <h2>Kdo spor řeší</h2>

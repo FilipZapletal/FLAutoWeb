@@ -253,10 +253,14 @@ model Service {
   items           String[]    @default([])
   /// Delší text na stránce služby
   description     String?     @db.Text
-  /// Ceník: [{ label, price, from }], cena v Kč; `from` = „od“
+  /// Ceník: [{ label, price, from, group?, note?, addon? }], cena v Kč; `from` = „od“,
+  /// `group` = nadpis sekce, `note` = popisek pod položkou, `addon` = doplněk (nezapočítává se do ceny „od“)
   prices          Json        @default("[]")
   /// Poznámka k ceníku, např. „Ceny jsou včetně DPH.“
   priceNote       String?     @map("price_note")
+  /// Vlastní kontakt služby (např. Crystal Finish). Je-li vyplněn, zobrazuje se na stránce služby
+  /// jako jediný kontakt a online objednávka se pro službu nenabízí.
+  contactPhone    String?     @map("contact_phone")
   metaTitle       String?     @map("meta_title")
   metaDescription String?     @map("meta_description")
   published       Boolean     @default(true)

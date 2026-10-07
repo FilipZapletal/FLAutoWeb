@@ -71,7 +71,7 @@ Datum, čas, jméno, telefon, e-mail; propojeno s vozem; viditelné v adminu; st
 Nadpis „Servis". Čtyři karty služeb, každá s ikonou, štítkem, popisem a odrážkami:
 1. **Dovoz aut z EU** (Dovoz na klíč): vyhledání a prověření vozu v zahraničí, fyzická kontrola před koupí, doprava do ČR a přepis, dovozová STK, emise a přihlášení na české SPZ, pomoc s financováním a pojištěním.
 2. **Autoservis & Pneuservis** (Rychle & spolehlivě): výměna oleje, filtrů a kapalin, brzdy, přezouvání a vyvažování kol, opravy defektů a sezónní uskladnění.
-3. **Ruční mytí & čištění interiéru** (Špičková čistota): vícefázové mytí s pH neutrální chemií, tepování, čištění a impregnace kůže, mytí oken, dezinfekce ozonem.
+3. ~~Ruční mytí & čištění interiéru~~ – **nahrazeno službou Crystal Finish** (viz 15c, změna klienta 10/2026).
 4. **Příprava na STK & emise** (Bez starostí): před-prohlídka podle metodiky STK, kontrola světel, brzd a řízení, podvozku a výfuku, rychlé odstranění nedostatků.
 
 Pod kartami formulář „Objednat se do servisu" (značka a model vozu, telefon, e-mail, poznámka) → ukládá lead typu `SERVICE`.
@@ -81,6 +81,9 @@ Pro zákazníka, který si z nabídky nevybere. **Žádný trvalý formulář na
 - Zobrazí se jen návštěvníkovi, který v katalogu použil filtry a z nabídky si nevybral (neotevřel detail vozu ani neodeslal poptávku): (1) katalog bez výsledků, (2) vrátil se tlačítkem Zpět z katalogu, (3) chce opustit stránku (myš míří k zavření okna).
 - Nejvýše jednou za návštěvu; po zavření 14 dní, po odeslání 60 dní se neukáže. Předvyplní se podle filtrů.
 - Poptávka (typ `WANTED_CAR`, „Hledané auto“) se uloží do leadů a e-mailem přijde **oběma majitelům**; zákazník dostane potvrzení. Majitelé mu následně odpoví, zda je poptávka reálná, nebo ji potvrdí.
+
+## 15c. Crystal Finish (změna klienta 10/2026)
+Samostatná služba na stránce Servis (`/servis/crystal-finish`) s vlastním ceníkem a **vlastním telefonem +420 735 231 876 jako jediným kontaktem** (kontakty majitelů se na stránce služby nezobrazují, online objednávka se nenabízí – objednává se jen telefonicky). Nabídka: ruční mytí exteriéru, čištění interiéru, renovace a ochrana laku. Ceník je rozdělený do sekcí (hlavní programy, samostatný interiér, exteriér, doplňky, renovace a korekce laku, keramická ochrana). V administraci: Služby → Crystal Finish.
 
 ## 16. Protiúčet
 Jen jako typ poptávky `TRADE_IN` u konkrétního vozu (bez samostatné stránky).
@@ -106,6 +109,9 @@ Type: INTEREST, TEST_DRIVE, RESERVATION, FINANCING, TRADE_IN, CALLBACK, **SERVIC
 ## 22. CRM
 Detail leadu: zákazník, kontakt, konkrétní vůz, typ, zpráva, datum, stav. Admin mění stav v pořadí Nová → Kontaktováno → V jednání → Rezervace → Prodáno, nebo Ztraceno.
 
+## 22b. Uchovávání poptávek (změna klienta 10/2026)
+Poptávky, které nevedly k obchodu (stavy Nová, Kontaktováno, V jednání, Ztraceno), se **30 dní od posledního kontaktu** (poslední změny stavu) automaticky mažou. Rezervace a Prodáno se nemažou. Servisní objednávka s budoucím termínem se nemaže před termínem.
+
 ## 23. Notifikace
 Po nové poptávce: zákazníkovi „Děkujeme za váš zájem. Autobazar vás bude kontaktovat.", adminovi „Nová poptávka" + vůz, jméno, telefon, e-mail, typ. Primárně e-mail; architektura připravená na SMS a WhatsApp.
 
@@ -124,6 +130,8 @@ Mobile-first. Na mobilu hned vidět cenu, rok, nájezd, palivo, telefon, kontakt
 - E-mail: **jarekfrejky@gmail.com**
 - Otevírací doba: **pouze po telefonické domluvě** (bez konkrétních hodin; změna klienta 10/2026)
 - Provozovatel a odpovědná osoba: **Lukáš Gvožď**, IČO 07481233 (údaje v Nastavení webu)
+- Kontakty **obou majitelů** (Jarek Frejkovský, Lukáš Gvožď – jméno, telefon, e-mail) se zobrazují společně všude: Kontakt, patička, otevírací doba, detail vozu, právní stránky. Jediná výjimka je **Crystal Finish** (vlastní telefon).
+- Instagram: https://www.instagram.com/flautocrystal/ (ikona „Sledujte nás“ v patičce a na Kontaktu)
 - Dále: mapa, fotografie provozovny, sociální sítě, CTA „Jak se k nám dostanete".
 
 ## 28. O nás `/o-nas`

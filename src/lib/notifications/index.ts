@@ -2,6 +2,7 @@ import "server-only";
 import type { Lead } from "@/generated/prisma/client";
 import { formatBooking } from "@/lib/booking";
 import { LEAD_TYPE_LABELS } from "@/lib/labels";
+import { phonesLine } from "@/lib/contacts";
 import { getSettings } from "@/lib/settings";
 import { siteUrl } from "@/lib/site";
 import { sendEmail } from "./email";
@@ -78,7 +79,7 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
           "",
           "FL Auto",
           settings.address,
-          `Tel.: ${settings.phone}`,
+          `Tel.: ${phonesLine(settings)}`,
           settings.email,
         ]
           .filter((l) => l !== null)

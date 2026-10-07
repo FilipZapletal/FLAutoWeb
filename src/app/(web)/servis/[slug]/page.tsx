@@ -6,9 +6,10 @@ import { PriceList } from "@/components/services/ServicePrice";
 import { ServiceIconView } from "@/components/services/ServiceIconView";
 import { CheckIcon, PhoneIcon } from "@/components/ui/icons";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { ownerContacts } from "@/lib/contacts";
 import { phoneDigits } from "@/lib/format";
 import { jsonLdString, serviceJsonLd } from "@/lib/seo";
-import { findServiceSlugRedirect, getPublicServices, getServiceBySlug } from "@/lib/services/public";
+import { bookableServices, findServiceSlugRedirect, getPublicServices, getServiceBySlug } from "@/lib/services/public";
 import { getSettings } from "@/lib/settings";
 
 export async function generateMetadata({ params }: PageProps<"/servis/[slug]">): Promise<Metadata> {
@@ -33,6 +34,7 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
     notFound();
   }
   const others = services.filter((o) => o.id !== s.id);
+  const own = s.contactPhone; // služba s vlastním kontaktem (Crystal Finish): jediný kontakt je tento telefon
 
   return (
     <>
@@ -77,19 +79,34 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
         <aside>
           <SectionTitle className="mb-3">Ceník</SectionTitle>
           <PriceList prices={s.prices} note={s.priceNote} />
-          <div className="mt-4 flex flex-wrap gap-2">
-            <a href="#objednavka" className="btn">Objednat</a>
-            <a href={`tel:${phoneDigits(settings.phone)}`} className="btn-outline">
-              <PhoneIcon size={16} /> {settings.phone}
-            </a>
-          </div>
+          {own ? (
+            <div className="card mt-4 p-5">
+              <p className="text-sm text-muted">Objednávky a dotazy vyřizujeme telefonicky:</p>
+              <a href={`tel:${phoneDigits(own)}`} className="btn mt-3">
+                <PhoneIcon size={16} /> {own}
+              </a>
+            </div>
+          ) : (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a href="#objednavka" className="btn">Objednat</a>
+              {ownerContacts(settings)
+                .filter((c) => c.phone)
+                .map((c) => (
+                  <a key={c.name} href={`tel:${c.tel}`} className="btn-outline">
+                    <PhoneIcon size={16} /> {c.firstName} {c.phone}
+                  </a>
+                ))}
+            </div>
+          )}
         </aside>
       </div>
 
-      <section id="objednavka" className="mb-12 scroll-mt-24">
-        <SectionTitle className="mb-3">Objednat se do servisu</SectionTitle>
-        <ServiceForm services={services.map(({ id, title }) => ({ id, title }))} serviceId={s.id} />
-      </section>
+      {!own && (
+        <section id="objednavka" className="mb-12 scroll-mt-24">
+          <SectionTitle className="mb-3">Objednat se do servisu</SectionTitle>
+          <ServiceForm services={bookableServices(services)} serviceId={s.id} />
+        </section>
+      )}
 
       {others.length > 0 && (
         <section>

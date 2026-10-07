@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LEAD_RETENTION_DAYS } from "@/lib/leads/retention";
 import type { SiteSettings } from "@/lib/validation/settings";
 import { CompanyBlock } from "./CompanyBlock";
 
@@ -69,7 +70,7 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
 
       <h2>4. Jak dlouho údaje uchováváme</h2>
       <ul>
-        <li>Poptávky, které nevedly k uzavření smlouvy: <span className="text-acc">[DOPLNIT: doba uložení, např. 2 roky od posledního kontaktu]</span>.</li>
+        <li>Poptávky, které nevedly k uzavření smlouvy: <strong>{LEAD_RETENTION_DAYS} dní</strong> od posledního kontaktu s vámi, poté je automaticky smažeme. Poptávka, která vedla k rezervaci nebo koupi vozu, se dále uchovává jako podklad ke smlouvě podle následujícího bodu.</li>
         <li>Údaje ze smluv a účetní a daňové doklady: po dobu, kterou nám ukládají právní předpisy (zejména zákon o účetnictví a zákon o dani z přidané hodnoty), a po dobu, po kterou lze uplatnit práva ze smlouvy.</li>
         <li>Technické údaje pro ochranu formulářů: jen v paměti serveru, nejvýše několik desítek minut.</li>
       </ul>

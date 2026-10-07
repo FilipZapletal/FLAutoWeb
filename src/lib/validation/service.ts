@@ -7,6 +7,12 @@ export const servicePriceSchema = z.object({
   price: requiredInt(0, 10_000_000),
   /** Cena „od“ (konečná cena podle rozsahu práce) */
   from: z.boolean().default(false),
+  /** Nadpis sekce ceníku (položky se stejným nadpisem po sobě se seskupí) */
+  group: optionalText(80),
+  /** Popisek pod položkou */
+  note: optionalText(200),
+  /** Doplněk k programům – nezapočítává se do ceny „od“ na kartě služby */
+  addon: z.boolean().default(false),
 });
 
 export type ServicePrice = z.infer<typeof servicePriceSchema>;
@@ -29,6 +35,14 @@ const lines = z.preprocess(
     .pipe(z.array(z.string()).max(30, { error: "Maximálně 30 odrážek" })),
 );
 
+const contactPhone = z.preprocess(
+  (v) => (typeof v === "string" ? v.trim() || null : v ?? null),
+  z
+    .string()
+    .regex(/^\+?[\d\s()-]{9,20}$/, { error: "Zadejte platné telefonní číslo" })
+    .nullable(),
+);
+
 export const serviceSchema = z.object({
   title: requiredText(120),
   tag: optionalText(60),
@@ -38,6 +52,7 @@ export const serviceSchema = z.object({
   description: optionalText(10_000),
   prices: z.array(servicePriceSchema).max(50).default([]),
   priceNote: optionalText(300),
+  contactPhone,
   metaTitle: optionalText(70),
   metaDescription: optionalText(170),
   published: z.boolean().default(true),

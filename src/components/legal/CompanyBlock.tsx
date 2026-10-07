@@ -1,4 +1,5 @@
 import { Fill } from "@/components/layout/LegalPage";
+import { ownerContacts } from "@/lib/contacts";
 import type { SiteSettings } from "@/lib/validation/settings";
 
 /** Identifikace provozovatele – sdílená pro všechny právní stránky. */
@@ -13,14 +14,14 @@ export function CompanyBlock({ s }: { s: SiteSettings }) {
       <li>Sídlo: <Fill value={s.registeredOffice} label="sídlo / místo podnikání" /></li>
       <li><Fill value={s.registryEntry} label="zápis v obchodním nebo živnostenském rejstříku" /></li>
       <li>Provozovna: {s.address}{s.mapNote ? `, ${s.mapNote}` : ""}</li>
-      <li>E-mail: <a href={`mailto:${s.email}`}>{s.email}</a>, telefon: {s.phone}</li>
-      {s.responsiblePerson && (
-        <li>
-          Odpovědná osoba a kontakt pro osobní údaje: {s.responsiblePerson}
-          {s.responsiblePhone && <>, tel. <a href={`tel:${s.responsiblePhone.replace(/[^\d+]/g, "")}`}>{s.responsiblePhone}</a></>}
-          {s.responsibleEmail && <>, e-mail <a href={`mailto:${s.responsibleEmail}`}>{s.responsibleEmail}</a></>}
+      {ownerContacts(s).map((c) => (
+        <li key={c.name}>
+          {c.name}
+          {c.role ? ` (${c.role})` : ""}
+          {c.phone && <>, tel. <a href={`tel:${c.tel}`}>{c.phone}</a></>}
+          {c.email && <>, e-mail <a href={`mailto:${c.email}`}>{c.email}</a></>}
         </li>
-      )}
+      ))}
     </ul>
   );
 }

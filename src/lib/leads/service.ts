@@ -39,7 +39,7 @@ export async function createLead(input: LeadInput) {
       type: "SERVICE",
       message: input.message,
       car: input.car,
-      serviceId: service?.id ?? null,
+      serviceId: service && !service.contactPhone ? service.id : null,
       preferredDate: input.preferredDate,
       preferredSlot: input.preferredSlot,
     };

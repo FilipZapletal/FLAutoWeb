@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { phonesLine } from "@/lib/contacts";
 import type { SiteSettings } from "@/lib/validation/settings";
 import { CompanyBlock } from "./CompanyBlock";
 
@@ -33,16 +34,15 @@ export function ComplaintsPolicy({ s }: { s: SiteSettings }) {
       <h2>4. Lhůty pro uplatnění reklamace</h2>
       <ul>
         <li>
-          Vadu můžete uplatnit do 2 let od převzetí vozidla. U použitého vozidla lze v kupní smlouvě sjednat kratší dobu, nejméně však 1 rok. Doba platná pro konkrétní vozidlo je uvedena v kupní smlouvě:{" "}
-          <span className="text-acc">[DOPLNIT: zvolená doba – 24, nebo 12 měsíců]</span>.
+          Práva z vadného plnění u ojetého vozidla můžete uplatnit do <strong>12 měsíců</strong> od převzetí vozidla. Zákonná doba odpovědnosti prodávajícího je u spotřebitelské koupě 24 měsíců; u použité věci ji lze dohodou zkrátit, nejméně však na 12 měsíců. U vozidel z naší nabídky je doba odpovědnosti za vady sjednána na 12 měsíců. Je uvedena v kupní smlouvě a před jejím uzavřením vás na ni výslovně upozorníme.
         </li>
-        <li>Projeví-li se vada během prvního roku od převzetí, má se za to, že ji vozidlo mělo již při převzetí, pokud neprokážeme opak nebo pokud to nevylučuje povaha vady.</li>
+        <li>Projeví-li se vada během těchto 12 měsíců od převzetí, má se za to, že ji vozidlo mělo již při převzetí, pokud neprokážeme opak nebo pokud to nevylučuje povaha vady.</li>
         <li>Vadu nám prosím oznamte co nejdříve po jejím zjištění. Dalším používáním vozidla s vadou může vzniknout větší škoda.</li>
       </ul>
 
       <h2>5. Jak reklamaci uplatnit</h2>
       <ol>
-        <li>Kontaktujte nás telefonicky na {s.phone}, e-mailem na <a href={`mailto:${s.email}`}>{s.email}</a> nebo osobně na provozovně {s.address}.</li>
+        <li>Kontaktujte nás telefonicky ({phonesLine(s)}), e-mailem na <a href={`mailto:${s.email}`}>{s.email}</a>{s.responsibleEmail && <> nebo <a href={`mailto:${s.responsibleEmail}`}>{s.responsibleEmail}</a></>} anebo osobně na provozovně {s.address} (návštěvu je nutné předem domluvit telefonicky).</li>
         <li>Popište vadu, jak se projevuje a kdy jste ji zjistili. Uveďte, jaký způsob vyřízení požadujete.</li>
         <li>Přiložte kupní smlouvu nebo jiný doklad o koupi.</li>
         <li>Na domluveném místě nám zpřístupněte vozidlo, abychom mohli vadu posoudit. Pokud vozidlo není pojízdné, domluvíme se na jeho převozu.</li>
