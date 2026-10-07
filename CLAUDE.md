@@ -23,7 +23,7 @@ Next.js (App Router) + TypeScript + Tailwind CSS, PostgreSQL (např. Supabase: D
 - Loga: `public/logo-dark.png` (tmavý režim), `public/logo-light.png` (světlý režim). Nekopírovat cizí loga ani vodoznakované návrhy.
 
 ## Příkazy
-- dev: `npm run dev` (DB lokálně: `npm run db:local` v jiném terminálu)
+- dev: `npm run dev:local` (spustí i lokální DB; náhled v .claude/launch.json ho používá), `npm run dev` jen web
 - build: `npm run build`
 - lint: `npm run lint`, typy: `npm run typecheck`
 - DB: `npm run db:migrate` (změna schématu), `npm run db:seed`

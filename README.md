@@ -30,19 +30,21 @@ V `.env` vyplňte `SESSION_SECRET` (např. `openssl rand -base64 48`), `ADMIN_EM
 - bez Dockeru: `npm run db:local` (spustí PostgreSQL v samostatném terminálu, data jsou v `./.local-db`; nechte ho běžet),
 - s Dockerem: `docker compose up -d`.
 
-Potom ve druhém terminálu:
+Potom ve druhém terminálu (jen poprvé):
 
 ```bash
 npm run db:deploy   # vytvoří tabulky
 npm run db:seed     # výbava, první admin a 4 DEMO vozy
-npm run dev         # http://localhost:3000
 ```
+
+**Každodenní vývoj:** `npm run dev:local` spustí lokální databázi (pokud už neběží) i web na http://localhost:3000 jedním příkazem a po ukončení (Ctrl+C) databázi zase zastaví. S Dockerem stačí `npm run dev`.
 
 ## Příkazy
 
 | Příkaz | Co dělá |
 |---|---|
-| `npm run dev` | vývojový server |
+| `npm run dev:local` | lokální databáze + vývojový server jedním příkazem |
+| `npm run dev` | vývojový server (databáze musí běžet) |
 | `npm run build` / `npm start` | produkční build / spuštění |
 | `npm run lint`, `npm run typecheck` | kontrola kódu |
 | `npm run db:local` | lokální PostgreSQL bez Dockeru |

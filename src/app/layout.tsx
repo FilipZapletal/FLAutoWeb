@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Oswald } from "next/font/google";
+import { ThemeScript } from "@/components/ui/ThemeScript";
 import { SITE_NAME, siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -23,14 +24,11 @@ export const viewport: Viewport = {
   ],
 };
 
-// Nastaví motiv ještě před vykreslením (bez probliknutí): localStorage → systém.
-const themeScript = `(function(){var t;try{t=localStorage.getItem("ab_theme")}catch(e){}if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}document.documentElement.setAttribute("data-theme",t)})()`;
-
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="cs" className={`${inter.variable} ${oswald.variable} antialiased`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <ThemeScript />
       </head>
       <body className="flex min-h-dvh flex-col">{children}</body>
     </html>
