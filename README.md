@@ -113,6 +113,8 @@ Demo vozy ze seedu jsou označené „DEMO“ (v popisu i na fotkách). Před sp
 
 ## Nasazení (Vercel + Supabase)
 
+> Aktuální stav produkce a další kroky: [`docs/nasazeni.md`](docs/nasazeni.md).
+
 1. Supabase: vytvořte projekt. Ve Storage vytvořte **veřejný** bucket (např. `photos`) a v *Storage → S3 Connection* vygenerujte přístupové klíče.
 2. Vercel: importujte repozitář a nastavte proměnné prostředí:
    - `DATABASE_URL` = connection string z Supabase (pro běh aplikace ideálně *Transaction pooler*),

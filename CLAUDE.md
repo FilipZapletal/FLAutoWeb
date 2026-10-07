@@ -4,6 +4,7 @@ Systém, jehož veřejnou částí je web autobazaru a jehož jádrem je admin (
 
 ## Dokumenty (přečti před větší prací)
 - `docs/zadani.md` – kompletní funkční zadání (aktuální, po úpravách klienta)
+- `docs/nasazeni.md` – **aktuální stav nasazení (Vercel + Supabase) a co zbývá udělat**
 - `docs/specifikace.md` – technologie, design tokeny, DB schéma, API, rozdíl prototyp vs. produkce
 - `prototype/autobazar.html` – funkční demo schválené klientem. **Reference vzhledu, textů a chování**, ne kód k přenesení (localStorage, heslo napevno, loga jako base64).
 
