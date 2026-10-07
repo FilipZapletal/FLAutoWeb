@@ -81,7 +81,9 @@ npm run db:seed     # výbava, první admin a 4 DEMO vozy
 
 Adresa `/admin` (odkaz „Admin“ v hlavičce). Přihlašuje se e-mailem a heslem z `ADMIN_EMAIL` / `ADMIN_PASSWORD` v době spuštění seedu. V databázi je uložený jen hash hesla; po seedu lze heslo z `.env` smazat.
 
-**Změna hesla / další admin:** nastavte `ADMIN_EMAIL` a nové `ADMIN_PASSWORD` a spusťte znovu `npm run db:seed` (existující účet dostane nové heslo, jiný e-mail vytvoří nový účet).
+**Změna hesla:** přihlášený admin si heslo změní sám v administraci → *Změna hesla* (zadá současné heslo a nové, min. 10 znaků).
+
+**Další admin / zapomenuté heslo:** nastavte `ADMIN_EMAIL` a nové `ADMIN_PASSWORD` a spusťte znovu `npm run db:seed` (existující účet dostane nové heslo, jiný e-mail vytvoří nový účet).
 
 Přihlášení je chráněné limitem 5 pokusů za 15 minut z jedné IP.
 
@@ -165,7 +167,7 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.
 - Servis: služby spravované v administraci (výchozí 4 vytvoří migrace), každá s vlastní stránkou `/servis/[slug]` a ceníkem; online objednávka termínu (služba, den, dopoledne/odpoledne; lead typu `SERVICE`).
 - Kontakt (mapa až po kliknutí, odkaz na navigaci), O nás s texty klienta, právní stránky (návrh, firemní údaje z Nastavení).
-- Administrace: přihlášení, dashboard se statistikami, posledními poptávkami a nadcházejícími servisními termíny, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, služby (texty, odrážky, ceník, pořadí, skrytí, SEO titulek a popis), nastavení kontaktů a otevírací doby, recenze zákazníků (zobrazení na úvodu a/nebo na Servisu, pořadí) a ručně zadané hodnocení na Googlu.
+- Administrace: přihlášení, dashboard se statistikami, posledními poptávkami a nadcházejícími servisními termíny, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, služby (texty, odrážky, ceník, pořadí, skrytí, SEO titulek a popis), nastavení kontaktů a otevírací doby, změna vlastního hesla, recenze zákazníků (zobrazení na úvodu a/nebo na Servisu, pořadí) a ručně zadané hodnocení na Googlu.
 - SEO: title, meta description, canonical, Open Graph (hlavní fotka), schema.org `Car` + `Offer` a `Service` s ceníkem, `sitemap.xml`, `robots.txt`, 301 přesměrování po změně URL vozu i služby, 404 stránka.
 - Světlý i tmavý režim (přepínač ve stylu iOS, bez probliknutí při načtení), mobile-first.
 
