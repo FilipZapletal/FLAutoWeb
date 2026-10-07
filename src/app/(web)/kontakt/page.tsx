@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { MapEmbed } from "@/components/layout/MapEmbed";
 import { ClockIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { SectionTitle } from "@/components/ui/SectionTitle";
@@ -39,11 +40,8 @@ export default async function ContactPage() {
             <ClockIcon className="mt-0.5 shrink-0 text-acc" />
             <div>
               <h2 className="mb-1 text-base">Otevírací doba</h2>
-              <dl className="text-sm">
-                <div><dt className="inline text-muted">Pondělí – pátek: </dt><dd className="inline">{s.hoursWeekdays}</dd></div>
-                <div><dt className="inline text-muted">Sobota: </dt><dd className="inline">{s.hoursSaturday}</dd></div>
-                <div><dt className="inline text-muted">Neděle: </dt><dd className="inline">{s.hoursSunday}</dd></div>
-              </dl>
+              <p className="text-sm">{s.openingHours}</p>
+              <p className="mt-1 text-xs text-muted">Před návštěvou nám prosím zavolejte, domluvíme si termín.</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2 border-t border-line pt-4">
@@ -59,6 +57,31 @@ export default async function ContactPage() {
           <a href={directions} target="_blank" rel="noopener noreferrer" className="btn w-full">Jak se k nám dostanete</a>
         </div>
       </div>
+
+      <section className="card mt-6 p-6">
+        <h2 className="mb-3 text-lg">Provozovatel a odpovědná osoba</h2>
+        <dl className="grid gap-x-8 gap-y-1 text-sm sm:grid-cols-[auto_1fr]">
+          <dt className="text-muted">Provozovatel</dt>
+          <dd>{s.companyName ?? "[DOPLNIT]"}{s.ico && `, IČO ${s.ico}`}{s.dic && `, DIČ ${s.dic}`}</dd>
+          {s.registeredOffice && (
+            <>
+              <dt className="text-muted">Sídlo</dt>
+              <dd>{s.registeredOffice}</dd>
+            </>
+          )}
+          {s.responsiblePerson && (
+            <>
+              <dt className="text-muted">Odpovědná osoba</dt>
+              <dd>
+                {s.responsiblePerson}
+                {s.responsiblePhone && <>, <a href={`tel:${phoneDigits(s.responsiblePhone)}`} className="hover:text-acc">{s.responsiblePhone}</a></>}
+                {s.responsibleEmail && <>, <a href={`mailto:${s.responsibleEmail}`} className="break-all hover:text-acc">{s.responsibleEmail}</a></>}
+              </dd>
+            </>
+          )}
+        </dl>
+        <p className="mt-4 text-sm text-muted">Další údaje najdete v <Link href="/obchodni-udaje" className="underline">obchodních údajích</Link>.</p>
+      </section>
 
       <section className="card mt-6 p-6">
         <h2 className="mb-2 text-lg">Provozovna</h2>

@@ -42,11 +42,12 @@ export function Footer({ settings }: { settings: SiteSettings }) {
         </div>
         <div>
           <h2 className="mb-3 text-base">Otevírací doba</h2>
-          <dl className="space-y-1 text-muted">
-            <div>Po–Pá: {settings.hoursWeekdays}</div>
-            <div>Sobota: {settings.hoursSaturday}</div>
-            <div>Neděle: {settings.hoursSunday}</div>
-          </dl>
+          <p className="text-muted">{settings.openingHours}</p>
+          <p className="mt-1">
+            <a href={`tel:${phoneDigits(settings.phone)}`} className="font-semibold hover:text-acc">
+              {settings.phone}
+            </a>
+          </p>
         </div>
         <div>
           <h2 className="mb-3 text-base">Odkazy</h2>

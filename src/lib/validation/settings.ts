@@ -21,9 +21,8 @@ export const siteSettingsSchema = z.object({
   address: requiredText(200),
   phone: requiredText(40),
   email: z.email({ error: "Zadejte platný e-mail" }),
-  hoursWeekdays: requiredText(100),
-  hoursSaturday: requiredText(100),
-  hoursSunday: requiredText(100),
+  // Otevírací doba – volný text (např. „Pouze po telefonické domluvě“)
+  openingHours: requiredText(200),
   facebookUrl: optionalUrl,
   instagramUrl: optionalUrl,
   mapNote: optionalText(300),
@@ -35,6 +34,13 @@ export const siteSettingsSchema = z.object({
   registryEntry: optionalText(300),
   tradeOffice: optionalText(200),
   legalEffectiveDate: optionalText(40),
+  // Odpovědná osoba za provozovnu a správce osobních údajů
+  responsiblePerson: optionalText(120),
+  responsiblePhone: optionalText(40),
+  responsibleEmail: z.preprocess(
+    (v) => (typeof v === "string" ? v.trim() || null : v ?? null),
+    z.email({ error: "Zadejte platný e-mail" }).max(160).nullable(),
+  ),
   // Hodnocení na Googlu – zadává se ručně podle profilu firmy; bez hodnocení se nezobrazuje
   googleRating: optionalRating,
   googleReviewCount: optionalInt(0, 100000),

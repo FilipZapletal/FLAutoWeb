@@ -13,7 +13,19 @@ export function CompanyInfo({ s }: { s: SiteSettings }) {
     ["Provozovna", `${s.address}${s.mapNote ? `, ${s.mapNote}` : ""}`],
     ["Telefon", <a key="p" href={`tel:${s.phone.replace(/[^\d+]/g, "")}`}>{s.phone}</a>],
     ["E-mail", <a key="e" href={`mailto:${s.email}`}>{s.email}</a>],
-    ["Otevírací doba", `Po–Pá ${s.hoursWeekdays}, sobota ${s.hoursSaturday}, neděle ${s.hoursSunday}`],
+    ["Otevírací doba", s.openingHours],
+    [
+      "Odpovědná osoba za provozovnu a správce osobních údajů",
+      s.responsiblePerson ? (
+        <span key="r">
+          {s.responsiblePerson}
+          {s.responsiblePhone && <>, <a href={`tel:${s.responsiblePhone.replace(/[^\d+]/g, "")}`}>{s.responsiblePhone}</a></>}
+          {s.responsibleEmail && <>, <a href={`mailto:${s.responsibleEmail}`}>{s.responsibleEmail}</a></>}
+        </span>
+      ) : (
+        <Fill key="r" value={null} label="odpovědná osoba (jméno, telefon, e-mail)" />
+      ),
+    ],
   ];
 
   return (
