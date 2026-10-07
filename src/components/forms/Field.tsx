@@ -1,15 +1,16 @@
 import type { ComponentProps, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 
-type Common = { label: string; name: string; error?: string; hint?: ReactNode; className?: string };
+/** `idPrefix` zajistí unikátní id, když je na stránce víc formulářů se stejnými poli (např. vyskakovací okno). */
+type Common = { label: string; name: string; error?: string; hint?: ReactNode; className?: string; idPrefix?: string };
 
-function Wrapper({ label, name, error, hint, className = "", children }: Common & { children: ReactNode }) {
+function Wrapper({ label, name, error, hint, className = "", idPrefix = "", children }: Common & { children: ReactNode }) {
   return (
     <div className={className}>
-      <label className="label" htmlFor={`fld-${name}`}>{label}</label>
+      <label className="label" htmlFor={`${idPrefix}fld-${name}`}>{label}</label>
       {children}
       {hint && !error && <p className="mt-1 text-xs text-muted">{hint}</p>}
       {error && (
-        <p id={`fld-${name}-err`} className="mt-1 text-xs text-acc" role="alert">
+        <p id={`${idPrefix}fld-${name}-err`} className="mt-1 text-xs text-acc" role="alert">
           {error}
         </p>
       )}
@@ -17,35 +18,35 @@ function Wrapper({ label, name, error, hint, className = "", children }: Common 
   );
 }
 
-const aria = (name: string, error?: string) => ({
-  id: `fld-${name}`,
+const aria = (name: string, error?: string, idPrefix = "") => ({
+  id: `${idPrefix}fld-${name}`,
   name,
   "aria-invalid": error ? true : undefined,
-  "aria-describedby": error ? `fld-${name}-err` : undefined,
+  "aria-describedby": error ? `${idPrefix}fld-${name}-err` : undefined,
 });
 
-export function InputField({ label, name, error, hint, className, ...rest }: Common & ComponentProps<"input">) {
+export function InputField({ label, name, error, hint, className, idPrefix, ...rest }: Common & ComponentProps<"input">) {
   return (
-    <Wrapper label={label} name={name} error={error} hint={hint} className={className}>
-      <input className="field" {...aria(name, error)} {...rest} />
+    <Wrapper label={label} name={name} error={error} hint={hint} className={className} idPrefix={idPrefix}>
+      <input className="field" {...aria(name, error, idPrefix)} {...rest} />
     </Wrapper>
   );
 }
 
-export function SelectField({ label, name, error, hint, className, children, ...rest }: Common & SelectHTMLAttributes<HTMLSelectElement>) {
+export function SelectField({ label, name, error, hint, className, idPrefix, children, ...rest }: Common & SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <Wrapper label={label} name={name} error={error} hint={hint} className={className}>
-      <select className="field" {...aria(name, error)} {...rest}>
+    <Wrapper label={label} name={name} error={error} hint={hint} className={className} idPrefix={idPrefix}>
+      <select className="field" {...aria(name, error, idPrefix)} {...rest}>
         {children}
       </select>
     </Wrapper>
   );
 }
 
-export function TextareaField({ label, name, error, hint, className, ...rest }: Common & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function TextareaField({ label, name, error, hint, className, idPrefix, ...rest }: Common & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
-    <Wrapper label={label} name={name} error={error} hint={hint} className={className}>
-      <textarea className="field" {...aria(name, error)} {...rest} />
+    <Wrapper label={label} name={name} error={error} hint={hint} className={className} idPrefix={idPrefix}>
+      <textarea className="field" {...aria(name, error, idPrefix)} {...rest} />
     </Wrapper>
   );
 }

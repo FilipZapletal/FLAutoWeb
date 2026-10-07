@@ -65,6 +65,7 @@ export const LEAD_TYPE_LABELS: Record<LeadType, string> = {
   TRADE_IN: "Protiúčet",
   CALLBACK: "Zavolat zpět",
   SERVICE: "Servis",
+  WANTED_CAR: "Hledané auto",
 };
 
 /** Typy, které si zákazník vybírá ve formuláři u vozu (v tomto pořadí). */

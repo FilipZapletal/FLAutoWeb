@@ -6,6 +6,8 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 import { CatalogFilters } from "@/components/vehicles/CatalogFilters";
 import { SortSelect } from "@/components/vehicles/SortSelect";
 import { VehicleGrid } from "@/components/vehicles/VehicleCard";
+import { filtersToPrefill } from "@/components/wanted/prefill";
+import { WantedNoResultsTrigger } from "@/components/wanted/WantedNoResultsTrigger";
 import { filtersToQuery, parseFilters } from "@/lib/validation/filters";
 import { getBrandModels, getFilterValues, searchVehicles } from "@/lib/vehicles/queries";
 
@@ -57,6 +59,7 @@ export default async function CatalogPage({ searchParams }: PageProps<"/vozy">) 
           <Link href="/vozy" className="btn-outline">
             Zobrazit všechny vozy
           </Link>
+          {activeCount > 0 && <WantedNoResultsTrigger prefill={filtersToPrefill(filters)} />}
         </div>
       )}
 

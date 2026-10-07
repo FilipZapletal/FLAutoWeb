@@ -3,6 +3,8 @@ import type { LeadStatus, LeadType, Prisma } from "@/generated/prisma/client";
 import { pragueToday } from "@/lib/booking";
 import { db } from "@/lib/db";
 import { getPublishedService } from "@/lib/services/public";
+import { formatKm, formatPrice } from "@/lib/format";
+import { BODY_TYPE_LABELS, FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/labels";
 import type { LeadInput } from "@/lib/validation/lead";
 import { PUBLIC_VEHICLE_WHERE } from "@/lib/vehicles/public";
 
@@ -17,6 +19,16 @@ export async function createLead(input: LeadInput) {
     const vehicle = await db.vehicle.findFirst({ where: { id: input.vehicleId, ...PUBLIC_VEHICLE_WHERE }, select: { id: true } });
     if (!vehicle) throw new LeadVehicleNotFoundError();
     data = { vehicleId: vehicle.id, name: input.name, phone: input.phone, email: input.email, type: input.type, message: input.message };
+  } else if (input.kind === "wanted") {
+    data = {
+      vehicleId: null,
+      name: input.name,
+      phone: input.phone,
+      email: input.email,
+      type: "WANTED_CAR",
+      car: input.car,
+      message: wantedCarMessage(input),
+    };
   } else {
     const service = input.serviceId ? await getPublishedService(input.serviceId) : null;
     data = {
@@ -33,6 +45,21 @@ export async function createLead(input: LeadInput) {
     };
   }
   return db.lead.create({ data, include: { vehicle: vehicleSelect, service: serviceSelect } });
+}
+
+/** Požadavky na hledané auto jako čitelný text (zobrazí se v administraci i v e-mailu). */
+function wantedCarMessage(input: Extract<LeadInput, { kind: "wanted" }>) {
+  return [
+    input.maxPrice !== null && `Maximální cena: ${formatPrice(input.maxPrice)}`,
+    input.yearFrom !== null && `Rok výroby od: ${input.yearFrom}`,
+    input.maxMileage !== null && `Maximální nájezd: ${formatKm(input.maxMileage)}`,
+    input.fuel && `Palivo: ${FUEL_LABELS[input.fuel]}`,
+    input.transmission && `Převodovka: ${TRANSMISSION_LABELS[input.transmission]}`,
+    input.bodyType && `Karoserie: ${BODY_TYPE_LABELS[input.bodyType]}`,
+    input.message && `\nPoznámka zákazníka:\n${input.message}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export type LeadListFilters = { status?: LeadStatus; type?: LeadType };

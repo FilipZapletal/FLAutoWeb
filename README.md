@@ -106,7 +106,7 @@ Demo vozy ze seedu jsou označené „DEMO“ (v popisu i na fotkách). Před sp
 | `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL` | při `s3` | S3-kompatibilní úložiště fotek, `S3_PUBLIC_URL` = veřejná URL bucketu |
 | `RESEND_API_KEY` | ne | bez něj se e-maily jen vypíšou do konzole |
 | `EMAIL_FROM` | s Resend | odesílatel, doména musí být ověřená v Resend |
-| `ADMIN_NOTIFY_EMAIL` | ne | kam chodí upozornění na poptávky (jinak e-mail z Nastavení webu) |
+| `ADMIN_NOTIFY_EMAIL` | ne | kam chodí upozornění na poptávky (jinak e-mail z Nastavení webu). Upozornění dostává vždy i odpovědná osoba z Nastavení (druhý majitel). |
 
 ## Nasazení (Vercel + Supabase)
 
@@ -159,6 +159,7 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Homepage: hero s rychlým hledáním, rychlé kategorie, doporučené vozy, akční nabídky, nově v nabídce, blok Servis, kontakt.
 - Katalog s kombinovatelnými filtry nad databází (základní, technické, karoserie, další), 7 způsobů řazení, stránkování po 12. Prodané vozy jsou na konci, dají se skrýt.
 - Detail vozu: SEO URL, galerie (náhledy, šipky, fullscreen, klávesnice, swipe, lazy loading), aktuální cena, štítek statusu, technické údaje ve 4 skupinách, výbava podle kategorií, maskovaný VIN, poptávkový formulář, Zavolat a WhatsApp, na mobilu spodní lišta.
+- Hledané auto na přání: vyskakovací okno „Nenašli jste, co hledáte?“ pro zákazníka, který si z nabídky nevybral (prázdný katalog, návrat zpět z katalogu, odchod ze stránky); poptávka jde e-mailem oběma majitelům. Logika v `src/components/wanted/`.
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.
 - Servis: služby spravované v administraci (výchozí 4 vytvoří migrace), každá s vlastní stránkou `/servis/[slug]` a ceníkem; online objednávka termínu (služba, den, dopoledne/odpoledne; lead typu `SERVICE`).
 - Kontakt (mapa až po kliknutí, odkaz na navigaci), O nás s texty klienta, právní stránky (návrh, firemní údaje z Nastavení).

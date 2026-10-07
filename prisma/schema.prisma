@@ -70,6 +70,8 @@ enum LeadType {
   TRADE_IN
   CALLBACK
   SERVICE
+  /// Zákazník hledá auto, které není v nabídce (formulář „Sehnat auto na přání“)
+  WANTED_CAR
 }
 
 /// Preferovaná část dne pro servisní termín.

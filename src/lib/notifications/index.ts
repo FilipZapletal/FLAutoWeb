@@ -18,7 +18,9 @@ type LeadWithVehicle = Lead & {
 export async function notifyNewLead(lead: LeadWithVehicle) {
   const settings = await getSettings();
   const vehicleName = lead.vehicle ? [lead.vehicle.brand, lead.vehicle.model, lead.vehicle.version].filter(Boolean).join(" ") : null;
-  const adminTo = process.env.ADMIN_NOTIFY_EMAIL || settings.email;
+  // Upozornění dostávají oba majitelé: hlavní e-mail webu a odpovědná osoba.
+  const adminTo = [...new Set([process.env.ADMIN_NOTIFY_EMAIL || settings.email, settings.responsibleEmail].filter((e): e is string => Boolean(e)))];
+  const wanted = lead.type === "WANTED_CAR";
   const service = lead.service?.title ?? null;
   const booking = formatBooking(lead);
 
@@ -26,15 +28,20 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
     sendEmail({
       to: adminTo,
       replyTo: lead.email ?? undefined,
-      subject: booking ? `Objednávka do servisu – ${booking}` : `Nová poptávka – ${vehicleName ?? LEAD_TYPE_LABELS[lead.type]}`,
+      subject: wanted
+        ? `Hledané auto – ${lead.car}`
+        : booking
+          ? `Objednávka do servisu – ${booking}`
+          : `Nová poptávka – ${vehicleName ?? LEAD_TYPE_LABELS[lead.type]}`,
       text: [
-        "Nová poptávka z webu FL Auto",
+        wanted ? "Zákazník hledá auto, které není v nabídce – poptávka z webu FL Auto" : "Nová poptávka z webu FL Auto",
+        wanted ? "Odpovězte mu prosím, zda je poptávka reálná, případně ji potvrďte." : null,
         "",
         vehicleName ? `Vůz: ${vehicleName} (${siteUrl(`/vozy/${lead.vehicle!.slug}`)})` : null,
         `Typ: ${LEAD_TYPE_LABELS[lead.type]}`,
         service ? `Služba: ${service}` : null,
         booking ? `Preferovaný termín: ${booking}` : null,
-        lead.car ? `Vůz zákazníka: ${lead.car}` : null,
+        lead.car ? `${wanted ? "Hledaný vůz" : "Vůz zákazníka"}: ${lead.car}` : null,
         `Jméno: ${lead.name}`,
         `Telefon: ${lead.phone}`,
         `E-mail: ${lead.email ?? "—"}`,
@@ -52,13 +59,19 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
       sendEmail({
         to: lead.email,
         replyTo: settings.email,
-        subject: booking ? "Přijali jsme vaši objednávku do servisu – FL Auto" : "Děkujeme za váš zájem – FL Auto",
+        subject: wanted
+          ? "Přijali jsme vaši poptávku na auto – FL Auto"
+          : booking
+            ? "Přijali jsme vaši objednávku do servisu – FL Auto"
+            : "Děkujeme za váš zájem – FL Auto",
         text: [
           "Dobrý den,",
           "",
-          booking
-            ? "děkujeme za objednávku. Termín je zatím předběžný, ozveme se vám a potvrdíme ho."
-            : "děkujeme za váš zájem. Autobazar vás bude kontaktovat.",
+          wanted
+            ? `děkujeme za poptávku. Vůz „${lead.car}“ se pokusíme pro vás sehnat. Ozveme se vám s odpovědí, zda je poptávka reálná, nebo ji potvrdíme.`
+            : booking
+              ? "děkujeme za objednávku. Termín je zatím předběžný, ozveme se vám a potvrdíme ho."
+              : "děkujeme za váš zájem. Autobazar vás bude kontaktovat.",
           vehicleName ? `\nVaše poptávka: ${vehicleName}` : null,
           service ? `\nSlužba: ${service}` : null,
           booking ? `Preferovaný termín: ${booking}` : null,

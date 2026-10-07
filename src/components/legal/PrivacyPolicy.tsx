@@ -8,6 +8,9 @@ import { CompanyBlock } from "./CompanyBlock";
  * spuštěním doporučujeme kontrolu právníkem.
  */
 export function PrivacyPolicy({ s }: { s: SiteSettings }) {
+  // Žádosti o osobní údaje směřují na odpovědnou osobu, jinak na obecný kontakt.
+  const privacyEmail = s.responsibleEmail ?? s.email;
+  const privacyPhone = s.responsiblePhone ?? s.phone;
   return (
     <>
       <p>
@@ -16,14 +19,18 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
 
       <h2>1. Kdo je správcem vašich údajů</h2>
       <CompanyBlock s={s} />
-      <p>S jakýmkoli dotazem k osobním údajům se na nás můžete obrátit na uvedeném e-mailu nebo telefonu. Pověřence pro ochranu osobních údajů jsme nejmenovali, protože nám tato povinnost nevzniká.</p>
+      <p>
+        S jakýmkoli dotazem k osobním údajům se můžete obrátit na správce{s.responsiblePerson ? <> ({s.responsiblePerson})</> : null} na e-mailu <a href={`mailto:${privacyEmail}`}>{privacyEmail}</a> nebo telefonu {privacyPhone}. Pověřence pro ochranu osobních údajů jsme nejmenovali, protože nám tato povinnost nevzniká.
+      </p>
 
       <h2>2. Jaké údaje zpracováváme</h2>
       <ul>
         <li><strong>Poptávka u vozu</strong> (formulář „Máte zájem o tento vůz?“): jméno, telefon, e-mail (nepovinný), typ zájmu, text zprávy a vůz, o který máte zájem.</li>
+        <li><strong>Hledané auto</strong> (okno „Nenašli jste, co hledáte?“): jméno, telefon, e-mail (nepovinný), popis hledaného vozu a vaše požadavky (např. cena, rok, palivo).</li>
         <li><strong>Objednávka do servisu</strong>: jméno, značka a model vozu, telefon, e-mail (nepovinný) a poznámka.</li>
         <li><strong>Koupě vozu nebo servisní zakázka</strong>: údaje potřebné k uzavření a splnění smlouvy, k převodu vozidla v registru silničních vozidel a k vystavení dokladů (např. jméno, adresa, datum narození, číslo dokladu totožnosti, u podnikatelů IČO).</li>
         <li><strong>Komunikace</strong>: obsah e-mailů, zpráv a záznamy o telefonickém a osobním jednání týkajícím se vaší poptávky.</li>
+        <li><strong>Údaje v prohlížeči</strong>: aby se okno „Nenašli jste, co hledáte?“ nabídlo jen tomu, kdo nic nenašel, ukládáme ve vašem prohlížeči údaj, že jste v katalogu používali filtry, a že jste okno zavřeli. Zůstává jen ve vašem zařízení (viz <Link href="/cookies">Cookies</Link>), nikam se neodesílá.</li>
         <li><strong>Technické údaje</strong>: IP adresa a údaje o prohlížeči. Používáme je jen krátkodobě k ochraně formulářů před zneužitím (omezení počtu odeslání) a k zajištění bezpečného provozu webu.</li>
       </ul>
 
@@ -38,6 +45,10 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
         <tbody>
           <tr>
             <td>Vyřízení vaší poptávky, domluva prohlídky, zkušební jízdy nebo termínu v servisu</td>
+            <td>Jednání o smlouvě na vaši žádost – čl. 6 odst. 1 písm. b) GDPR</td>
+          </tr>
+          <tr>
+            <td>Posouzení, zda se nám podaří vámi hledané auto sehnat, a odpověď na vaši poptávku</td>
             <td>Jednání o smlouvě na vaši žádost – čl. 6 odst. 1 písm. b) GDPR</td>
           </tr>
           <tr>
@@ -97,7 +108,7 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
         <li>na přenositelnost údajů, které jste nám poskytli na základě smlouvy,</li>
         <li>vznést námitku proti zpracování založenému na našem oprávněném zájmu.</li>
       </ul>
-      <p>Svá práva můžete uplatnit e-mailem na <a href={`mailto:${s.email}`}>{s.email}</a> nebo osobně na provozovně. Odpovíme bez zbytečného odkladu, nejpozději do jednoho měsíce.</p>
+      <p>Svá práva můžete uplatnit e-mailem na <a href={`mailto:${privacyEmail}`}>{privacyEmail}</a> nebo osobně na provozovně. Odpovíme bez zbytečného odkladu, nejpozději do jednoho měsíce.</p>
       <p>
         Pokud se domníváte, že s vašimi údaji nezacházíme v souladu s předpisy, můžete podat stížnost u Úřadu pro ochranu osobních údajů, Pplk. Sochora 27, 170 00 Praha 7,{" "}
         <a href="https://uoou.gov.cz" target="_blank" rel="noopener noreferrer">uoou.gov.cz</a>.

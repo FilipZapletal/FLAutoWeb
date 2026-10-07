@@ -12,7 +12,7 @@ export function CookiesPolicy() {
       </p>
 
       <h2>Jaké cookies a údaje v prohlížeči používáme</h2>
-      <p>Používáme pouze to, co je nezbytné pro fungování webu nebo co si sami nastavíte:</p>
+      <p>Používáme pouze to, co je nezbytné pro fungování webu nebo pro funkce, které si sami vyvoláte nebo nastavíte:</p>
       <table>
         <thead>
           <tr>
@@ -26,6 +26,16 @@ export function CookiesPolicy() {
             <td>ab_theme</td>
             <td>Místní úložiště prohlížeče. Pamatuje si, zda jste zvolili světlý, nebo tmavý režim. Neobsahuje osobní údaje a neodesílá se na server.</td>
             <td>Do smazání v prohlížeči</td>
+          </tr>
+          <tr>
+            <td>fl_wanted</td>
+            <td>Místní úložiště prohlížeče. Pamatuje si, že jste zavřeli nebo odeslali okno „Nenašli jste, co hledáte?“, aby se vám znovu neukazovalo (14 dní po zavření, 60 dní po odeslání). Neobsahuje osobní údaje a neodesílá se na server.</td>
+            <td>Nejdéle 60 dní</td>
+          </tr>
+          <tr>
+            <td>fl_wanted_session</td>
+            <td>Úložiště relace prohlížeče. Během jedné návštěvy si pamatuje, zda jste v katalogu používali filtry a zda jste si vybrali vůz, aby se okno „Nenašli jste, co hledáte?“ ukázalo jen návštěvníkovi, který nic nenašel. Neobsahuje osobní údaje a neodesílá se na server.</td>
+            <td>Do zavření karty prohlížeče</td>
           </tr>
           <tr>
             <td>fl_admin_session</td>
@@ -47,7 +57,7 @@ export function CookiesPolicy() {
 
       <h2>Jak cookies spravovat</h2>
       <p>
-        Uložené cookies a data webu můžete kdykoli smazat nebo jejich ukládání zablokovat v nastavení svého prohlížeče (obvykle v části Soukromí nebo Zabezpečení). Pokud smažete údaj ab_theme, web znovu použije režim podle nastavení vašeho zařízení.
+        Uložené cookies a data webu můžete kdykoli smazat nebo jejich ukládání zablokovat v nastavení svého prohlížeče (obvykle v části Soukromí nebo Zabezpečení). Pokud smažete údaj ab_theme, web znovu použije režim podle nastavení vašeho zařízení. Pokud smažete údaje fl_wanted, může se okno „Nenašli jste, co hledáte?“ zobrazit znovu.
       </p>
 
       <h2>Další informace</h2>

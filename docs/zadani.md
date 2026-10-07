@@ -76,6 +76,12 @@ Nadpis „Servis". Čtyři karty služeb, každá s ikonou, štítkem, popisem a
 
 Pod kartami formulář „Objednat se do servisu" (značka a model vozu, telefon, e-mail, poznámka) → ukládá lead typu `SERVICE`.
 
+## 15b. Hledané auto na přání (změna klienta 10/2026)
+Pro zákazníka, který si z nabídky nevybere. **Žádný trvalý formulář na stránkách** – jen vyskakovací okno „Nenašli jste, co hledáte?“ s poptávkou na vysněný vůz (co hledá, volitelně cena, rok, nájezd, palivo, převodovka, karoserie, poznámka; jméno, telefon, e-mail).
+- Zobrazí se jen návštěvníkovi, který v katalogu použil filtry a z nabídky si nevybral (neotevřel detail vozu ani neodeslal poptávku): (1) katalog bez výsledků, (2) vrátil se tlačítkem Zpět z katalogu, (3) chce opustit stránku (myš míří k zavření okna).
+- Nejvýše jednou za návštěvu; po zavření 14 dní, po odeslání 60 dní se neukáže. Předvyplní se podle filtrů.
+- Poptávka (typ `WANTED_CAR`, „Hledané auto“) se uloží do leadů a e-mailem přijde **oběma majitelům**; zákazník dostane potvrzení. Majitelé mu následně odpoví, zda je poptávka reálná, nebo ji potvrdí.
+
 ## 16. Protiúčet
 Jen jako typ poptávky `TRADE_IN` u konkrétního vozu (bez samostatné stránky).
 
@@ -116,7 +122,8 @@ Mobile-first. Na mobilu hned vidět cenu, rok, nájezd, palivo, telefon, kontakt
 - Adresa: **Frýdecká 652/295**
 - Telefon: **+420 604 452 221**
 - E-mail: **jarekfrejky@gmail.com**
-- Otevírací doba: **Po–Pá 08:00–18:00, sobota dle předchozí domluvy, neděle zavřeno (pouze po dohodě)**
+- Otevírací doba: **pouze po telefonické domluvě** (bez konkrétních hodin; změna klienta 10/2026)
+- Provozovatel a odpovědná osoba: **Lukáš Gvožď**, IČO 07481233 (údaje v Nastavení webu)
 - Dále: mapa, fotografie provozovny, sociální sítě, CTA „Jak se k nám dostanete".
 
 ## 28. O nás `/o-nas`

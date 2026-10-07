@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { LeadStatus, TimeSlot } from "@/generated/prisma/enums";
+import { BodyType, Fuel, LeadStatus, TimeSlot, Transmission } from "@/generated/prisma/enums";
 import { bookingRange, isWeekend } from "@/lib/booking";
 import { VEHICLE_LEAD_TYPES } from "@/lib/labels";
-import { optionalInt, optionalText, requiredText } from "./helpers";
+import { optionalEnum, optionalInt, optionalText, requiredText } from "./helpers";
 
 const phone = z
   .string({ error: "Zadejte telefon" })
@@ -58,7 +58,25 @@ export const serviceLeadSchema = z.object({
   website: honeypot,
 });
 
-export const leadSchema = z.discriminatedUnion("kind", [vehicleLeadSchema, serviceLeadSchema]);
+/** „Sehnat auto na přání“ – zákazník hledá vůz, který není v nabídce. */
+export const wantedLeadSchema = z.object({
+  kind: z.literal("wanted"),
+  name: requiredText(120),
+  phone,
+  email,
+  /** Co hledá (značka, model, popis) */
+  car: requiredText(160),
+  maxPrice: optionalInt(10_000, 100_000_000),
+  yearFrom: optionalInt(1950, new Date().getFullYear() + 1),
+  maxMileage: optionalInt(0, 3_000_000),
+  fuel: optionalEnum(Fuel),
+  transmission: optionalEnum(Transmission),
+  bodyType: optionalEnum(BodyType),
+  message: optionalText(2000),
+  website: honeypot,
+});
+
+export const leadSchema = z.discriminatedUnion("kind", [vehicleLeadSchema, serviceLeadSchema, wantedLeadSchema]);
 export type LeadInput = z.infer<typeof leadSchema>;
 
 export const leadUpdateSchema = z.object({ status: z.enum(LeadStatus) }).strict();
