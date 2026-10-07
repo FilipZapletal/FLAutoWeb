@@ -20,6 +20,11 @@ export function formatDateTime(d: Date | string) {
   }).format(typeof d === "string" ? new Date(d) : d);
 }
 
+/** Pouze datum v české časové zóně, např. „9. 11. 2026“. */
+export function formatDate(d: Date | string) {
+  return new Intl.DateTimeFormat("cs-CZ", { dateStyle: "medium", timeZone: "Europe/Prague" }).format(typeof d === "string" ? new Date(d) : d);
+}
+
 /** Telefon do odkazu tel: / wa.me (jen číslice, s předvolbou). */
 export function phoneDigits(phone: string) {
   return phone.replace(/[^\d+]/g, "");

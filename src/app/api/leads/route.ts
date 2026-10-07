@@ -1,6 +1,7 @@
 import { after, NextResponse, type NextRequest } from "next/server";
 import { LeadStatus, LeadType } from "@/generated/prisma/enums";
 import { guardAdmin, jsonError, readJson, validationError } from "@/lib/api";
+import { purgeExpiredLeads } from "@/lib/leads/retention";
 import { createLead, getLeads, LeadVehicleNotFoundError } from "@/lib/leads/service";
 import { notifyNewLead } from "@/lib/notifications";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
@@ -33,6 +34,8 @@ export async function POST(req: NextRequest) {
   try {
     const lead = await createLead(parsed.data);
     after(() => notifyNewLead(lead));
+    // Pojistka: úklid proběhne i bez plánovače, kdykoli přijde nová poptávka.
+    after(() => purgeExpiredLeads().catch((e) => console.error("Úklid poptávek selhal:", e)));
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (e) {
     if (e instanceof LeadVehicleNotFoundError) return jsonError(404, "Vůz už není v nabídce.");

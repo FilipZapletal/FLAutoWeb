@@ -6,6 +6,7 @@ import { LeadStatus, LeadType } from "@/generated/prisma/enums";
 import { formatBooking } from "@/lib/booking";
 import { formatDateTime, phoneDigits } from "@/lib/format";
 import { LEAD_STATUS_LABELS, LEAD_TYPE_LABELS } from "@/lib/labels";
+import { LEAD_RETENTION_DAYS } from "@/lib/leads/retention";
 import { getLeads } from "@/lib/leads/service";
 
 export const metadata = { title: "Poptávky" };
@@ -19,6 +20,9 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
   return (
     <>
       <PageHead title="Poptávky" />
+      <p className="mb-4 text-sm text-muted">
+        Poptávky, které nevedly k obchodu, se {LEAD_RETENTION_DAYS} dní od posledního kontaktu (poslední změny stavu) automaticky mažou. Poptávky ve stavu Rezervace a Prodáno se nemažou.
+      </p>
       <GetForm action="/admin/poptavky" className="mb-4 flex flex-wrap items-end gap-2">
         <div>
           <label className="label" htmlFor="flt-status">Stav</label>
