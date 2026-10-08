@@ -79,7 +79,7 @@ npm run db:seed     # výbava, první admin a 4 DEMO vozy
 
 ## Přihlášení do administrace
 
-Adresa `/admin` (odkaz „Admin“ v hlavičce). Přihlašuje se e-mailem a heslem z `ADMIN_EMAIL` / `ADMIN_PASSWORD` v době spuštění seedu. V databázi je uložený jen hash hesla; po seedu lze heslo z `.env` smazat.
+Adresa `/admin` – zadává se ručně, na veřejném webu na administraci záměrně nevede žádný odkaz. Přihlašuje se e-mailem a heslem z `ADMIN_EMAIL` / `ADMIN_PASSWORD` v době spuštění seedu. V databázi je uložený jen hash hesla; po seedu lze heslo z `.env` smazat.
 
 **Změna hesla:** přihlášený admin si heslo změní sám v administraci → *Změna hesla* (zadá současné heslo a nové, min. 10 znaků).
 
