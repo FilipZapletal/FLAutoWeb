@@ -3,6 +3,7 @@ import { z } from "zod";
 import { guardAdmin, jsonError, parseId, readJson, validationError } from "@/lib/api";
 import { db } from "@/lib/db";
 import { describeError, ImageUploadError, MAX_UPLOAD_BYTES, UploadStageError } from "@/lib/images/process";
+import { getStorage } from "@/lib/images/storage";
 import { addVehicleImage, arrangeVehicleImages, getVehicleImages } from "@/lib/vehicles/images";
 
 const MAX_FILES_PER_REQUEST = 10;
@@ -35,6 +36,7 @@ export async function POST(req: NextRequest, ctx: RouteContext<"/api/vehicles/[k
   if (files.length > MAX_FILES_PER_REQUEST) return jsonError(400, `Najednou lze nahrát max. ${MAX_FILES_PER_REQUEST} souborů.`);
 
   const errors: string[] = [];
+  let storageFailed = false;
   for (const file of files) {
     if (file.size > MAX_UPLOAD_BYTES) {
       errors.push(`${file.name}: soubor je větší než 15 MB.`);
@@ -48,6 +50,7 @@ export async function POST(req: NextRequest, ctx: RouteContext<"/api/vehicles/[k
       } else if (e instanceof UploadStageError) {
         // Podrobnosti jen administrátorovi (endpoint je chráněný přihlášením) a do logu serveru.
         console.error(`Upload fotky – ${e.stage}:`, e.cause);
+        if (e.stage === "uložení do úložiště") storageFailed = true;
         errors.push(`${file.name}: ${e.stage} selhalo – ${describeError(e.cause)}`);
       } else {
         console.error("Upload fotky selhal:", e);
@@ -55,8 +58,15 @@ export async function POST(req: NextRequest, ctx: RouteContext<"/api/vehicles/[k
       }
     }
   }
+  // Při selhání úložiště přidáme (jednou) popis jeho nastavení – bez tajných hodnot, jen pro přihlášeného admina.
+  let diagnostics: string | undefined;
+  if (storageFailed) {
+    try {
+      diagnostics = await getStorage().diagnose?.();
+    } catch {}
+  }
   const images = await getVehicleImages(id);
-  return NextResponse.json({ images, errors }, { status: errors.length === files.length ? 400 : 200 });
+  return NextResponse.json({ images, errors, ...(diagnostics && { diagnostics }) }, { status: errors.length === files.length ? 400 : 200 });
 }
 
 const arrangeSchema = z.object({

@@ -10,6 +10,8 @@ export interface Storage {
   put(key: string, body: Buffer, contentType: string): Promise<void>;
   remove(keys: string[]): Promise<void>;
   publicUrl(key: string): string;
+  /** Popis nastavení úložiště pro diagnostiku chyb (bez tajných hodnot). */
+  diagnose?(): Promise<string>;
 }
 
 /** Jaké úložiště je zapnuté. Hodnota se čistí od mezer a velikosti písmen (častá chyba při vkládání do Vercelu). */
@@ -80,6 +82,21 @@ function s3Storage(): Storage {
       );
     },
     publicUrl: (key) => `${publicBase}/${key}`,
+    async diagnose() {
+      let host = "?";
+      try {
+        host = new URL(requireEnv("S3_ENDPOINT")).host;
+      } catch {}
+      const base = `Nastavený bucket „${bucket}“ na ${host}.`;
+      try {
+        const { ListBucketsCommand } = await import("@aws-sdk/client-s3");
+        const out = await (await client).send(new ListBucketsCommand({}));
+        const names = (out.Buckets ?? []).map((b) => b.Name).filter(Boolean);
+        return `${base} Dostupné buckety v tomto projektu: ${names.length ? names.map((n) => `„${n}“`).join(", ") : "žádné"}.`;
+      } catch (e) {
+        return `${base} Seznam bucketů se nepodařilo načíst (${(e as Error).name}).`;
+      }
+    },
   };
 }
 

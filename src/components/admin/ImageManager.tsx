@@ -75,6 +75,7 @@ export function ImageManager({ vehicleId, initial }: { vehicleId: number; initia
       body.append("files", await downscale(file), file.name.replace(/\.\w+$/, ".jpg"));
       const { ok, status, data } = await call(base, { method: "POST", body });
       if (data.errors?.length) errs.push(...data.errors);
+      if (data.diagnostics && !errs.includes(data.diagnostics)) errs.push(data.diagnostics);
       else if (data.error) errs.push(`${file.name}: ${data.error}`);
       else if (!ok) {
         // Server vrátil chybu bez JSON (např. příliš velký požadavek nebo vypršel časový limit).
