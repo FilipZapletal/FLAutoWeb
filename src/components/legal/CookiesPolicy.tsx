@@ -12,7 +12,9 @@ export function CookiesPolicy() {
       </p>
 
       <h2>Jaké cookies a údaje v prohlížeči používáme</h2>
-      <p>Používáme pouze to, co je nezbytné pro fungování webu nebo pro funkce, které si sami vyvoláte nebo nastavíte:</p>
+      <p>
+        Při první návštěvě se zobrazí okno <strong>Nastavení soukromí</strong>. Nezbytné údaje se ukládají vždy, pohodlné funkce jen s vaším souhlasem. Svou volbu můžete kdykoli změnit odkazem „Nastavení soukromí“ v patičce webu. Při odmítnutí se pohodlné funkce nezapisují a dříve uložené údaje se smažou.
+      </p>
       <table>
         <thead>
           <tr>
@@ -23,29 +25,39 @@ export function CookiesPolicy() {
         </thead>
         <tbody>
           <tr>
+            <td>fl_consent</td>
+            <td><strong>Nezbytné.</strong> Místní úložiště prohlížeče. Pamatuje si vaši volbu v okně Nastavení soukromí, aby se okno nezobrazovalo při každé stránce. Neobsahuje osobní údaje.</td>
+            <td>12 měsíců</td>
+          </tr>
+          <tr>
+            <td>fl_admin_session</td>
+            <td><strong>Nezbytné.</strong> Cookie. Udržuje přihlášení do administrace webu. Nastavuje se pouze správcům webu, běžným návštěvníkům ne.</td>
+            <td>7 dní nebo do odhlášení</td>
+          </tr>
+          <tr>
+            <td>fl_wanted_session</td>
+            <td><strong>Nezbytné.</strong> Úložiště relace prohlížeče. Během jedné návštěvy si pamatuje, zda jste v katalogu používali filtry, zda jste si vybrali vůz a jak dlouho jste na webu, aby se okno „Nenašli jste, co hledáte?“ nabídlo ve vhodnou chvíli. Neobsahuje osobní údaje a neodesílá se na server.</td>
+            <td>Do zavření karty prohlížeče</td>
+          </tr>
+          <tr>
             <td>ab_theme</td>
-            <td>Místní úložiště prohlížeče. Pamatuje si, zda jste zvolili světlý, nebo tmavý režim. Neobsahuje osobní údaje a neodesílá se na server.</td>
+            <td><strong>Pohodlné funkce (se souhlasem).</strong> Místní úložiště prohlížeče. Pamatuje si, zda jste zvolili světlý, nebo tmavý režim. Neobsahuje osobní údaje a neodesílá se na server.</td>
+            <td>Do smazání v prohlížeči</td>
+          </tr>
+          <tr>
+            <td>fl_favorites</td>
+            <td><strong>Pohodlné funkce (se souhlasem).</strong> Místní úložiště prohlížeče. Seznam čísel vozů, které jste si uložili do oblíbených (bez registrace). Neodesílá se na server, na jiném zařízení ho neuvidíte.</td>
             <td>Do smazání v prohlížeči</td>
           </tr>
           <tr>
             <td>fl_wanted</td>
-            <td>Místní úložiště prohlížeče. Pamatuje si, že jste zavřeli nebo odeslali okno „Nenašli jste, co hledáte?“, aby se vám znovu neukazovalo (14 dní po zavření, 60 dní po odeslání). Neobsahuje osobní údaje a neodesílá se na server.</td>
+            <td><strong>Pohodlné funkce (se souhlasem).</strong> Místní úložiště prohlížeče. Pamatuje si, že jste zavřeli nebo odeslali okno „Nenašli jste, co hledáte?“, kolikrát se okno samo ukázalo a zda se má zobrazit bublinka „Auto na přání“ (30 dní po zavření, 60 dní po odeslání se okno nenabízí). Neobsahuje osobní údaje a neodesílá se na server.</td>
             <td>Nejdéle 60 dní</td>
-          </tr>
-          <tr>
-            <td>fl_wanted_session</td>
-            <td>Úložiště relace prohlížeče. Během jedné návštěvy si pamatuje, zda jste v katalogu používali filtry a zda jste si vybrali vůz, aby se okno „Nenašli jste, co hledáte?“ ukázalo jen návštěvníkovi, který nic nenašel. Neobsahuje osobní údaje a neodesílá se na server.</td>
-            <td>Do zavření karty prohlížeče</td>
-          </tr>
-          <tr>
-            <td>fl_admin_session</td>
-            <td>Nezbytná cookie. Udržuje přihlášení do administrace webu. Nastavuje se pouze správcům webu, běžným návštěvníkům ne.</td>
-            <td>7 dní nebo do odhlášení</td>
           </tr>
         </tbody>
       </table>
       <p>
-        <strong>Analytické, reklamní ani sledovací cookies nepoužíváme.</strong> Protože ukládáme jen údaje nezbytné pro provoz webu nebo pro vámi zvolené nastavení, nepotřebujeme k nim váš souhlas (§ 89 odst. 3 zákona č. 127/2005 Sb., o elektronických komunikacích). Proto se vám na webu nezobrazuje cookie lišta.
+        <strong>Analytické, reklamní ani sledovací cookies nepoužíváme.</strong> Údaje označené jako nezbytné jsou potřeba k fungování webu nebo k provedení vámi zvolené akce, proto k nim souhlas nepotřebujeme (§ 89 odst. 3 zákona č. 127/2005 Sb., o elektronických komunikacích). Pohodlné funkce ukládáme jen s vaším souhlasem.
       </p>
 
       <h2>Obsah třetích stran</h2>
@@ -57,7 +69,7 @@ export function CookiesPolicy() {
 
       <h2>Jak cookies spravovat</h2>
       <p>
-        Uložené cookies a data webu můžete kdykoli smazat nebo jejich ukládání zablokovat v nastavení svého prohlížeče (obvykle v části Soukromí nebo Zabezpečení). Pokud smažete údaj ab_theme, web znovu použije režim podle nastavení vašeho zařízení. Pokud smažete údaje fl_wanted, může se okno „Nenašli jste, co hledáte?“ zobrazit znovu.
+        Uložené cookies a data webu můžete kdykoli smazat nebo jejich ukládání zablokovat v nastavení svého prohlížeče (obvykle v části Soukromí nebo Zabezpečení). Pokud smažete údaj ab_theme, web znovu použije režim podle nastavení vašeho zařízení. Pokud smažete fl_favorites, ztratíte seznam oblíbených aut. Pokud smažete fl_wanted, může se okno „Nenašli jste, co hledáte?“ zobrazit znovu. Pokud smažete fl_consent, zobrazí se okno Nastavení soukromí znovu.
       </p>
 
       <h2>Další informace</h2>

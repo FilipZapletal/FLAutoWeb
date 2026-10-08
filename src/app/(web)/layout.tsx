@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { ConsentDialog } from "@/components/consent/ConsentDialog";
 import { WantedCarPrompt } from "@/components/wanted/WantedCarPrompt";
 import { ownerContacts } from "@/lib/contacts";
 import { getSettings } from "@/lib/settings";
@@ -15,6 +16,7 @@ export default async function WebLayout({ children }: LayoutProps<"/">) {
       <Header contacts={ownerContacts(settings)} />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:py-8">{children}</main>
       <Footer settings={settings} />
+      <ConsentDialog />
       <Suspense>
         <WantedCarPrompt />
       </Suspense>

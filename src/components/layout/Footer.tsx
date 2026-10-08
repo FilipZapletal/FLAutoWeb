@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FacebookIcon, InstagramIcon } from "@/components/ui/icons";
 import { ownerContacts } from "@/lib/contacts";
 import type { SiteSettings } from "@/lib/validation/settings";
+import { PrivacySettingsButton } from "@/components/consent/PrivacySettingsButton";
 import { LEGAL_NAV, MAIN_NAV } from "./nav";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
@@ -79,6 +80,9 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 </Link>
               </li>
             ))}
+            <li>
+              <PrivacySettingsButton className="hover:text-fg" />
+            </li>
           </ul>
         </div>
       </div>

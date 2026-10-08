@@ -27,7 +27,10 @@ export function ServiceForm({ services = [], serviceId }: Props) {
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    if (await submit({ ...Object.fromEntries(new FormData(form)), kind: "service" })) form.reset();
+    if (await submit({ ...Object.fromEntries(new FormData(form)), kind: "service" })) {
+      form.reset();
+      window.dispatchEvent(new Event("fl:lead-sent"));
+    }
   }
 
   if (done) {

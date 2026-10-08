@@ -9,7 +9,7 @@ const KEY = "site";
 export const DEFAULT_SETTINGS: SiteSettings = {
   address: "Frýdecká 652/259, 718 00 Ostrava-Kunčičky",
   contactName: "Jarek Frejkovský",
-  phone: "+420 604 452 221",
+  phone: "+420 734 300 839",
   email: "jarekfrejky@gmail.com",
   openingHours: "Pouze po telefonické domluvě",
   facebookUrl: null,
@@ -25,7 +25,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   legalEffectiveDate: null,
   responsiblePerson: "Lukáš Gvožď",
   responsiblePhone: "+420 776 623 397",
-  responsibleEmail: "gvozd809@icloud.com",
+  responsibleEmail: "gvozd809@gmail.com",
   googleRating: null,
   googleReviewCount: null,
   googleReviewsUrl: null,

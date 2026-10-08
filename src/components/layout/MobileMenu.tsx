@@ -36,6 +36,9 @@ export function MobileMenu() {
               {item.label}
             </Link>
           ))}
+          <Link href="/oblibene" className="block border-b border-line py-3 font-display text-lg uppercase">
+            Oblíbená auta
+          </Link>
           <Link href="/admin" prefetch={false} className="block py-3 text-sm text-muted">
             Administrace
           </Link>

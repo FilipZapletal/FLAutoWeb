@@ -19,7 +19,7 @@ export function ownerContacts(s: SiteSettings): OwnerContact[] {
   return list;
 }
 
-/** „Jarek +420 604 452 221 · Lukáš +420 776 623 397“ pro texty a e-maily. */
+/** „Jarek +420 734 300 839 · Lukáš +420 776 623 397“ pro texty a e-maily. */
 export function phonesLine(s: SiteSettings, separator = " · ") {
   return ownerContacts(s)
     .filter((c) => c.phone)

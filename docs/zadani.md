@@ -40,8 +40,11 @@ Další: první registrace, počet majitelů, původ, barva, STK, počet míst, 
 ## 5. Řazení
 Nejlevnější, nejdražší, nejnovější, nejstarší, nejnižší nájezd, nejvyšší nájezd, doporučené.
 
-## 6. Oblíbené (fáze 2, architektura připravena)
-♡ u každého vozu, bez registrace přes localStorage, později rozšiřitelné o účty.
+## 6. Oblíbené (hotovo, změna klienta 10/2026)
+Srdíčko u každého vozu (karta v katalogu i detail) uloží vůz do oblíbených **bez registrace** – seznam je v prohlížeči zákazníka (localStorage) a jen s jeho souhlasem s pohodlnými funkcemi. Odkaz „Oblíbená auta“ s počtem je v hlavičce, stránka `/oblibene` zobrazí uložené vozy (vozy, které už nejsou v nabídce, ze seznamu zmizí). Seznam se nesynchronizuje mezi zařízeními.
+
+## 6b. Nastavení soukromí (souhlas, změna klienta 10/2026)
+Při první návštěvě okno „Nastavení soukromí“ (Souhlasím / Nastavení / odmítnout). Web nesleduje návštěvníky; souhlas se týká pohodlných funkcí v prohlížeči (světlý/tmavý režim, oblíbená auta, zapamatování okna „Auto na přání“). Bez souhlasu se tyto údaje neukládají. Volbu lze změnit odkazem „Nastavení soukromí“ v patičce; platí 12 měsíců.
 
 ## 7. Detail vozu
 SEO URL, např. `/vozy/skoda-octavia-2022` (ne `/car?id=…`). Obsahuje název, **aktuální cenu** (u akce jen akční), rok, nájezd, palivo, převodovku, výkon, galerii, technické parametry, výbavu, popis, **maskovaný VIN**, STK, majitele, původ, barvu, počet míst a dveří.
@@ -78,8 +81,8 @@ Pod kartami formulář „Objednat se do servisu" (značka a model vozu, telefon
 
 ## 15b. Hledané auto na přání (změna klienta 10/2026)
 Pro zákazníka, který si z nabídky nevybere. **Žádný trvalý formulář na stránkách** – jen vyskakovací okno „Nenašli jste, co hledáte?“ s poptávkou na vysněný vůz (co hledá, volitelně cena, rok, nájezd, palivo, převodovka, karoserie, poznámka; jméno, telefon, e-mail).
-- Zobrazí se jen návštěvníkovi, který v katalogu použil filtry a z nabídky si nevybral (neotevřel detail vozu ani neodeslal poptávku): (1) katalog bez výsledků, (2) vrátil se tlačítkem Zpět z katalogu, (3) chce opustit stránku (myš míří k zavření okna).
-- Nejvýše jednou za návštěvu; po zavření 14 dní, po odeslání 60 dní se neukáže. Předvyplní se podle filtrů.
+- Zobrazí se návštěvníkovi, který si z nabídky nevybral a nic neodeslal: (1) katalog bez výsledků po 12 s nečinnosti (jakákoli aktivita odpočet zruší), (2) návrat tlačítkem Zpět z katalogu po hledání, (3) myš míří k zavření okna po hledání (počítač), (4) po 5 minutách aktivně stráveným na webu. Nezobrazí se, když návštěvník píše do formuláře nebo je otevřené jiné okno, a čeká na rozhodnutí v okně soukromí.
+- Nejvýše jednou za návštěvu a celkem třikrát (při různých návštěvách). Po zavření se zmenší do **bublinky** na boku stránky (30 dní, i při další návštěvě), odkud ho lze znovu otevřít; po odeslání se 60 dní nenabízí. Předvyplní se podle filtrů.
 - Poptávka (typ `WANTED_CAR`, „Hledané auto“) se uloží do leadů a e-mailem přijde **oběma majitelům**; zákazník dostane potvrzení. Majitelé mu následně odpoví, zda je poptávka reálná, nebo ji potvrdí.
 
 ## 15c. Crystal Finish (změna klienta 10/2026)
@@ -126,8 +129,8 @@ Mobile-first. Na mobilu hned vidět cenu, rok, nájezd, palivo, telefon, kontakt
 
 ## 27. Kontakt `/kontakt`
 - Adresa: **Frýdecká 652/259, 718 00 Ostrava-Kunčičky**
-- Telefon: **+420 604 452 221**
-- E-mail: **jarekfrejky@gmail.com**
+- Telefon (Jarek Frejkovský): **+420 734 300 839**
+- E-mail (Jarek Frejkovský): **jarekfrejky@gmail.com**; Lukáš Gvožď: +420 776 623 397, gvozd809@gmail.com
 - Otevírací doba: **pouze po telefonické domluvě** (bez konkrétních hodin; změna klienta 10/2026)
 - Provozovatel a odpovědná osoba: **Lukáš Gvožď**, IČO 07481233 (údaje v Nastavení webu)
 - Kontakty **obou majitelů** (Jarek Frejkovský, Lukáš Gvožď – jméno, telefon, e-mail) se zobrazují společně všude: Kontakt, patička, otevírací doba, detail vozu, právní stránky. Jediná výjimka je **Crystal Finish** (vlastní telefon).

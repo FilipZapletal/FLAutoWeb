@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FavoritesLink } from "@/components/favorites/FavoritesLink";
 import { PhoneIcon } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
@@ -23,6 +24,7 @@ export function Header({ contacts }: { contacts: OwnerContact[] }) {
               {item.label}
             </Link>
           ))}
+          <FavoritesLink variant="desktop" />
           <Link href="/admin" className="btn-outline btn-sm" prefetch={false}>
             Admin
           </Link>
@@ -30,6 +32,7 @@ export function Header({ contacts }: { contacts: OwnerContact[] }) {
         </nav>
 
         <div className="flex items-center gap-3 md:hidden">
+          <FavoritesLink variant="mobile" />
           {callable.length === 1 ? (
             <a href={`tel:${callable[0].tel}`} className="btn-outline btn-sm" aria-label={`Zavolat ${callable[0].phone}`}>
               <PhoneIcon size={16} />

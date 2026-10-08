@@ -31,7 +31,7 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
         <li><strong>Objednávka do servisu</strong>: jméno, značka a model vozu, telefon, e-mail (nepovinný) a poznámka.</li>
         <li><strong>Koupě vozu nebo servisní zakázka</strong>: údaje potřebné k uzavření a splnění smlouvy, k převodu vozidla v registru silničních vozidel a k vystavení dokladů (např. jméno, adresa, datum narození, číslo dokladu totožnosti, u podnikatelů IČO).</li>
         <li><strong>Komunikace</strong>: obsah e-mailů, zpráv a záznamy o telefonickém a osobním jednání týkajícím se vaší poptávky.</li>
-        <li><strong>Údaje v prohlížeči</strong>: aby se okno „Nenašli jste, co hledáte?“ nabídlo jen tomu, kdo nic nenašel, ukládáme ve vašem prohlížeči údaj, že jste v katalogu používali filtry, a že jste okno zavřeli. Zůstává jen ve vašem zařízení (viz <Link href="/cookies">Cookies</Link>), nikam se neodesílá.</li>
+        <li><strong>Údaje v prohlížeči</strong>: vaši volbu v okně Nastavení soukromí a – s vaším souhlasem – světlý či tmavý režim, oblíbená auta a údaj, že jste zavřeli okno „Nenašli jste, co hledáte?“. Zůstávají jen ve vašem zařízení (viz <Link href="/cookies">Cookies</Link>), nikam se neodesílají.</li>
         <li><strong>Technické údaje</strong>: IP adresa a údaje o prohlížeči. Používáme je jen krátkodobě k ochraně formulářů před zneužitím (omezení počtu odeslání) a k zajištění bezpečného provozu webu.</li>
       </ul>
 

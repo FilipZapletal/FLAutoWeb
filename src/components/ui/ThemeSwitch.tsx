@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { canPersist } from "@/lib/consent";
 
 /**
  * Přepínač motivu. Nedělá re-render – jen změní data-theme na <html>
@@ -16,9 +17,12 @@ export function ThemeSwitch() {
   function toggle() {
     const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
-    try {
-      localStorage.setItem("ab_theme", next);
-    } catch {}
+    // Volba se pamatuje jen se souhlasem s pohodlnými funkcemi (Nastavení soukromí).
+    if (canPersist()) {
+      try {
+        localStorage.setItem("ab_theme", next);
+      } catch {}
+    }
     document.querySelectorAll(".theme-switch").forEach((b) => b.setAttribute("aria-checked", String(next === "dark")));
   }
 

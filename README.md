@@ -164,6 +164,7 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Homepage: hero s rychlým hledáním, rychlé kategorie, doporučené vozy, akční nabídky, nově v nabídce, blok Servis, kontakt.
 - Katalog s kombinovatelnými filtry nad databází (základní, technické, karoserie, další), 7 způsobů řazení, stránkování po 12. Prodané vozy jsou na konci, dají se skrýt.
 - Detail vozu: SEO URL, galerie (náhledy, šipky, fullscreen, klávesnice, swipe, lazy loading), aktuální cena, štítek statusu, technické údaje ve 4 skupinách, výbava podle kategorií, maskovaný VIN, poptávkový formulář, Zavolat a WhatsApp, na mobilu spodní lišta.
+- Oblíbená auta bez registrace (srdíčko, `/oblibene`, v prohlížeči) a okno Nastavení soukromí (souhlas s pohodlnými funkcemi; web nesleduje návštěvníky).
 - Hledané auto na přání: vyskakovací okno „Nenašli jste, co hledáte?“ pro zákazníka, který si z nabídky nevybral (prázdný katalog, návrat zpět z katalogu, odchod ze stránky); poptávka jde e-mailem oběma majitelům. Logika v `src/components/wanted/`.
 - Ochrana dat: poptávky bez obchodu se **30 dní od posledního kontaktu automaticky mažou** (denní úklid přes Vercel Cron + pojistka při každé nové poptávce). Rezervace a Prodáno se nemažou; servisní objednávka s budoucím termínem se nemaže před termínem. Logika v `src/lib/leads/retention.ts`.
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.

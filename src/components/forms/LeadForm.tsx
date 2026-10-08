@@ -14,7 +14,10 @@ export function LeadForm({ vehicleId }: { vehicleId: number }) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form));
-    if (await submit({ ...data, kind: "vehicle", vehicleId })) form.reset();
+    if (await submit({ ...data, kind: "vehicle", vehicleId })) {
+      form.reset();
+      window.dispatchEvent(new Event("fl:lead-sent"));
+    }
   }
 
   if (done) {

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { EquipmentList } from "@/components/vehicles/EquipmentList";
 import { Gallery } from "@/components/vehicles/Gallery";
 import { MobileStickyBar } from "@/components/vehicles/MobileStickyBar";
@@ -76,6 +77,7 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
             <Price value={v.price} isSale={v.isSale} className="text-3xl" />
             <StatusBadge status={v.status} />
           </div>
+          <FavoriteButton vehicleId={v.id} label={title} variant="labeled" className="mt-3" />
           <dl className="mt-4 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
             {facts.map(([label, value]) => (
               <div key={label} className="card px-3 py-2">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FavoriteButton } from "@/components/favorites/FavoriteButton";
 import { formatKm } from "@/lib/format";
 import { FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/labels";
 import type { VehicleCardData } from "@/lib/vehicles/public";
@@ -9,11 +10,12 @@ import { VehicleImage } from "./VehicleImage";
 export function VehicleCard({ vehicle: v, priority = false }: { vehicle: VehicleCardData; priority?: boolean }) {
   const specs = [formatKm(v.mileage), FUEL_LABELS[v.fuel], TRANSMISSION_LABELS[v.transmission], v.power ? `${v.power} kW` : null].filter(Boolean);
   return (
-    <article className="card group flex flex-col overflow-hidden transition-colors hover:border-acc">
+    <article className="card group relative flex flex-col overflow-hidden transition-colors hover:border-acc">
       <Link href={`/vozy/${v.slug}`} className="relative block aspect-[16/10] overflow-hidden" tabIndex={-1} aria-hidden="true">
         <VehicleImage image={v.image} sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw" priority={priority} className="h-full w-full transition-transform duration-300 group-hover:scale-[1.03]" />
         <StatusBadge status={v.status} className="absolute left-2.5 top-2.5" />
       </Link>
+      <FavoriteButton vehicleId={v.id} label={`${v.brand} ${v.model}`} className="absolute right-2.5 top-2.5 z-10" />
       <div className="flex flex-1 flex-col p-4">
         <h3 className="text-base tracking-wide">
           <Link href={`/vozy/${v.slug}`}>
