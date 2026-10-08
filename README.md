@@ -115,7 +115,7 @@ Demo vozy ze seedu jsou označené „DEMO“ (v popisu i na fotkách). Před sp
 
 > Aktuální stav produkce a další kroky: [`docs/nasazeni.md`](docs/nasazeni.md).
 
-1. Supabase: vytvořte projekt. Ve Storage vytvořte **veřejný** bucket (např. `photos`) a v *Storage → S3 Connection* vygenerujte přístupové klíče.
+1. Supabase: vytvořte projekt. Ve Storage vytvořte **veřejný** bucket (např. `photos`; název pak přesně stejně, včetně velikosti písmen, do `S3_BUCKET` a na konec `S3_PUBLIC_URL`) a v *Storage → S3 Connection* vygenerujte přístupové klíče.
 2. Vercel: importujte repozitář a nastavte proměnné prostředí:
    - `DATABASE_URL` = connection string z Supabase (pro běh aplikace ideálně *Transaction pooler*),
    - `STORAGE_DRIVER=s3`, `S3_ENDPOINT=https://<projekt>.supabase.co/storage/v1/s3`, `S3_REGION` (region projektu), `S3_BUCKET`, klíče,
