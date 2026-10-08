@@ -25,9 +25,6 @@ export function Header({ contacts }: { contacts: OwnerContact[] }) {
             </Link>
           ))}
           <FavoritesLink variant="desktop" />
-          <Link href="/admin" className="btn-outline btn-sm" prefetch={false}>
-            Admin
-          </Link>
           <ThemeSwitch />
         </nav>
 
