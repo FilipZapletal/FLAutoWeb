@@ -2,10 +2,13 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { guardAdmin, jsonError, parseId, readJson, validationError } from "@/lib/api";
 import { db } from "@/lib/db";
-import { ImageUploadError, MAX_UPLOAD_BYTES } from "@/lib/images/process";
+import { describeError, ImageUploadError, MAX_UPLOAD_BYTES, UploadStageError } from "@/lib/images/process";
 import { addVehicleImage, arrangeVehicleImages, getVehicleImages } from "@/lib/vehicles/images";
 
 const MAX_FILES_PER_REQUEST = 10;
+
+// Zpracování fotky a nahrání do úložiště na serverless nesmí skončit předčasným časovým limitem.
+export const maxDuration = 60;
 
 async function vehicleId(ctx: RouteContext<"/api/vehicles/[key]/images">) {
   const id = parseId((await ctx.params).key);
@@ -40,8 +43,16 @@ export async function POST(req: NextRequest, ctx: RouteContext<"/api/vehicles/[k
     try {
       await addVehicleImage(id, Buffer.from(await file.arrayBuffer()));
     } catch (e) {
-      if (!(e instanceof ImageUploadError)) console.error("Upload fotky selhal:", e);
-      errors.push(`${file.name}: ${e instanceof ImageUploadError ? e.message : "zpracování selhalo."}`);
+      if (e instanceof ImageUploadError) {
+        errors.push(`${file.name}: ${e.message}`);
+      } else if (e instanceof UploadStageError) {
+        // Podrobnosti jen administrátorovi (endpoint je chráněný přihlášením) a do logu serveru.
+        console.error(`Upload fotky – ${e.stage}:`, e.cause);
+        errors.push(`${file.name}: ${e.stage} selhalo – ${describeError(e.cause)}`);
+      } else {
+        console.error("Upload fotky selhal:", e);
+        errors.push(`${file.name}: nahrání selhalo – ${describeError(e)}`);
+      }
     }
   }
   const images = await getVehicleImages(id);

@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronRight, StarIcon, TrashIcon, UploadIcon } from "@/co
 export type ManagedImage = { id: number; isMain: boolean; thumb: string; src: string };
 
 const MAX_EDGE = 2560;
+/** Serverless hosting (Vercel) přijme tělo požadavku nejvýše 4,5 MB. */
+const MAX_SEND_BYTES = 4 * 1024 * 1024;
 
 /**
  * Zmenší fotku v prohlížeči před uploadem (rychlejší nahrávání z mobilu a
@@ -17,17 +19,28 @@ const MAX_EDGE = 2560;
 async function downscale(file: File): Promise<Blob> {
   try {
     const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-    const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
-    if (scale === 1 && file.size < 4 * 1024 * 1024 && file.type !== "image/heic") {
+    const longest = Math.max(bitmap.width, bitmap.height);
+    if (longest <= MAX_EDGE && file.size < MAX_SEND_BYTES && file.type !== "image/heic") {
       bitmap.close();
       return file;
     }
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.round(bitmap.width * scale);
-    canvas.height = Math.round(bitmap.height * scale);
-    canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    // Zmenší na MAX_EDGE; když je výsledek stále velký, zkusí menší rozměr a nižší kvalitu.
+    let edge = Math.min(longest, MAX_EDGE);
+    let quality = 0.9;
+    let blob: Blob = file;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const scale = edge / longest;
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(bitmap.width * scale);
+      canvas.height = Math.round(bitmap.height * scale);
+      canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      blob = await new Promise<Blob>((resolve) => canvas.toBlob((b) => resolve(b ?? file), "image/jpeg", quality));
+      if (blob.size < MAX_SEND_BYTES) break;
+      edge = Math.round(edge * 0.8);
+      quality -= 0.1;
+    }
     bitmap.close();
-    return await new Promise((resolve) => canvas.toBlob((b) => resolve(b ?? file), "image/jpeg", 0.9));
+    return blob;
   } catch {
     return file;
   }
@@ -48,7 +61,7 @@ export function ImageManager({ vehicleId, initial }: { vehicleId: number; initia
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) router.replace("/admin/prihlaseni");
     if (data.images) setImages(data.images);
-    return { ok: res.ok, data };
+    return { ok: res.ok, status: res.status, data };
   }
 
   async function upload(files: File[]) {
@@ -60,9 +73,14 @@ export function ImageManager({ vehicleId, initial }: { vehicleId: number; initia
     for (const [i, file] of list.entries()) {
       const body = new FormData();
       body.append("files", await downscale(file), file.name.replace(/\.\w+$/, ".jpg"));
-      const { data } = await call(base, { method: "POST", body });
+      const { ok, status, data } = await call(base, { method: "POST", body });
       if (data.errors?.length) errs.push(...data.errors);
       else if (data.error) errs.push(`${file.name}: ${data.error}`);
+      else if (!ok) {
+        // Server vrátil chybu bez JSON (např. příliš velký požadavek nebo vypršel časový limit).
+        const why = status === 413 ? "soubor je příliš velký pro server" : status === 504 || status === 408 ? "server neodpověděl včas" : "neočekávaná odpověď serveru";
+        errs.push(`${file.name}: nahrání selhalo (HTTP ${status}) – ${why}.`);
+      }
       setProgress({ done: i + 1, total: list.length });
     }
     setErrors(errs);

@@ -125,7 +125,7 @@ Náhled při sdílení: název vozu, cena, hlavní fotografie. Metadata pro Face
 Mobile-first. Na mobilu hned vidět cenu, rok, nájezd, palivo, telefon, kontakt a fotografie. Na detailu vozu sticky spodní lišta [Zavolat] [Poptat vůz].
 
 ## 27. Kontakt `/kontakt`
-- Adresa: **Frýdecká 652/295**
+- Adresa: **Frýdecká 652/259, 718 00 Ostrava-Kunčičky**
 - Telefon: **+420 604 452 221**
 - E-mail: **jarekfrejky@gmail.com**
 - Otevírací doba: **pouze po telefonické domluvě** (bez konkrétních hodin; změna klienta 10/2026)

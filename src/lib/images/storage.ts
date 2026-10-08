@@ -12,6 +12,11 @@ export interface Storage {
   publicUrl(key: string): string;
 }
 
+/** Jaké úložiště je zapnuté. Hodnota se čistí od mezer a velikosti písmen (častá chyba při vkládání do Vercelu). */
+export function storageDriver(): "local" | "s3" {
+  return process.env.STORAGE_DRIVER?.trim().toLowerCase() === "s3" ? "s3" : "local";
+}
+
 const LOCAL_ROOT = path.resolve(process.cwd(), "uploads");
 
 /** Bezpečně převede klíč na cestu uvnitř ./uploads (ochrana proti ../). */
@@ -43,8 +48,11 @@ function s3Storage(): Storage {
     ({ S3Client }) =>
       new S3Client({
         endpoint: requireEnv("S3_ENDPOINT"),
-        region: process.env.S3_REGION || "auto",
+        region: process.env.S3_REGION?.trim() || "auto",
         forcePathStyle: true,
+        // S3-kompatibilní úložiště (Supabase, R2…) nemusí znát kontrolní součty, které novější SDK přidává samo.
+        requestChecksumCalculation: "WHEN_REQUIRED",
+        responseChecksumValidation: "WHEN_REQUIRED",
         credentials: {
           accessKeyId: requireEnv("S3_ACCESS_KEY_ID"),
           secretAccessKey: requireEnv("S3_SECRET_ACCESS_KEY"),
@@ -75,14 +83,21 @@ function s3Storage(): Storage {
   };
 }
 
+/** Hodnota proměnné bez okolních mezer a zalomení řádku (vložené klíče je často obsahují). */
 function requireEnv(name: string) {
-  const v = process.env[name];
+  const v = process.env[name]?.trim();
   if (!v) throw new Error(`Chybí proměnná prostředí ${name}`);
   return v;
 }
 
 let instance: Storage | undefined;
 export function getStorage(): Storage {
-  instance ??= process.env.STORAGE_DRIVER === "s3" ? s3Storage() : localStorage;
+  if (!instance) {
+    // Na Vercelu je disk jen pro čtení – místní úložiště by padalo na zápisu. Raději hned srozumitelná chyba.
+    if (storageDriver() === "local" && process.env.VERCEL) {
+      throw new Error('Na ostrém serveru je nutné nastavit STORAGE_DRIVER na "s3" (a vyplnit S3_*). Aktuálně je zapnuté místní úložiště.');
+    }
+    instance = storageDriver() === "s3" ? s3Storage() : localStorage;
+  }
   return instance;
 }

@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db";
-import { processVehicleImage, removeVehicleImageFiles } from "@/lib/images/process";
+import { processVehicleImage, removeVehicleImageFiles, UploadStageError } from "@/lib/images/process";
 import { imageUrls } from "@/lib/images/variants";
 
 export async function getVehicleImages(vehicleId: number) {
@@ -14,8 +14,8 @@ export type AdminImage = Awaited<ReturnType<typeof getVehicleImages>>[number];
 
 export async function addVehicleImage(vehicleId: number, file: Buffer) {
   const processed = await processVehicleImage(vehicleId, file);
-  const agg = await db.vehicleImage.aggregate({ where: { vehicleId }, _max: { sortOrder: true }, _count: true });
   try {
+    const agg = await db.vehicleImage.aggregate({ where: { vehicleId }, _max: { sortOrder: true }, _count: true });
     return await db.vehicleImage.create({
       data: {
         vehicleId,
@@ -25,8 +25,8 @@ export async function addVehicleImage(vehicleId: number, file: Buffer) {
       },
     });
   } catch (e) {
-    await removeVehicleImageFiles(processed.storageKey);
-    throw e;
+    await removeVehicleImageFiles(processed.storageKey).catch(() => undefined);
+    throw new UploadStageError("zápis do databáze", e);
   }
 }
 

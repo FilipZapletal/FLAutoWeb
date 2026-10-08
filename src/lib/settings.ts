@@ -7,7 +7,7 @@ const KEY = "site";
 
 /** Výchozí údaje ze zadání – použijí se, dokud admin v Nastavení nic neuloží. */
 export const DEFAULT_SETTINGS: SiteSettings = {
-  address: "Frýdecká 652/295, 718 00 Ostrava-Kunčičky",
+  address: "Frýdecká 652/259, 718 00 Ostrava-Kunčičky",
   contactName: "Jarek Frejkovský",
   phone: "+420 604 452 221",
   email: "jarekfrejky@gmail.com",
