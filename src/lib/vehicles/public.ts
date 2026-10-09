@@ -9,11 +9,14 @@ export const PUBLIC_VEHICLE_WHERE = {
   archivedAt: null,
 } satisfies Prisma.VehicleWhereInput;
 
+/** Kolik fotek se listuje přímo na kartě vozu (hlavní první). Zbytek je v detailu. */
+export const CARD_IMAGE_LIMIT = 10;
+
 const mainImageInclude = {
   images: {
     where: { mediaType: "IMAGE" },
     orderBy: [{ isMain: "desc" }, { sortOrder: "asc" }],
-    take: 1,
+    take: CARD_IMAGE_LIMIT,
   },
 } satisfies Prisma.VehicleInclude;
 
@@ -39,6 +42,21 @@ function toImage(v: { brand: string; model: string }, img: CardRow["images"][num
   };
 }
 
+/** Fotka na kartě: jen to, co karta potřebuje (náhled 400 px a 1024 px). */
+export type CardImage = { id: number; alt: string; src: string; srcSet: string; width: number; height: number };
+
+function toCardImage(v: { brand: string; model: string }, img: CardRow["images"][number], i: number): CardImage {
+  const u = imageUrls(img.storageKey);
+  return {
+    id: img.id,
+    alt: img.alt || `${v.brand} ${v.model} – fotografie ${i + 1}`,
+    src: u.src,
+    srcSet: `${u.thumb} 400w, ${u.src} 1024w`,
+    width: img.width,
+    height: img.height,
+  };
+}
+
 /** Data pro kartu vozu. Žádný VIN, žádná interní pole. */
 export function toVehicleCard(v: CardRow) {
   return {
@@ -55,7 +73,7 @@ export function toVehicleCard(v: CardRow) {
     price: v.currentPrice,
     isSale: v.salePrice !== null,
     status: v.status,
-    image: v.images[0] ? toImage(v, v.images[0], 0) : null,
+    images: v.images.map((img, i) => toCardImage(v, img, i)),
   };
 }
 export type VehicleCardData = ReturnType<typeof toVehicleCard>;

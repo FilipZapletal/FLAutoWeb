@@ -51,6 +51,7 @@ SEO URL, např. `/vozy/skoda-octavia-2022` (ne `/car?id=…`). Obsahuje název, 
 
 ## 8. Fotogalerie
 Hlavní foto, thumbnails, fullscreen, šipky, velké foto. Počet fotek není pevně omezen. Architektura připravená na video a 360° prohlídku. Lazy loading na veřejném webu.
+**Změna klienta 10/2026:** na kartě vozu (úvodní stránka i katalog) lze fotky listovat přímo – přejetím prstem nebo šipkami (nejvýše 10 fotek na kartě), bez otevření detailu. V administraci jde pořadí fotek měnit přetažením myší i prstem (na telefonu podržet a táhnout) a také šipkami.
 
 ## 9. Technické údaje (rozdělení)
 Základní (značka, model, rok výroby, první registrace, karoserie, barva) · Motor (palivo, objem, výkon, převodovka, pohon) · Provoz (nájezd, STK, spotřeba, emise) · Další (počet míst, dveří, VIN).

@@ -48,7 +48,7 @@ export function Gallery({ images, title }: { images: PublicImage[]; title: strin
   const arrowClass = "absolute top-1/2 -translate-y-1/2 rounded-full bg-black/55 p-2 text-white transition hover:bg-black/80";
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="group relative aspect-[16/11] overflow-hidden rounded bg-card2" {...swipe}>
         <button type="button" className="block h-full w-full cursor-zoom-in" onClick={() => setFullscreen(true)} aria-label="Zobrazit fotku na celou obrazovku">
           <VehicleImage image={current} sizes="(min-width: 768px) 560px, 100vw" priority={index === 0} className="h-full w-full" />
@@ -69,7 +69,7 @@ export function Gallery({ images, title }: { images: PublicImage[]; title: strin
       </div>
 
       {count > 1 && (
-        <div className="mt-2 flex gap-2 overflow-x-auto pb-1" role="list" aria-label="Náhledy fotografií">
+        <div className="mt-2 flex w-full max-w-full gap-2 overflow-x-auto pb-1" role="list" aria-label="Náhledy fotografií">
           {images.map((img, i) => (
             <button
               key={img.id}
@@ -88,7 +88,7 @@ export function Gallery({ images, title }: { images: PublicImage[]; title: strin
 
       {fullscreen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black" role="dialog" aria-modal="true" aria-label={`Fotogalerie – ${title}`} {...swipe}>
-          <img src={current.large} srcSet={current.srcSet} sizes="100vw" alt={current.alt} className="max-h-full max-w-full object-contain" />
+          <img src={current.large} srcSet={current.srcSet} sizes="100vw" alt={current.alt} className="h-full w-full object-contain" />
           <button type="button" onClick={() => setFullscreen(false)} className="absolute right-3 top-[max(0.75rem,env(safe-area-inset-top))] rounded-full bg-white/10 p-2 text-white hover:bg-white/20" aria-label="Zavřít" autoFocus>
             <CloseIcon size={24} />
           </button>

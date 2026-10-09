@@ -67,8 +67,8 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
         ← Zpět na nabídku
       </Link>
 
-      <div className="mt-3 grid gap-6 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-        <div className="md:order-2">
+      <div className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <div className="min-w-0 md:order-2">
           <h1 className="text-2xl md:text-3xl">
             <span className="text-acc">{v.brand}</span> {v.model}
             {v.version && <span className="mt-1 block font-sans text-base font-normal normal-case text-muted">{v.version}</span>}
@@ -104,7 +104,7 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
             </p>
           )}
         </div>
-        <div className="md:order-1">
+        <div className="min-w-0 md:order-1">
           <Gallery images={v.images} title={title} />
         </div>
       </div>

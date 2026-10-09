@@ -1,6 +1,18 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- náhledy z vlastního úložiště */
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type DragEvent } from "react";
 import { ChevronLeft, ChevronRight, StarIcon, TrashIcon, UploadIcon } from "@/components/ui/icons";
@@ -52,9 +64,23 @@ export function ImageManager({ vehicleId, initial }: { vehicleId: number; initia
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [dragOver, setDragOver] = useState(false);
-  const dragId = useRef<number | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const base = `/api/vehicles/${vehicleId}/images`;
+
+  // Myš: potáhnutí o pár pixelů. Dotyk: krátké podržení prstem (aby šlo stránku dál posouvat). Klávesnice: mezerník a šipky.
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 180, tolerance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  function onDragEnd({ active, over }: DragEndEvent) {
+    if (!over || active.id === over.id) return;
+    move(
+      images.findIndex((i) => i.id === active.id),
+      images.findIndex((i) => i.id === over.id),
+    );
+  }
 
   async function call(url: string, init: RequestInit) {
     const res = await fetch(url, init);
@@ -75,13 +101,13 @@ export function ImageManager({ vehicleId, initial }: { vehicleId: number; initia
       body.append("files", await downscale(file), file.name.replace(/\.\w+$/, ".jpg"));
       const { ok, status, data } = await call(base, { method: "POST", body });
       if (data.errors?.length) errs.push(...data.errors);
-      if (data.diagnostics && !errs.includes(data.diagnostics)) errs.push(data.diagnostics);
       else if (data.error) errs.push(`${file.name}: ${data.error}`);
       else if (!ok) {
         // Server vrátil chybu bez JSON (např. příliš velký požadavek nebo vypršel časový limit).
         const why = status === 413 ? "soubor je příliš velký pro server" : status === 504 || status === 408 ? "server neodpověděl včas" : "neočekávaná odpověď serveru";
         errs.push(`${file.name}: nahrání selhalo (HTTP ${status}) – ${why}.`);
       }
+      if (data.diagnostics && !errs.includes(data.diagnostics)) errs.push(data.diagnostics);
       setProgress({ done: i + 1, total: list.length });
     }
     setErrors(errs);
@@ -160,51 +186,77 @@ export function ImageManager({ vehicleId, initial }: { vehicleId: number; initia
         <p className="text-muted">Zatím žádné fotky. První nahraná fotka bude hlavní.</p>
       ) : (
         <>
-          <p className="text-sm text-muted">Pořadí změníte přetažením nebo šipkami. Hvězdička = hlavní fotka (karta vozu, sdílení).</p>
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {images.map((img, i) => (
-              <li
-                key={img.id}
-                draggable
-                onDragStart={() => (dragId.current = img.id)}
-                onDragOver={(e) => dragId.current !== null && e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  const from = images.findIndex((x) => x.id === dragId.current);
-                  dragId.current = null;
-                  if (from >= 0) move(from, i);
-                }}
-                className={`card cursor-grab overflow-hidden active:cursor-grabbing ${img.isMain ? "border-acc" : ""}`}
-              >
-                <div className="relative aspect-[4/3]">
-                  <img src={img.thumb} alt={`Fotka ${i + 1}`} className="h-full w-full object-cover" draggable={false} />
-                  <span className="absolute left-1.5 top-1.5 rounded bg-black/60 px-1.5 text-xs text-white">{i + 1}</span>
-                  {img.isMain && <span className="badge absolute right-1.5 top-1.5 bg-acc text-white">Hlavní</span>}
-                </div>
-                <div className="flex items-center justify-between gap-1 p-1.5">
-                  <div className="flex">
-                    <button type="button" onClick={() => move(i, i - 1)} disabled={i === 0} className="p-1.5 text-muted hover:text-fg disabled:opacity-30" aria-label="Posunout dopředu">
-                      <ChevronLeft size={16} />
-                    </button>
-                    <button type="button" onClick={() => move(i, i + 1)} disabled={i === images.length - 1} className="p-1.5 text-muted hover:text-fg disabled:opacity-30" aria-label="Posunout dozadu">
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
-                  <div className="flex">
-                    <button type="button" onClick={() => arrange(images.map((x) => x.id), img.id)} className={`p-1.5 ${img.isMain ? "text-acc" : "text-muted hover:text-fg"}`} aria-label="Nastavit jako hlavní fotku" aria-pressed={img.isMain}>
-                      <StarIcon size={16} filled={img.isMain} />
-                    </button>
-                    <button type="button" onClick={() => remove(img.id)} className="p-1.5 text-muted hover:text-acc" aria-label="Smazat fotku">
-                      <TrashIcon size={16} />
-                    </button>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <p className="text-sm text-muted">
+            Pořadí změníte přetažením (na telefonu podržte prst na fotce a pak táhněte) nebo šipkami. Hvězdička = hlavní fotka (karta vozu, sdílení).
+          </p>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+            <SortableContext items={images.map((i) => i.id)} strategy={rectSortingStrategy}>
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {images.map((img, i) => (
+                  <SortableImage
+                    key={img.id}
+                    img={img}
+                    index={i}
+                    total={images.length}
+                    onMove={move}
+                    onMain={() => arrange(images.map((x) => x.id), img.id)}
+                    onRemove={() => remove(img.id)}
+                  />
+                ))}
+              </ul>
+            </SortableContext>
+          </DndContext>
         </>
       )}
     </div>
+  );
+}
+
+type SortableImageProps = {
+  img: ManagedImage;
+  index: number;
+  total: number;
+  onMove: (from: number, to: number) => void;
+  onMain: () => void;
+  onRemove: () => void;
+};
+
+/** Jedna fotka v mřížce – jde přetáhnout myší, prstem i klávesnicí. */
+function SortableImage({ img, index, total, onMove, onMain, onRemove }: SortableImageProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: img.id });
+  return (
+    <li
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 20 : undefined }}
+      {...attributes}
+      role="listitem"
+      aria-pressed={undefined}
+      {...listeners}
+      className={`card relative cursor-grab touch-manipulation select-none overflow-hidden [-webkit-touch-callout:none] active:cursor-grabbing ${img.isMain ? "border-acc" : ""} ${isDragging ? "opacity-80 shadow-2xl ring-2 ring-acc" : ""}`}
+    >
+      <div className="relative aspect-[4/3]">
+        <img src={img.thumb} alt={`Fotka ${index + 1}`} className="pointer-events-none h-full w-full object-cover" draggable={false} />
+        <span className="absolute left-1.5 top-1.5 rounded bg-black/60 px-1.5 text-xs text-white">{index + 1}</span>
+        {img.isMain && <span className="badge absolute right-1.5 top-1.5 bg-acc text-white">Hlavní</span>}
+      </div>
+      <div className="flex items-center justify-between gap-1 p-1.5">
+        <div className="flex">
+          <button type="button" onClick={() => onMove(index, index - 1)} disabled={index === 0} className="p-1.5 text-muted hover:text-fg disabled:opacity-30" aria-label="Posunout dopředu">
+            <ChevronLeft size={16} />
+          </button>
+          <button type="button" onClick={() => onMove(index, index + 1)} disabled={index === total - 1} className="p-1.5 text-muted hover:text-fg disabled:opacity-30" aria-label="Posunout dozadu">
+            <ChevronRight size={16} />
+          </button>
+        </div>
+        <div className="flex">
+          <button type="button" onClick={onMain} className={`p-1.5 ${img.isMain ? "text-acc" : "text-muted hover:text-fg"}`} aria-label="Nastavit jako hlavní fotku" aria-pressed={img.isMain}>
+            <StarIcon size={16} filled={img.isMain} />
+          </button>
+          <button type="button" onClick={onRemove} className="p-1.5 text-muted hover:text-acc" aria-label="Smazat fotku">
+            <TrashIcon size={16} />
+          </button>
+        </div>
+      </div>
+    </li>
   );
 }
