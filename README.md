@@ -83,7 +83,9 @@ Adresa `/admin` – zadává se ručně, na veřejném webu na administraci zám
 
 **Změna hesla:** přihlášený admin si heslo změní sám v administraci → *Změna hesla* (zadá současné heslo a nové, min. 10 znaků).
 
-**Další admin / zapomenuté heslo:** nastavte `ADMIN_EMAIL` a nové `ADMIN_PASSWORD` a spusťte znovu `npm run db:seed` (existující účet dostane nové heslo, jiný e-mail vytvoří nový účet).
+**Další admin:** v administraci → *Správci*. Zadá se e-mail a dočasné heslo nového správce a pro potvrzení heslo přihlášeného admina. Tamtéž jde správce odebrat (sebe ani posledního ne); odebraný správce je hned odhlášen.
+
+**Zapomenuté heslo:** jiný správce ho odebere a založí znovu s dočasným heslem. Když žádný jiný není: nastavte `ADMIN_EMAIL` a nové `ADMIN_PASSWORD` a spusťte znovu `npm run db:seed` (existující účet dostane nové heslo).
 
 Přihlášení je chráněné limitem 5 pokusů za 15 minut z jedné IP.
 
@@ -132,7 +134,7 @@ Build databázi nepotřebuje, všechny stránky s daty se renderují při požad
 prisma/              schéma, migrace, seed
 scripts/local-db.mjs lokální PostgreSQL bez Dockeru
 src/app/(web)/       veřejné stránky (homepage, /vozy, /vozy/[slug], /servis, /o-nas, /kontakt, právní stránky)
-src/app/admin/       přihlášení a administrace (dashboard, vozidla, fotky, poptávky, služby, recenze, nastavení)
+src/app/admin/       přihlášení a administrace (dashboard, vozidla, fotky, poptávky, služby, recenze, nastavení, správci, změna hesla)
 src/app/api/         REST API (vehicles, leads, services, reviews, settings, auth, equipment)
 src/app/media/       servírování fotek při lokálním úložišti
 src/components/      UI komponenty (layout, vehicles, forms, admin, ui)
@@ -156,6 +158,8 @@ src/proxy.ts         přesměrování nepřihlášených z /admin
 | `GET/PUT /api/settings` | admin | kontakt, otevírací doba, sociální sítě, hodnocení na Googlu |
 | `POST /api/services`, `PUT/DELETE /api/services/:id` | admin | služby a ceníky |
 | `GET/POST /api/reviews`, `PUT/DELETE /api/reviews/:id` | admin | recenze zákazníků |
+| `POST /api/admins`, `DELETE /api/admins/:id` | admin | správci (přidání vyžaduje heslo přihlášeného admina) |
+| `PUT /api/auth/password` | admin | změna vlastního hesla |
 
 Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani kontakty z poptávek. Zápisy do admin API kontrolují přihlášení i hlavičku `Origin` (ochrana proti CSRF).
 
@@ -193,6 +197,6 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Adresa provozovny je bez města a PSČ. Doplňte je v **Nastavení → Upřesnění k adrese**, nebo přímo do adresy.
 - Právní stránky (ochrana osobních údajů, cookies, obchodní údaje, reklamační řád, ADR) jsou **návrh** podle aktuální legislativy a skutečného fungování webu – před spuštěním je nechte zkontrolovat právníkem. Firemní údaje (IČO, sídlo, zápis…) se vyplňují v **Nastavení → Firemní údaje**; dokud chybí, stránky ukazují `[DOPLNIT …]`. Doplnit je třeba i dobu uložení poptávek, zvolenou dobu odpovědnosti za vady (12/24 měsíců) a konkrétní poskytovatele hostingu.
 - Fotografie provozovny a týmu dodá klient (`[DOPLNIT …]`).
-- Admin má jednu roli; změna hesla se dělá přes seed (viz výše), v administraci formulář na změnu hesla není.
+- Admin má jednu roli: každý správce může přidávat a odebírat ostatní. Zapomenuté heslo bez dalšího správce jde obnovit jen přes seed (viz výše).
 - Web používá jen nezbytnou cookie (přihlášení do adminu) a `localStorage` pro motiv, proto nemá cookie lištu. Při přidání analytiky (fáze 2) bude lišta se souhlasem potřeba.
 - E-maily přes Resend vyžadují ověřenou odesílací doménu.
