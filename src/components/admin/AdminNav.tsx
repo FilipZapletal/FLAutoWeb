@@ -10,6 +10,7 @@ const ITEMS = [
   { href: "/admin/sluzby", label: "Služby" },
   { href: "/admin/recenze", label: "Recenze" },
   { href: "/admin/nastaveni", label: "Nastavení" },
+  { href: "/admin/spravci", label: "Správci" },
   { href: "/admin/heslo", label: "Změna hesla" },
 ];
 

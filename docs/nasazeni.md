@@ -29,6 +29,7 @@ Skript už **znovu nespouštějte**.
 ### Admin
 - Přihlášení: `https://<adresa>/admin`.
 - Existuje 1 účet (Michal), heslo si už změnil v Administraci → Změna hesla.
+- Další účty se přidávají a odebírají v Administraci → **Správci** (od 9. 10.).
 - Hesla jsou v tabulce `admins` jako argon2 hash.
 
 ## Co se stalo 8. 10.
@@ -43,10 +44,7 @@ Formulář → `POST /api/leads` → validace na serveru → uložení do tabulk
 
 1. **E-maily (Resend)**, nejdůležitější. Bez nich se objednávky přehlédnou. Resend potřebuje ověřenou vlastní doménu; bez ní posílá jen na e-mail majitele Resend účtu. Postup: účet na resend.com, přidat doménu, nastavit DNS záznamy u registrátora, ve Vercelu doplnit `RESEND_API_KEY`, `EMAIL_FROM` (např. `FL Auto <poptavky@flauto.cz>`), `ADMIN_NOTIFY_EMAIL`, pak Redeploy a otestovat zkušební objednávkou.
 2. **Doména:** doporučeno `flauto.cz` (podle DNS vypadá volná, ověřit u registrátora). Koupit u českého registrátora (Wedos, Forpsi, Active24), ne přes Vercel. Ve Vercelu → Settings → Domains ji přidat, u registrátora nastavit DNS podle Vercelu, pak změnit `SITE_URL` a dát Redeploy.
-3. **Admin účty pro majitele** (Jarek Frejkovský, Lukáš Gvožď). Dvě možnosti:
-   - z počítače s projektem: `DATABASE_URL="<Session pooler URL>" ADMIN_EMAIL=… ADMIN_PASSWORD=… SEED_DEMO_VEHICLES=0 npm run db:seed`,
-   - nebo v Supabase SQL Editoru: `INSERT INTO public.admins (email, password_hash) VALUES ('email@malymi.pismeny', '<argon2 hash>');`. Hash vytvoříte v projektu příkazem `node -e "require('@node-rs/argon2').hash(process.argv[1]).then(console.log)" 'DocasneHeslo'`.
-   Po prvním přihlášení si majitel změní heslo v Administraci → Změna hesla.
+3. **Admin účty pro majitele** (Jarek Frejkovský, Lukáš Gvožď): v Administraci → **Správci** zadat e-mail a dočasné heslo (a pro potvrzení své heslo). Po prvním přihlášení si majitel změní heslo v Administraci → Změna hesla. SQL ani seed už nejsou potřeba (seed jen jako nouzovka, když se nikdo nemůže přihlásit, viz `README.md`).
 4. **Obsah:** skutečná auta, ceny služeb (Služby), hodnocení z Googlu (Nastavení), fotky provozovny a týmu, místa označená `[DOPLNIT …]`, poskytovatelé (Vercel, Supabase, Resend) v Ochraně osobních údajů. **Smazat zkušební auta a poptávky.**
 5. **Design:** Michal chce ještě trochu doladit vzhled (zatím bez konkrétního zadání, zeptat se ho). Reference vzhledu je `prototype/autobazar.html`, design tokeny v `docs/specifikace.md`, světlý i tmavý režim povinně.
 6. **Před ostrým spuštěním:** Vercel → Settings → Functions → region Frankfurt (fra1). Vercel Hobby je podle podmínek jen nekomerční, pro web firmy tarif Pro. Supabase Free po neaktivitě uspává projekt, zvážit Pro.
@@ -54,4 +52,5 @@ Formulář → `POST /api/leads` → validace na serveru → uložení do tabulk
 
 ## Při další práci
 - Změna schématu: `npm run db:migrate` lokálně, commit migrace. Po nasazení na Vercel spustit proti produkční DB `DATABASE_URL="<Session pooler URL>" npm run db:deploy`. Pro migrace používejte *Session pooler* (port 5432), ne Transaction pooler.
-- Známé limity jsou v `README.md` (rate limit v paměti instance, správa adminů jen přes seed/SQL).
+- Známé limity jsou v `README.md` (rate limit v paměti instance).
+- Předávací list k podpisu: `docs/predavaci-list.md`.
