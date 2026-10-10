@@ -60,7 +60,7 @@ export function WantedCarForm({ prefill, onSent, onClose }: Props) {
       </div>
 
       {/* Sbalené pole se odešlou taky – předvyplněné hodnoty z filtrů tedy nepropadnou. */}
-      <details className="rounded border border-line p-3" open={Object.keys(fields).some((k) => ["maxPrice", "yearFrom", "maxMileage", "fuel", "transmission", "bodyType", "message"].includes(k))}>
+      <details className="rounded-inner border border-line p-3" open={Object.keys(fields).some((k) => ["maxPrice", "yearFrom", "maxMileage", "fuel", "transmission", "bodyType", "message"].includes(k))}>
         <summary className="cursor-pointer font-display text-sm uppercase tracking-wide text-muted hover:text-fg">
           Upřesnit požadavky (nepovinné)
           {hasDetails && <span className="ml-2 font-sans text-xs normal-case tracking-normal text-acc">předvyplněno podle vašeho hledání</span>}

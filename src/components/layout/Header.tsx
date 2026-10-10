@@ -11,7 +11,7 @@ import { MAIN_NAV } from "./nav";
 export function Header({ contacts }: { contacts: OwnerContact[] }) {
   const callable = contacts.filter((c) => c.tel);
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur pt-[env(safe-area-inset-top)]">
+    <header className="sticky top-0 z-30 border-b border-line/50 bg-bg/50 backdrop-blur-xl backdrop-saturate-150 pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="FL Auto – úvodní stránka">
           <Logo height={40} priority sizes="100px" />
@@ -40,10 +40,10 @@ export function Header({ contacts }: { contacts: OwnerContact[] }) {
                 <summary className="btn-outline btn-sm list-none [&::-webkit-details-marker]:hidden" aria-label="Zavolat">
                   <PhoneIcon size={16} />
                 </summary>
-                <ul className="absolute right-0 top-full z-40 mt-2 w-60 rounded border border-line bg-card p-2 shadow-xl">
+                <ul className="absolute right-0 top-full z-40 mt-2 w-60 rounded-inner border border-line bg-card/90 p-2 shadow-xl backdrop-blur-xl">
                   {callable.map((c) => (
                     <li key={c.name}>
-                      <a href={`tel:${c.tel}`} className="block rounded px-3 py-2 hover:bg-card2">
+                      <a href={`tel:${c.tel}`} className="block rounded-inner px-3 py-2 hover:bg-card2">
                         <span className="block text-xs text-muted">{c.name}</span>
                         <span className="font-semibold">{c.phone}</span>
                       </a>

@@ -22,7 +22,7 @@ export function LeadForm({ vehicleId }: { vehicleId: number }) {
 
   if (done) {
     return (
-      <div className="rounded border border-sold/40 bg-sold/10 p-4 text-sm" role="status">
+      <div className="rounded-inner border border-sold/40 bg-sold/10 p-4 text-sm" role="status">
         <p className="font-semibold">Děkujeme za váš zájem. Autobazar vás bude kontaktovat.</p>
         <button type="button" onClick={reset} className="mt-2 text-muted underline underline-offset-4">
           Odeslat další poptávku

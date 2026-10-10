@@ -30,7 +30,7 @@ export function MobileMenu() {
         {open ? <CloseIcon size={16} /> : <MenuIcon size={16} />}
       </button>
       {open && (
-        <nav id="mobile-menu" className="absolute inset-x-0 top-full border-b border-line bg-bg px-4 pb-4" aria-label="Hlavní navigace">
+        <nav id="mobile-menu" className="absolute inset-x-0 top-full border-b border-line/50 bg-bg/85 px-4 pb-4 backdrop-blur-xl" aria-label="Hlavní navigace">
           {MAIN_NAV.map((item) => (
             <Link key={item.href} href={item.href} className="block border-b border-line py-3 font-display text-lg uppercase">
               {item.label}

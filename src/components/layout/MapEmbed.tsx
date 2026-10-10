@@ -13,14 +13,14 @@ export function MapEmbed({ address }: { address: string }) {
       <iframe
         title={`Mapa – ${address}`}
         src={`https://www.google.com/maps?q=${q}&output=embed`}
-        className="aspect-[4/3] w-full rounded border-0"
+        className="aspect-[4/3] w-full rounded-inner border-0"
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
       />
     );
   }
   return (
-    <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded bg-card2 p-6 text-center">
+    <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-inner bg-card2 p-6 text-center">
       <PinIcon size={32} className="text-acc" />
       <p className="text-sm text-muted">Mapa se načte ze služby Google Maps.</p>
       <button type="button" onClick={() => setShow(true)} className="btn-outline btn-sm">

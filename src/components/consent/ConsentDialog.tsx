@@ -49,7 +49,7 @@ export function ConsentDialog() {
         if (!decided) e.preventDefault();
         else setManual(false);
       }}
-      className="m-auto max-h-[calc(100dvh-1.5rem)] w-[min(40rem,calc(100vw-1.5rem))] overflow-y-auto rounded-lg border border-line bg-card p-0 text-center text-fg shadow-2xl backdrop:bg-black/70"
+      className="m-auto max-h-[calc(100dvh-1.5rem)] w-[min(40rem,calc(100vw-1.5rem))] overflow-y-auto rounded-card border border-line bg-card p-0 text-center text-fg shadow-2xl backdrop:bg-black/70"
     >
       {open && (
         <div className="p-6 sm:p-9">
@@ -91,14 +91,14 @@ export function ConsentDialog() {
           ) : (
             <>
               <div id="consent-text" className="mt-6 space-y-3 text-left text-sm">
-                <label className="flex items-start gap-3 rounded border border-line p-4 opacity-80">
+                <label className="flex items-start gap-3 rounded-inner border border-line p-4 opacity-80">
                   <input type="checkbox" checked disabled className="mt-1 accent-[var(--acc)]" />
                   <span>
                     <strong className="block">Nezbytné – vždy zapnuto</strong>
                     <span className="text-muted">Potvrzení této volby a přihlášení do administrace (jen správci webu). Bez nich web nefunguje správně.</span>
                   </span>
                 </label>
-                <label className="flex cursor-pointer items-start gap-3 rounded border border-line p-4">
+                <label className="flex cursor-pointer items-start gap-3 rounded-inner border border-line p-4">
                   <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="mt-1 accent-[var(--acc)]" />
                   <span>
                     <strong className="block">Pohodlné funkce</strong>

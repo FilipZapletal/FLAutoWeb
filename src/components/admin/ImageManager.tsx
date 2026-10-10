@@ -166,7 +166,7 @@ export function ImageManager({ vehicleId, initial }: { vehicleId: number; initia
         <p className="text-xs text-muted">JPG, PNG, WebP, AVIF · max. 15 MB na fotku · automaticky se zmenší a převedou do WebP</p>
         {progress && (
           <div className="w-full max-w-xs" role="status">
-            <div className="h-1.5 overflow-hidden rounded bg-card2">
+            <div className="h-1.5 overflow-hidden rounded-inner bg-card2">
               <div className="h-full bg-acc transition-all" style={{ width: `${(progress.done / progress.total) * 100}%` }} />
             </div>
             <p className="mt-1 text-xs text-muted">Nahrávám {progress.done} / {progress.total}…</p>
@@ -175,7 +175,7 @@ export function ImageManager({ vehicleId, initial }: { vehicleId: number; initia
       </div>
 
       {errors.length > 0 && (
-        <ul className="rounded border border-acc/40 bg-acc/10 px-4 py-3 text-sm" role="alert">
+        <ul className="rounded-inner border border-acc/40 bg-acc/10 px-4 py-3 text-sm" role="alert">
           {errors.map((e) => (
             <li key={e}>{e}</li>
           ))}
@@ -236,7 +236,7 @@ function SortableImage({ img, index, total, onMove, onMain, onRemove }: Sortable
     >
       <div className="relative aspect-[4/3]">
         <img src={img.thumb} alt={`Fotka ${index + 1}`} className="pointer-events-none h-full w-full object-cover" draggable={false} />
-        <span className="absolute left-1.5 top-1.5 rounded bg-black/60 px-1.5 text-xs text-white">{index + 1}</span>
+        <span className="absolute left-1.5 top-1.5 rounded-inner bg-black/60 px-1.5 text-xs text-white">{index + 1}</span>
         {img.isMain && <span className="badge absolute right-1.5 top-1.5 bg-acc text-white">Hlavní</span>}
       </div>
       <div className="flex items-center justify-between gap-1 p-1.5">

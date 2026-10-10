@@ -24,7 +24,7 @@ Lze zvolit jinak, pokud zůstane: SSR stránek vozů, relační DB, admin za log
 
 ## 3. Design systém
 
-Font: nadpisy, tlačítka, labely a ceny **Oswald** (700, uppercase), běžný text **Inter**. Hranaté prvky (radius 2–4 px), tlačítka uppercase.
+Font: nadpisy, tlačítka, labely a ceny **Oswald** (700, uppercase), běžný text **Inter**. Zaoblený styl (změna klienta 10/2026): karty a okna ~20 px, pole formulářů a vnořené boxy ~14 px, tlačítka a štítky „pilulky“ (plně zaoblené); hodnoty jsou tokeny `--r-card`, `--r-inner`, `--r-field` v `src/app/globals.css`. Tlačítka uppercase. Horní lišta je průsvitné „sklo“ (poloprůhledné pozadí + rozmazání) – pod ní je při scrollování vidět obsah, jako v iOS.
 
 Tokeny (CSS proměnné na `:root`, přepínané atributem `data-theme="dark|light"`):
 

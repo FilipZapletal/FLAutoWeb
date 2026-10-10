@@ -65,7 +65,7 @@ export function Honeypot() {
 export function FormError({ message }: { message: string | null }) {
   if (!message) return null;
   return (
-    <p className="rounded border border-acc/40 bg-acc/10 px-3 py-2 text-sm" role="alert">
+    <p className="rounded-inner border border-acc/40 bg-acc/10 px-3 py-2 text-sm" role="alert">
       {message}
     </p>
   );

@@ -44,7 +44,7 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
       </nav>
 
       <div className="mt-3 mb-8 flex items-start gap-4">
-        <span className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-card2 text-acc sm:flex">
+        <span className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-card2 text-acc sm:flex">
           <ServiceIconView icon={s.icon} size={28} />
         </span>
         <div>

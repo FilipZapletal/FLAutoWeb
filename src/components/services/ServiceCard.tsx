@@ -10,7 +10,7 @@ export function ServiceCard({ service: s }: { service: PublicService }) {
   return (
     <article className="card flex flex-col p-5">
       <div className="mb-3 flex items-start justify-between gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-card2 text-acc">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-card2 text-acc">
           <ServiceIconView icon={s.icon} />
         </span>
         {s.tag && <span className="text-[10px] uppercase tracking-widest text-muted">{s.tag}</span>}

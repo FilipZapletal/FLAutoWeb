@@ -54,7 +54,7 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
             ))}
           </dl>
           <h2 className="mb-2 mt-5 text-base">Zpráva</h2>
-          <p className="whitespace-pre-line rounded bg-card2 p-3 text-sm">{lead.message || "—"}</p>
+          <p className="whitespace-pre-line rounded-inner bg-card2 p-3 text-sm">{lead.message || "—"}</p>
         </div>
         <div className="card h-fit space-y-4 p-5">
           <div>

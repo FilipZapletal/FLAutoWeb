@@ -41,7 +41,7 @@ export function Gallery({ images, title }: { images: PublicImage[]; title: strin
   };
 
   if (count === 0) {
-    return <VehicleImage image={null} sizes="100vw" className="aspect-[16/11] w-full rounded" />;
+    return <VehicleImage image={null} sizes="100vw" className="aspect-[16/11] w-full rounded-inner" />;
   }
 
   const current = images[index];
@@ -49,7 +49,7 @@ export function Gallery({ images, title }: { images: PublicImage[]; title: strin
 
   return (
     <div className="min-w-0">
-      <div className="group relative aspect-[16/11] overflow-hidden rounded bg-card2" {...swipe}>
+      <div className="group relative aspect-[16/11] overflow-hidden rounded-inner bg-card2" {...swipe}>
         <button type="button" className="block h-full w-full cursor-zoom-in" onClick={() => setFullscreen(true)} aria-label="Zobrazit fotku na celou obrazovku">
           <VehicleImage image={current} sizes="(min-width: 768px) 560px, 100vw" priority={index === 0} className="h-full w-full" />
         </button>
@@ -63,7 +63,7 @@ export function Gallery({ images, title }: { images: PublicImage[]; title: strin
             </button>
           </>
         )}
-        <span className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded bg-black/60 px-2 py-1 text-xs text-white">
+        <span className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full bg-black/60 px-2 py-1 text-xs text-white">
           <ExpandIcon size={12} /> {index + 1} / {count}
         </span>
       </div>
@@ -78,7 +78,7 @@ export function Gallery({ images, title }: { images: PublicImage[]; title: strin
               onClick={() => setIndex(i)}
               aria-label={`Fotka ${i + 1}`}
               aria-current={i === index}
-              className={`aspect-[4/3] w-20 shrink-0 overflow-hidden rounded border-2 sm:w-24 ${i === index ? "border-acc" : "border-transparent opacity-70 hover:opacity-100"}`}
+              className={`aspect-[4/3] w-20 shrink-0 overflow-hidden rounded-xl border-2 sm:w-24 ${i === index ? "border-acc" : "border-transparent opacity-70 hover:opacity-100"}`}
             >
               <img src={img.thumb} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </button>

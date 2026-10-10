@@ -65,7 +65,7 @@ export function CardGallery({ images, href, sizes, priority = false, children }:
           <button type="button" onClick={() => go(1)} disabled={index >= count - 1} aria-label="Další fotka" className={`${arrow} right-2 disabled:hidden`}>
             <ChevronRight size={20} />
           </button>
-          <span className="pointer-events-none absolute bottom-2 right-2 rounded bg-black/60 px-1.5 py-0.5 text-[11px] text-white" aria-hidden="true">
+          <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-[11px] text-white" aria-hidden="true">
             {index + 1} / {count}
           </span>
         </>

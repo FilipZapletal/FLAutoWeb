@@ -40,9 +40,9 @@ export default async function AdminVehiclesPage({ searchParams }: PageProps<"/ad
               <tr key={v.id} className="hover:bg-card2">
                 <td>
                   {v.images[0] ? (
-                    <img src={imageUrls(v.images[0].storageKey).thumb} alt="" className="aspect-[4/3] w-16 rounded object-cover" loading="lazy" />
+                    <img src={imageUrls(v.images[0].storageKey).thumb} alt="" className="aspect-[4/3] w-16 rounded-inner object-cover" loading="lazy" />
                   ) : (
-                    <Link href={`/admin/vozidla/${v.id}/fotky`} className="flex aspect-[4/3] w-16 items-center justify-center rounded bg-card2 text-[10px] text-muted">bez fotky</Link>
+                    <Link href={`/admin/vozidla/${v.id}/fotky`} className="flex aspect-[4/3] w-16 items-center justify-center rounded-inner bg-card2 text-[10px] text-muted">bez fotky</Link>
                   )}
                 </td>
                 <td className="min-w-[200px]">

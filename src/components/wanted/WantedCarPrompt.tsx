@@ -211,7 +211,7 @@ export function WantedCarPrompt() {
         onClick={(e) => {
           if (e.target === e.currentTarget) closeDialog();
         }}
-        className="m-auto max-h-[calc(100dvh-1.5rem)] w-[min(36rem,calc(100vw-1.5rem))] overflow-y-auto rounded border border-line bg-card p-0 text-fg shadow-2xl backdrop:bg-black/70"
+        className="m-auto max-h-[calc(100dvh-1.5rem)] w-[min(36rem,calc(100vw-1.5rem))] overflow-y-auto rounded-card border border-line bg-card p-0 text-fg shadow-2xl backdrop:bg-black/70"
       >
         {open && (
           <WantedCarForm
