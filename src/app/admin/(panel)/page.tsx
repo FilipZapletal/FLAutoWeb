@@ -13,12 +13,13 @@ export default async function DashboardPage() {
       <PageHead title="Dashboard">
         <Link href="/admin/vozidla/novy" className="btn">+ Přidat vozidlo</Link>
       </PageHead>
-      <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard label="Aktivní vozy" value={s.activeVehicles} href="/admin/vozidla" />
         <StatCard label="Nové poptávky" value={s.newLeads} href="/admin/poptavky?status=NEW" />
         <StatCard label="Rezervované vozy" value={s.reserved} href="/admin/vozidla" />
         <StatCard label="Servisní poptávky (otevřené)" value={s.serviceLeads} href="/admin/poptavky?type=SERVICE" />
         <StatCard label="Prodáno tento měsíc" value={s.soldThisMonth} />
+        <StatCard label="Recenze ke schválení" value={s.pendingReviews} href="/admin/recenze" />
       </div>
 
       <h2 className="mb-3 text-lg">Nadcházející servisní termíny</h2>

@@ -6,6 +6,7 @@ import { getPublishedService } from "@/lib/services/public";
 import { formatKm, formatPrice } from "@/lib/format";
 import { BODY_TYPE_LABELS, FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/labels";
 import type { LeadInput } from "@/lib/validation/lead";
+import { countPendingReviews } from "@/lib/reviews/service";
 import { PUBLIC_VEHICLE_WHERE } from "@/lib/vehicles/public";
 
 export class LeadVehicleNotFoundError extends Error {}
@@ -98,7 +99,7 @@ export async function updateLeadStatus(id: number, status: LeadStatus) {
 export async function getDashboardStats() {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const [activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads, upcomingBookings] = await Promise.all([
+  const [activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads, upcomingBookings, pendingReviews] = await Promise.all([
     db.vehicle.count({ where: { status: "DOSTUPNE", archivedAt: null } }),
     db.lead.count({ where: { status: "NEW" } }),
     db.vehicle.count({ where: { status: "REZERVOVANO", archivedAt: null } }),
@@ -106,6 +107,7 @@ export async function getDashboardStats() {
     db.vehicle.count({ where: { status: "PRODANO", soldAt: { gte: monthStart } } }),
     getLeads({}, 10),
     getUpcomingBookings(),
+    countPendingReviews(),
   ]);
-  return { activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads, upcomingBookings };
+  return { activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads, upcomingBookings, pendingReviews };
 }

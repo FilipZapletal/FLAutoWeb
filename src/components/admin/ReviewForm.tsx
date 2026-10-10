@@ -13,6 +13,7 @@ export type ReviewFormValues = {
   showOnHome: boolean;
   showOnService: boolean;
   sortOrder: number;
+  approved: boolean;
 };
 
 export function ReviewForm({ reviewId, initial }: { reviewId?: number; initial: ReviewFormValues }) {
@@ -22,7 +23,9 @@ export function ReviewForm({ reviewId, initial }: { reviewId?: number; initial: 
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (await submit(Object.fromEntries(new FormData(e.currentTarget)))) {
+    const fd = new FormData(e.currentTarget);
+    // Nezaškrtnuté políčko se ve formuláři neodesílá, proto schválení posíláme výslovně.
+    if (await submit({ ...Object.fromEntries(fd), approved: fd.get("approved") === "on" })) {
       router.push("/admin/recenze");
       router.refresh();
     }
@@ -40,6 +43,9 @@ export function ReviewForm({ reviewId, initial }: { reviewId?: number; initial: 
           ))}
         </SelectField>
         <InputField label="Pořadí" name="sortOrder" type="number" min={0} defaultValue={initial.sortOrder} error={fields.sortOrder} hint="Menší číslo = dříve" />
+        <label className="flex items-center gap-2 text-sm font-semibold sm:col-span-2">
+          <input type="checkbox" name="approved" defaultChecked={initial.approved} /> Schváleno – recenze se smí zobrazit na webu
+        </label>
         <div className="flex flex-wrap gap-5 sm:col-span-2">
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" name="showOnHome" defaultChecked={initial.showOnHome} /> Zobrazit na úvodní stránce

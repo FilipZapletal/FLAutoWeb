@@ -89,6 +89,9 @@ Pro zákazníka, který si z nabídky nevybere. **Žádný trvalý formulář na
 ## 15c. Crystal Finish (změna klienta 10/2026)
 Samostatná služba na stránce Servis (`/servis/crystal-finish`) s vlastním ceníkem a **vlastním telefonem +420 735 231 876 jako jediným kontaktem** (kontakty majitelů se na stránce služby nezobrazují, online objednávka se nenabízí – objednává se jen telefonicky). Nabídka: ruční mytí exteriéru, čištění interiéru, renovace a ochrana laku. Ceník je rozdělený do sekcí (hlavní programy, samostatný interiér, exteriér, doplňky, renovace a korekce laku, keramická ochrana). V administraci: Služby → Crystal Finish.
 
+## 15d. Recenze zákazníků (změna klienta 10/2026)
+Sekce „Spokojení zákazníci“ na úvodní stránce (pod blokem O autobazaru) a na Servisu: karty s hvězdami, jménem a textem, listování prstem/šipkami, delší text se rozbalí. Recenze jsou dvojího původu: (1) zadá je admin (např. přepis z Googlu), (2) napíše je návštěvník tlačítkem **„Napsat recenzi“** (jméno, 1–5 hvězd, text bez odkazů). Recenze z webu se **zobrazí až po schválení** v administraci (Recenze → Schválit); majitelé dostanou e-mailem upozornění a na nástěnce je počet recenzí ke schválení. Ochrana proti spamu: skryté pole, limit 3 recenze za hodinu z jedné IP. Pilulka „Recenze nejsou ověřené“ uvádí, že se neověřuje, zda recenzi napsal skutečný zákazník (provozovatel potvrdil, že nebude zveřejňovat vymyšlené recenze).
+
 ## 16. Protiúčet
 Jen jako typ poptávky `TRADE_IN` u konkrétního vozu (bez samostatné stránky).
 

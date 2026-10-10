@@ -7,7 +7,7 @@ export default function NewReviewPage() {
   return (
     <>
       <PageHead title="Přidat recenzi" />
-      <ReviewForm initial={{ author: "", text: "", rating: 5, source: "Google", showOnHome: true, showOnService: false, sortOrder: 0 }} />
+      <ReviewForm initial={{ author: "", text: "", rating: 5, source: "Google", showOnHome: true, showOnService: false, sortOrder: 0, approved: true }} />
     </>
   );
 }

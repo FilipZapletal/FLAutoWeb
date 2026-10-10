@@ -286,9 +286,15 @@ model Review {
   showOnHome    Boolean  @default(true) @map("show_on_home")
   showOnService Boolean  @default(false) @map("show_on_service")
   sortOrder     Int      @default(0) @map("sort_order")
+  /// Na webu se zobrazí jen schválená recenze. Recenze zadané adminem jsou schválené hned,
+  /// recenze od návštěvníků čekají na schválení.
+  approved      Boolean  @default(true)
+  /// Napsal ji návštěvník přes formulář na webu
+  fromCustomer  Boolean  @default(false) @map("from_customer")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
   @@index([sortOrder])
+  @@index([approved])
   @@map("reviews")
 }

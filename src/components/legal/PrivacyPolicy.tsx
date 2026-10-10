@@ -27,6 +27,7 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
       <h2>2. Jaké údaje zpracováváme</h2>
       <ul>
         <li><strong>Poptávka u vozu</strong> (formulář „Máte zájem o tento vůz?“): jméno, telefon, e-mail (nepovinný), typ zájmu, text zprávy a vůz, o který máte zájem.</li>
+        <li><strong>Recenze</strong> (formulář „Napsat recenzi“): jméno (nebo jeho zkrácená podoba), hodnocení a text recenze. Po schválení provozovatelem se zveřejní na webu.</li>
         <li><strong>Hledané auto</strong> (okno „Nenašli jste, co hledáte?“): jméno, telefon, e-mail (nepovinný), popis hledaného vozu a vaše požadavky (např. cena, rok, palivo).</li>
         <li><strong>Objednávka do servisu</strong>: jméno, značka a model vozu, telefon, e-mail (nepovinný) a poznámka.</li>
         <li><strong>Koupě vozu nebo servisní zakázka</strong>: údaje potřebné k uzavření a splnění smlouvy, k převodu vozidla v registru silničních vozidel a k vystavení dokladů (např. jméno, adresa, datum narození, číslo dokladu totožnosti, u podnikatelů IČO).</li>
@@ -47,6 +48,10 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
           <tr>
             <td>Vyřízení vaší poptávky, domluva prohlídky, zkušební jízdy nebo termínu v servisu</td>
             <td>Jednání o smlouvě na vaši žádost – čl. 6 odst. 1 písm. b) GDPR</td>
+          </tr>
+          <tr>
+            <td>Zveřejnění vaší recenze na webu (jméno, hodnocení a text)</td>
+            <td>Váš souhlas – čl. 6 odst. 1 písm. a) GDPR (udělujete ho odesláním recenze)</td>
           </tr>
           <tr>
             <td>Posouzení, zda se nám podaří vámi hledané auto sehnat, a odpověď na vaši poptávku</td>
@@ -71,6 +76,7 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
       <h2>4. Jak dlouho údaje uchováváme</h2>
       <ul>
         <li>Poptávky, které nevedly k uzavření smlouvy: <strong>{LEAD_RETENTION_DAYS} dní</strong> od posledního kontaktu s vámi, poté je automaticky smažeme. Poptávka, která vedla k rezervaci nebo koupi vozu, se dále uchovává jako podklad ke smlouvě podle následujícího bodu.</li>
+        <li>Recenze: po dobu zveřejnění na webu. Souhlas můžete kdykoli odvolat a my recenzi na vaši žádost smažeme (kontakt viz bod 1).</li>
         <li>Údaje ze smluv a účetní a daňové doklady: po dobu, kterou nám ukládají právní předpisy (zejména zákon o účetnictví a zákon o dani z přidané hodnoty), a po dobu, po kterou lze uplatnit práva ze smlouvy.</li>
         <li>Technické údaje pro ochranu formulářů: jen v paměti serveru, nejvýše několik desítek minut.</li>
       </ul>

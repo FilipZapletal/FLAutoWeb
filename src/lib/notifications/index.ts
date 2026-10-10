@@ -5,12 +5,41 @@ import { LEAD_TYPE_LABELS } from "@/lib/labels";
 import { phonesLine } from "@/lib/contacts";
 import { getSettings } from "@/lib/settings";
 import { siteUrl } from "@/lib/site";
+import type { SiteSettings } from "@/lib/validation/settings";
 import { sendEmail } from "./email";
 
 type LeadWithVehicle = Lead & {
   vehicle: { brand: string; model: string; version: string | null; slug: string } | null;
   service: { title: string } | null;
 };
+
+/** Upozornění dostávají oba majitelé: hlavní e-mail webu a odpovědná osoba. */
+function adminRecipients(settings: SiteSettings) {
+  return [...new Set([process.env.ADMIN_NOTIFY_EMAIL || settings.email, settings.responsibleEmail].filter((e): e is string => Boolean(e)))];
+}
+
+/** Upozornění majitelům na novou recenzi od návštěvníka (čeká na schválení). */
+export async function notifyNewReview(review: { id: number; author: string; rating: number; text: string }) {
+  try {
+    const settings = await getSettings();
+    await sendEmail({
+      to: adminRecipients(settings),
+      subject: `Nová recenze ke schválení – ${review.author} (${"★".repeat(review.rating)})`,
+      text: [
+        "Návštěvník napsal na webu FL Auto recenzi. Na webu se zobrazí, až ji schválíte.",
+        "",
+        `Jméno: ${review.author}`,
+        `Hodnocení: ${review.rating} z 5`,
+        "",
+        review.text,
+        "",
+        `Schválit nebo smazat: ${siteUrl("/admin/recenze")}`,
+      ].join("\n"),
+    });
+  } catch (e) {
+    console.error("Upozornění na novou recenzi selhalo:", e);
+  }
+}
 
 /**
  * Notifikace po nové poptávce. Zatím jen e-mail; další kanály (SMS, WhatsApp)
@@ -19,8 +48,7 @@ type LeadWithVehicle = Lead & {
 export async function notifyNewLead(lead: LeadWithVehicle) {
   const settings = await getSettings();
   const vehicleName = lead.vehicle ? [lead.vehicle.brand, lead.vehicle.model, lead.vehicle.version].filter(Boolean).join(" ") : null;
-  // Upozornění dostávají oba majitelé: hlavní e-mail webu a odpovědná osoba.
-  const adminTo = [...new Set([process.env.ADMIN_NOTIFY_EMAIL || settings.email, settings.responsibleEmail].filter((e): e is string => Boolean(e)))];
+  const adminTo = adminRecipients(settings);
   const wanted = lead.type === "WANTED_CAR";
   const service = lead.service?.title ?? null;
   const booking = formatBooking(lead);

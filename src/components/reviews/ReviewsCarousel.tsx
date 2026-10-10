@@ -26,8 +26,8 @@ function ReviewCard({ r }: { r: ReviewCardData }) {
         {r.source && <span className="text-xs">{r.source}</span>}
       </div>
       <Stars rating={r.rating} size={22} tone="accent" className="mb-3" />
-      <figcaption className="mb-2 font-display text-xl font-bold normal-case leading-tight">{r.author}</figcaption>
-      <blockquote className={`whitespace-pre-line text-sm leading-relaxed text-muted ${open ? "" : "line-clamp-5"} ${long ? "" : "flex-1"}`}>
+      <figcaption className="mb-2 font-display text-xl font-bold normal-case leading-tight [overflow-wrap:anywhere]">{r.author}</figcaption>
+      <blockquote className={`whitespace-pre-line text-sm leading-relaxed text-muted [overflow-wrap:anywhere] ${open ? "" : "line-clamp-5"} ${long ? "" : "flex-1"}`}>
         {r.text}
       </blockquote>
       {long && (
