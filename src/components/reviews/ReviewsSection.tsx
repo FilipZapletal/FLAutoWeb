@@ -1,6 +1,7 @@
-import { SectionTitle } from "@/components/ui/SectionTitle";
+import { InfoIcon } from "@/components/ui/icons";
 import { getPublicReviews, type ReviewPlacement } from "@/lib/reviews/service";
 import { getSettings } from "@/lib/settings";
+import { ReviewsCarousel } from "./ReviewsCarousel";
 import { Stars } from "./Stars";
 
 /** Recenze zákazníků + volitelně hodnocení z Googlu. Když není co ukázat, nevykreslí nic. */
@@ -10,13 +11,27 @@ export async function ReviewsSection({ placement, className = "" }: { placement:
   if (reviews.length === 0 && googleRating === null) return null;
 
   return (
-    <section className={className}>
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
-        <SectionTitle>Hodnocení zákazníků</SectionTitle>
+    <section className={className} aria-labelledby={`reviews-title-${placement}`}>
+      <div className="mb-8 flex flex-col items-center text-center">
+        <h2 id={`reviews-title-${placement}`} className="text-3xl md:text-5xl">
+          Spokojení zákazníci
+        </h2>
+        <p className="mt-3 text-muted">Co o nás říkají naši zákazníci.</p>
+
+        {/* Zákon vyžaduje uvést, zda se recenze ověřují. Provozovatel recenze přepisuje ručně, bez ověření. */}
+        <details className="group relative mt-4">
+          <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full border border-line bg-card px-4 py-1.5 text-sm [&::-webkit-details-marker]:hidden">
+            Recenze nejsou ověřené <InfoIcon size={15} className="text-muted" />
+          </summary>
+          <p className="absolute left-1/2 top-full z-20 mt-2 w-72 max-w-[85vw] -translate-x-1/2 rounded-inner border border-line bg-card p-3 text-left text-xs leading-relaxed text-muted shadow-xl">
+            Recenze přepisuje provozovatel webu ručně (např. z Googlu). Neověřujeme, zda je napsal skutečný zákazník.
+          </p>
+        </details>
+
         {googleRating !== null && (
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm">
             <span className="font-display text-2xl font-bold">{googleRating.toLocaleString("cs-CZ", { minimumFractionDigits: 1 })}</span>
-            <Stars rating={googleRating} />
+            <Stars rating={googleRating} tone="accent" />
             <span className="whitespace-nowrap text-muted">
               na Googlu{googleReviewCount ? ` (${googleReviewCount.toLocaleString("cs-CZ")} ${reviewWord(googleReviewCount)})` : ""}
             </span>
@@ -28,20 +43,7 @@ export async function ReviewsSection({ placement, className = "" }: { placement:
           </div>
         )}
       </div>
-      {reviews.length > 0 && (
-        <div className="grid gap-4 md:grid-cols-3">
-          {reviews.map((r) => (
-            <figure key={r.id} className="card flex flex-col p-5">
-              <Stars rating={r.rating} className="mb-3" />
-              <blockquote className="mb-4 flex-1 whitespace-pre-line text-sm">„{r.text}“</blockquote>
-              <figcaption className="text-sm">
-                <span className="font-semibold">{r.author}</span>
-                {r.source && <span className="text-muted"> · {r.source}</span>}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      )}
+      {reviews.length > 0 && <ReviewsCarousel reviews={reviews} />}
     </section>
   );
 }

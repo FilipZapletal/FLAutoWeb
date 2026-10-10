@@ -105,8 +105,6 @@ export default async function HomePage() {
         {newest.length > 0 ? <VehicleGrid vehicles={newest} /> : <p className="text-muted">Nabídku právě připravujeme.</p>}
       </section>
 
-      <ReviewsSection placement="home" className="mb-12" />
-
       <section className="mb-12 grid gap-4 md:grid-cols-2">
         <div className="card p-6">
           <div className="mb-3 flex gap-2 text-acc">
@@ -149,6 +147,8 @@ export default async function HomePage() {
           Více o nás
         </Link>
       </section>
+
+      <ReviewsSection placement="home" className="mt-16" />
     </>
   );
 }

@@ -124,3 +124,24 @@ export const HeartIcon = ({ filled, ...p }: P & { filled?: boolean }) => (
     <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z" />
   </Base>
 );
+export const GoogleIcon = ({ size = 18, ...p }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...p}>
+    <path d="M21.35 11.1H12v2.8h5.35c-.5 2.4-2.5 3.8-5.35 3.8a6 6 0 1 1 0-12c1.5 0 2.8.55 3.85 1.45l2-2A9 9 0 1 0 12 21c5.2 0 8.6-3.65 8.6-8.8 0-.4 0-.75-.1-1.1z" />
+  </svg>
+);
+export const InfoIcon = (p: P) => (
+  <Base {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16v-4M12 8h.01" />
+  </Base>
+);
+export const PlusIcon = (p: P) => (
+  <Base {...p}>
+    <path d="M12 5v14M5 12h14" />
+  </Base>
+);
+export const QuoteIcon = (p: P) => (
+  <Base {...p}>
+    <path d="M3 21c3 0 7-1 7-8V5H3v8h4M14 21c3 0 7-1 7-8V5h-7v8h4" />
+  </Base>
+);
