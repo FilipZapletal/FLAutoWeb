@@ -213,11 +213,11 @@ export function WantedCarPrompt() {
   return (
     <>
       {bubble && !open && (
-        <div className="fixed bottom-20 right-3 z-30 flex items-center md:bottom-5 md:right-5">
+        <div className="shine fixed bottom-20 right-3 z-30 flex items-center rounded-full shadow-lg md:bottom-5 md:right-5">
           <button
             type="button"
             onClick={() => openWith({})}
-            className="flex items-center gap-2 rounded-l-full border border-r-0 border-line bg-card py-2.5 pl-4 pr-3 text-sm font-semibold shadow-lg transition-colors hover:border-acc"
+            className="flex items-center gap-2 rounded-l-full border border-r-0 border-line bg-card py-2.5 pl-4 pr-3 text-sm font-semibold transition-colors hover:border-acc"
           >
             <HeartIcon size={16} className="text-acc" />
             <span className="hidden sm:inline">Hledáte auto na přání?</span>
@@ -231,7 +231,7 @@ export function WantedCarPrompt() {
             }}
             aria-label="Skrýt bublinku"
             title="Skrýt"
-            className="rounded-r-full border border-line bg-card py-2.5 pl-2 pr-3 text-muted shadow-lg transition-colors hover:text-fg"
+            className="rounded-r-full border border-line bg-card py-2.5 pl-2 pr-3 text-muted transition-colors hover:text-fg"
           >
             ×
           </button>

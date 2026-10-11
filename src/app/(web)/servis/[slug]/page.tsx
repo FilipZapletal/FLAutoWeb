@@ -82,7 +82,7 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
           {own ? (
             <div className="card mt-4 p-5">
               <p className="text-sm text-muted">Objednávky a dotazy vyřizujeme telefonicky:</p>
-              <a href={`tel:${phoneDigits(own)}`} className="btn mt-3">
+              <a href={`tel:${phoneDigits(own)}`} className="btn phone-ring mt-3">
                 <PhoneIcon size={16} /> {own}
               </a>
             </div>
@@ -91,8 +91,8 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
               <a href="#objednavka" className="btn">Objednat</a>
               {ownerContacts(settings)
                 .filter((c) => c.phone)
-                .map((c) => (
-                  <a key={c.name} href={`tel:${c.tel}`} className="btn-outline">
+                .map((c, i) => (
+                  <a key={c.name} href={`tel:${c.tel}`} className={`btn-outline ${i ? "phone-ring phone-ring-b" : "phone-ring"}`}>
                     <PhoneIcon size={16} /> {c.firstName} {c.phone}
                   </a>
                 ))}

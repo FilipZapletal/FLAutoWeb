@@ -312,7 +312,110 @@
   }
 }
 
+/* Jemné animace: tlačítka s telefonem „zazvoní“ a bublinka Auto na přání občas zalesknou. */
+@layer components {
+  .phone-ring {
+    --ring-delay: 0s;
+    animation: phone-ring 6s ease-in-out var(--ring-delay) infinite;
+  }
+  .phone-ring-b {
+    --ring-delay: 3s; /* druhé tlačítko zvoní jindy než první */
+  }
+  .phone-ring svg {
+    animation: phone-ring-icon 6s ease-in-out var(--ring-delay) infinite;
+    transform-origin: 50% 50%;
+  }
+  .phone-ring:hover,
+  .phone-ring:focus-visible,
+  .phone-ring:hover svg,
+  .phone-ring:focus-visible svg {
+    animation-play-state: paused;
+  }
+
+  .shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 38%, var(--shine) 50%, transparent 62%);
+    transform: translateX(-130%);
+    animation: shine 8s ease-in-out 2s infinite;
+  }
+  .shine:hover::after {
+    animation-play-state: paused;
+  }
+}
+
+:root,
+:root[data-theme="dark"] {
+  --shine: rgb(255 255 255 / 0.22);
+}
+:root[data-theme="light"] {
+  --shine: rgb(216 27 42 / 0.2);
+}
+
+/* Krátké zachvění (asi 0,7 s) a pak klid; zbytek cyklu je tlačítko v klidu. */
+@keyframes phone-ring {
+  0%,
+  12%,
+  100% {
+    transform: none;
+  }
+  2% {
+    transform: translateX(-1px) rotate(-1.2deg);
+  }
+  4% {
+    transform: translateX(1px) rotate(1.2deg);
+  }
+  6% {
+    transform: translateX(-1px) rotate(-1deg);
+  }
+  8% {
+    transform: translateX(1px) rotate(1deg);
+  }
+  10% {
+    transform: translateX(-0.5px) rotate(-0.5deg);
+  }
+}
+@keyframes phone-ring-icon {
+  0%,
+  12%,
+  100% {
+    transform: none;
+  }
+  2%,
+  6%,
+  10% {
+    transform: rotate(-14deg);
+  }
+  4%,
+  8% {
+    transform: rotate(14deg);
+  }
+}
+/* Lesk přejede bublinkou za první třetinu cyklu, pak je klid. */
+@keyframes shine {
+  0%,
+  35%,
+  100% {
+    transform: translateX(-130%);
+  }
+  55% {
+    transform: translateX(130%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .phone-ring,
+  .phone-ring svg,
+  .shine::after {
+    animation: none !important;
+  }
+
   *,
   *::before,
   *::after {

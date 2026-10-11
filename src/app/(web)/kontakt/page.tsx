@@ -31,7 +31,7 @@ export default async function ContactPage() {
             </span>
           </p>
 
-          {contacts.map((c) => (
+          {contacts.map((c, i) => (
             <div key={c.name} className="space-y-2 border-t border-line pt-4">
               <h2 className="text-base">{c.name}</h2>
               {c.phone && (
@@ -48,7 +48,7 @@ export default async function ContactPage() {
               )}
               {c.phone && (
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <a href={`tel:${c.tel}`} className="btn btn-sm"><PhoneIcon size={14} /> Zavolat</a>
+                  <a href={`tel:${c.tel}`} className={`btn btn-sm ${i ? "phone-ring phone-ring-b" : "phone-ring"}`}><PhoneIcon size={14} /> Zavolat</a>
                   <a href={whatsappLink(c.phone)} target="_blank" rel="noopener noreferrer" className="btn-outline btn-sm"><WhatsAppIcon size={14} /> WhatsApp</a>
                 </div>
               )}

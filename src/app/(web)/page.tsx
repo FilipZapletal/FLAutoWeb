@@ -128,9 +128,9 @@ export default async function HomePage() {
           <div className="flex flex-wrap gap-2">
             {ownerContacts(settings)
               .filter((c) => c.phone)
-              .map((c) => (
-                <a key={c.name} href={`tel:${c.tel}`} className="btn">
-                  {c.firstName} {c.phone}
+              .map((c, i) => (
+                <a key={c.name} href={`tel:${c.tel}`} className={`btn ${i ? "phone-ring phone-ring-b" : "phone-ring"}`}>
+                  <PhoneIcon size={16} /> {c.firstName} {c.phone}
                 </a>
               ))}
             <Link href="/kontakt" className="btn-outline">

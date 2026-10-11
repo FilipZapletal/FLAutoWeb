@@ -92,8 +92,8 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
                 Poptat vůz
               </a>
             )}
-            {contacts.map((c) => (
-              <a key={c.name} href={`tel:${c.tel}`} className="btn-outline">
+            {contacts.map((c, i) => (
+              <a key={c.name} href={`tel:${c.tel}`} className={`btn-outline ${i ? "phone-ring phone-ring-b" : "phone-ring"}`}>
                 <PhoneIcon size={16} /> {c.firstName} {c.phone}
               </a>
             ))}
@@ -141,7 +141,7 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
               <p className="text-sm text-muted">Raději se domluvíte přímo?</p>
               {contacts.map((c, i) => (
                 <div key={c.name} className="grid gap-2">
-                  <a href={`tel:${c.tel}`} className={i === 0 ? "btn" : "btn-outline"}>
+                  <a href={`tel:${c.tel}`} className={`${i === 0 ? "btn" : "btn-outline"} ${i ? "phone-ring phone-ring-b" : "phone-ring"}`}>
                     <PhoneIcon size={16} /> Zavolat – {c.firstName} {c.phone}
                   </a>
                   <a href={whatsappLink(c.phone!, waText)} target="_blank" rel="noopener noreferrer" className="btn-outline">
