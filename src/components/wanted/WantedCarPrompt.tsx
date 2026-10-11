@@ -23,6 +23,9 @@ import { WantedCarForm } from "./WantedCarForm";
 
 /** Exit intent (myš k zavření stránky) se bere vážně až po chvíli na webu. */
 const MIN_TIME_FOR_EXIT_MS = 30_000;
+/** Mobil (bez myši): tolik vteřin bez dotyku a posouvání se bere jako „přemýšlí“. */
+const MOBILE_IDLE_MS = 20_000;
+const ACTIVITY = ["pointerdown", "keydown", "scroll", "touchstart", "input", "focusin"] as const;
 
 /** Nejde okno ukázat zrovna teď? (návštěvník píše do formuláře nebo je otevřené jiné okno) */
 function userBusy() {
@@ -34,7 +37,8 @@ function userBusy() {
 /**
  * Okno „Sehnat auto na přání“. Samo se nabídne návštěvníkovi, který nic nevybral a nic neodeslal:
  *  1) katalog bez výsledků, když chvíli nic nedělá, 2) návrat zpět z katalogu po hledání,
- *  3) myš míří k zavření stránky po hledání, 4) po 5 minutách strávených na webu.
+ *  3) myš míří k zavření stránky po hledání (na mobilu místo toho: po hledání chvíli nic nedělá,
+ *     nebo odejde do jiné aplikace a vrátí se), 4) po 5 minutách strávených na webu.
  * V jedné návštěvě nejvýše jednou a celkem nejvýše třikrát. Po zavření se zmenší do bublinky
  * na boku stránky, odkud ho lze kdykoli znovu otevřít. Čeká, až se návštěvník rozhodne v okně soukromí.
  */
@@ -119,11 +123,43 @@ export function WantedCarPrompt() {
     // Odeslaná poptávka kdekoli na webu: okno se už samo nabízet nebude.
     const onLeadSent = () => patchSession({ inquirySent: true });
 
+    // Mobil nemá myš, takže „míří k zavření“ nahrazuje nečinnost a návrat do karty.
+    const touch = window.matchMedia("(hover: none)").matches;
+    let idle: ReturnType<typeof setTimeout> | undefined;
+    const thinking = () => {
+      const wait = MIN_TIME_FOR_EXIT_MS - (Date.now() - startedAt.current);
+      if (wait > 0) {
+        // Na webu je teprve chvíli: zkusí se to znovu, až uplyne minimální doba.
+        clearTimeout(idle);
+        idle = setTimeout(thinking, wait);
+        return;
+      }
+      const s = readSession();
+      if (s.engaged && !s.chosen) tryAutoOpen({});
+    };
+    const armIdle = () => {
+      clearTimeout(idle);
+      idle = setTimeout(thinking, MOBILE_IDLE_MS);
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible") thinking();
+    };
+    if (touch) {
+      ACTIVITY.forEach((e) => window.addEventListener(e, armIdle, { passive: true, capture: true }));
+      document.addEventListener("visibilitychange", onVisible);
+      armIdle();
+    }
+
     window.addEventListener("popstate", onPop);
     document.documentElement.addEventListener("mouseleave", onLeave);
     window.addEventListener(WANTED_OPEN_EVENT, onOpenEvent);
     window.addEventListener("fl:lead-sent", onLeadSent);
     return () => {
+      clearTimeout(idle);
+      if (touch) {
+        ACTIVITY.forEach((e) => window.removeEventListener(e, armIdle, { capture: true }));
+        document.removeEventListener("visibilitychange", onVisible);
+      }
       window.removeEventListener("popstate", onPop);
       document.documentElement.removeEventListener("mouseleave", onLeave);
       window.removeEventListener(WANTED_OPEN_EVENT, onOpenEvent);
