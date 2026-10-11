@@ -2,23 +2,25 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { HeartIcon } from "@/components/ui/icons";
 import { isConsentDecided } from "@/lib/consent";
 import { parseFilters } from "@/lib/validation/filters";
 import { WANTED_OPEN_EVENT } from "./events";
 import { filtersToPrefill, meaningfulFilterKeys } from "./prefill";
 import {
   autoPopupAllowed,
+  BUBBLE_AFTER_MS,
   bubbleWanted,
   hideBubble,
-  markDismissed,
+  isSubmitted,
   markShown,
   markSubmitted,
   patchSession,
   type Prefill,
   readSession,
+  showBubble,
   TIMER_MS,
 } from "./storage";
+import { WantedBubble } from "./WantedBubble";
 import { WantedCarForm } from "./WantedCarForm";
 
 /** Exit intent (myš k zavření stránky) se bere vážně až po chvíli na webu. */
@@ -39,8 +41,8 @@ function userBusy() {
  *  1) katalog bez výsledků, když chvíli nic nedělá, 2) návrat zpět z katalogu po hledání,
  *  3) myš míří k zavření stránky po hledání (na mobilu místo toho: po hledání chvíli nic nedělá,
  *     nebo odejde do jiné aplikace a vrátí se), 4) po 5 minutách strávených na webu.
- * V jedné návštěvě nejvýše jednou a celkem nejvýše třikrát. Po zavření se zmenší do bublinky
- * na boku stránky, odkud ho lze kdykoli znovu otevřít. Čeká, až se návštěvník rozhodne v okně soukromí.
+ * V jedné návštěvě nejvýše jednou a celkem nejvýše třikrát. Čeká, až se návštěvník rozhodne v okně soukromí.
+ * Bublinka v rohu (Auto na přání + služby servisu) se objeví po minutě na webu, nebo po zavření okna.
  */
 export function WantedCarPrompt() {
   const pathname = usePathname();
@@ -49,6 +51,8 @@ export function WantedCarPrompt() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
   const [bubble, setBubble] = useState(false);
+  /** Nabízet v bublince i „Auto na přání“ (po odeslání poptávky už ne) */
+  const [offerWanted, setOfferWanted] = useState(true);
   const [prefill, setPrefill] = useState<Prefill>({});
   const isOpen = useRef(false);
   const startedAt = useRef(0);
@@ -78,13 +82,17 @@ export function WantedCarPrompt() {
     [openWith],
   );
 
-  // Bublinka z minulé návštěvy.
-  useEffect(() => {
-    const sync = () => setBubble(!isOpen.current && bubbleWanted());
-    sync();
-    window.addEventListener("fl:consent-changed", sync);
-    return () => window.removeEventListener("fl:consent-changed", sync);
+  /** Bublinka se ukazuje, až se návštěvník rozhodl v okně soukromí a neskryl ji. */
+  const syncBubble = useCallback(() => {
+    setBubble(!isOpen.current && isConsentDecided() && bubbleWanted());
+    setOfferWanted(!isSubmitted());
   }, []);
+
+  useEffect(() => {
+    syncBubble();
+    window.addEventListener("fl:consent-changed", syncBubble);
+    return () => window.removeEventListener("fl:consent-changed", syncBubble);
+  }, [syncBubble]);
 
   // Sledování, co návštěvník dělá (jen v sessionStorage, bez osobních údajů).
   useEffect(() => {
@@ -175,13 +183,17 @@ export function WantedCarPrompt() {
       if (document.visibilityState !== "visible" || fired) return;
       active += 1000;
       if (active % 5000 === 0) patchSession({ activeMs: active });
+      if (active >= BUBBLE_AFTER_MS && !readSession().bubbleOn) {
+        showBubble();
+        syncBubble();
+      }
       if (active >= TIMER_MS && tryAutoOpen({}, { ignoreChosen: true })) fired = true;
     }, 1000);
     return () => {
       clearInterval(id);
       patchSession({ activeMs: active });
     };
-  }, [tryAutoOpen]);
+  }, [tryAutoOpen, syncBubble]);
 
   // Otevření/zavření nativního <dialog> (focus trap, Esc a zámek posunu stránky).
   useEffect(() => {
@@ -201,9 +213,9 @@ export function WantedCarPrompt() {
     if (!isOpen.current) return;
     isOpen.current = false;
     setOpen(false);
-    markDismissed();
-    setBubble(bubbleWanted());
-  }, []);
+    showBubble();
+    syncBubble();
+  }, [syncBubble]);
 
   const closeDialog = useCallback(() => {
     finish();
@@ -212,31 +224,7 @@ export function WantedCarPrompt() {
 
   return (
     <>
-      {bubble && !open && (
-        <div className="shine fixed bottom-20 right-3 z-30 flex items-center rounded-full shadow-lg md:bottom-5 md:right-5">
-          <button
-            type="button"
-            onClick={() => openWith({})}
-            className="flex items-center gap-2 rounded-l-full border border-r-0 border-line bg-card py-2.5 pl-4 pr-3 text-sm font-semibold transition-colors hover:border-acc"
-          >
-            <HeartIcon size={16} className="text-acc" />
-            <span className="hidden sm:inline">Hledáte auto na přání?</span>
-            <span className="sm:hidden">Auto na přání</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              hideBubble();
-              setBubble(false);
-            }}
-            aria-label="Skrýt bublinku"
-            title="Skrýt"
-            className="rounded-r-full border border-line bg-card py-2.5 pl-2 pr-3 text-muted transition-colors hover:text-fg"
-          >
-            ×
-          </button>
-        </div>
-      )}
+      {bubble && !open && <WantedBubble offerWanted={offerWanted} onOpenWanted={() => openWith({})} onHide={() => { hideBubble(); setBubble(false); }} />}
 
       <dialog
         ref={dialogRef}

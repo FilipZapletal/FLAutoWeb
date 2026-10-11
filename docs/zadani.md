@@ -83,7 +83,8 @@ Pod kartami formulář „Objednat se do servisu" (značka a model vozu, telefon
 ## 15b. Hledané auto na přání (změna klienta 10/2026)
 Pro zákazníka, který si z nabídky nevybere. **Žádný trvalý formulář na stránkách** – jen vyskakovací okno „Nenašli jste, co hledáte?“ s poptávkou na vysněný vůz (co hledá, volitelně cena, rok, nájezd, palivo, převodovka, karoserie, poznámka; jméno, telefon, e-mail).
 - Zobrazí se návštěvníkovi, který si z nabídky nevybral a nic neodeslal: (1) katalog bez výsledků po 12 s nečinnosti (jakákoli aktivita odpočet zruší), (2) návrat tlačítkem Zpět z katalogu po hledání, (3) myš míří k zavření okna po hledání (počítač), (4) po 5 minutách aktivně stráveným na webu. Nezobrazí se, když návštěvník píše do formuláře nebo je otevřené jiné okno, a čeká na rozhodnutí v okně soukromí.
-- Nejvýše jednou za návštěvu a celkem třikrát (při různých návštěvách). Po zavření se zmenší do **bublinky** na boku stránky (30 dní, i při další návštěvě), odkud ho lze znovu otevřít; po odeslání se 60 dní nenabízí. Předvyplní se podle filtrů.
+- Nejvýše jednou za návštěvu a celkem třikrát (při různých návštěvách). Po odeslání se 60 dní nenabízí. Předvyplní se podle filtrů.
+- **Bublinka** v rohu stránky se objeví po 60 s strávených na webu (nebo po zavření okna). Každých 10 s střídá nabídky: Auto na přání → Autoservis & pneuservis → Ruční mytí → Příprava na STK & emise (odkazují na stránky služeb). Lesk jede zleva doprava a smaže popisek, pak zprava doleva a napíše další. Při najetí myší se střídání zastaví, při omezeném pohybu v systému se lesk nepoužije. Křížkem ji návštěvník skryje (30 dní, bez souhlasu s pohodlnými funkcemi jen do konce návštěvy). Po odeslání poptávky „Auto na přání“ z rotace zmizí.
 - Poptávka (typ `WANTED_CAR`, „Hledané auto“) se uloží do leadů a e-mailem přijde **oběma majitelům**; zákazník dostane potvrzení. Majitelé mu následně odpoví, zda je poptávka reálná, nebo ji potvrdí.
 
 ## 15c. Crystal Finish (změna klienta 10/2026)

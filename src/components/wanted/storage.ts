@@ -1,15 +1,18 @@
 import { canPersist } from "@/lib/consent";
 
 // Stav okna „Auto na přání“.
-// localStorage `fl_wanted` (jen se souhlasem s pohodlnými funkcemi): zavřeno/odesláno, kolikrát se okno samo ukázalo.
+// localStorage `fl_wanted` (jen se souhlasem s pohodlnými funkcemi): odesláno, kolikrát se okno samo ukázalo,
+// do kdy má návštěvník skrytou bublinku.
 // sessionStorage `fl_wanted_session`: co návštěvník dělal během této návštěvy. Žádné osobní údaje.
 
 const LONG_KEY = "fl_wanted";
 const SESSION_KEY = "fl_wanted_session";
 
 const DAY = 24 * 60 * 60 * 1000;
-/** Bublinka po zavření okna zůstává tolik dní (i při další návštěvě). */
-export const BUBBLE_DAYS = 30;
+/** Čas strávený na webu, po kterém se objeví bublinka (Auto na přání a služby). */
+export const BUBBLE_AFTER_MS = 60 * 1000;
+/** Když návštěvník bublinku skryje křížkem, nezobrazí se tolik dní (se souhlasem; bez něj jen do konce návštěvy). */
+export const BUBBLE_HIDE_DAYS = 30;
 /** Po odeslání poptávky se okno ani bublinka tolik dní neukazují. */
 export const SUBMIT_DAYS = 60;
 /** Okno se samo ukáže nejvýše tolikrát (při různých návštěvách); pak už jen bublinka. */
@@ -40,9 +43,13 @@ export type SessionState = {
   prefill: Prefill | null;
   /** Aktivně strávený čas na webu v této návštěvě (ms). */
   activeMs: number;
+  /** Bublinka se v této návštěvě už ukázala (po minutě na webu nebo po zavření okna). */
+  bubbleOn: boolean;
+  /** Návštěvník v této návštěvě bublinku skryl křížkem. */
+  bubbleHidden: boolean;
 };
 
-const EMPTY: SessionState = { engaged: false, chosen: false, inquirySent: false, shown: false, prefill: null, activeMs: 0 };
+const EMPTY: SessionState = { engaged: false, chosen: false, inquirySent: false, shown: false, prefill: null, activeMs: 0, bubbleOn: false, bubbleHidden: false };
 
 export function readSession(): SessionState {
   try {
@@ -58,7 +65,7 @@ export function patchSession(patch: Partial<SessionState>) {
   } catch {}
 }
 
-type Long = { dismissedAt?: number; submittedUntil?: number; shownCount?: number };
+type Long = { bubbleHiddenUntil?: number; submittedUntil?: number; shownCount?: number };
 
 function readLong(): Long {
   try {
@@ -80,13 +87,16 @@ export const isSubmitted = () => (readLong().submittedUntil ?? 0) > Date.now();
 /** Smí se okno samo ukázat (neodesláno a nepřekročen počet automatických zobrazení)? */
 export const autoPopupAllowed = () => !isSubmitted() && (readLong().shownCount ?? 0) < MAX_AUTO_POPUPS;
 
-/** Má se zobrazovat bublinka (okno bylo zavřeno a neodesláno)? */
+/** Má se právě teď zobrazovat bublinka? (uběhla minuta na webu nebo se zavřelo okno, a návštěvník ji neskryl) */
 export function bubbleWanted() {
-  const l = readLong();
-  return !isSubmitted() && typeof l.dismissedAt === "number" && Date.now() - l.dismissedAt < BUBBLE_DAYS * DAY;
+  const s = readSession();
+  return s.bubbleOn && !s.bubbleHidden && (readLong().bubbleHiddenUntil ?? 0) <= Date.now();
 }
 
 export const markShown = () => patchLong({ shownCount: (readLong().shownCount ?? 0) + 1 });
-export const markDismissed = () => patchLong({ dismissedAt: Date.now() });
-export const hideBubble = () => patchLong({ dismissedAt: 0 });
-export const markSubmitted = () => patchLong({ submittedUntil: Date.now() + SUBMIT_DAYS * DAY, dismissedAt: 0 });
+export const showBubble = () => patchSession({ bubbleOn: true });
+export function hideBubble() {
+  patchSession({ bubbleHidden: true });
+  patchLong({ bubbleHiddenUntil: Date.now() + BUBBLE_HIDE_DAYS * DAY });
+}
+export const markSubmitted = () => patchLong({ submittedUntil: Date.now() + SUBMIT_DAYS * DAY });

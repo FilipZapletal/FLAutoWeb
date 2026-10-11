@@ -51,7 +51,7 @@ export function CookiesPolicy() {
           </tr>
           <tr>
             <td>fl_wanted</td>
-            <td><strong>Pohodlné funkce (se souhlasem).</strong> Místní úložiště prohlížeče. Pamatuje si, že jste zavřeli nebo odeslali okno „Nenašli jste, co hledáte?“, kolikrát se okno samo ukázalo a zda se má zobrazit bublinka „Auto na přání“ (30 dní po zavření, 60 dní po odeslání se okno nenabízí). Neobsahuje osobní údaje a neodesílá se na server.</td>
+            <td><strong>Pohodlné funkce (se souhlasem).</strong> Místní úložiště prohlížeče. Pamatuje si, že jste zavřeli nebo odeslali okno „Nenašli jste, co hledáte?“, kolikrát se okno samo ukázalo a zda jste skryli bublinku v rohu stránky (30 dní; 60 dní po odeslání se okno nenabízí). Neobsahuje osobní údaje a neodesílá se na server.</td>
             <td>Nejdéle 60 dní</td>
           </tr>
         </tbody>

@@ -25,6 +25,9 @@ export async function generateMetadata({ params }: PageProps<"/servis/[slug]">):
   };
 }
 
+/** Autoservis: na stránce je jen kontakt Lukáše (první kontakt = Jarek se tu nezobrazuje). */
+const SERVICE_WITHOUT_FIRST_CONTACT = "autoservis-pneuservis";
+
 export default async function ServiceDetailPage({ params }: PageProps<"/servis/[slug]">) {
   const { slug } = await params;
   const [s, services, settings] = await Promise.all([getServiceBySlug(slug), getPublicServices(), getSettings()]);
@@ -90,6 +93,7 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
             <div className="mt-4 flex flex-wrap gap-2">
               <a href="#objednavka" className="btn">Objednat</a>
               {ownerContacts(settings)
+                .slice(s.slug === SERVICE_WITHOUT_FIRST_CONTACT ? 1 : 0)
                 .filter((c) => c.phone)
                 .map((c, i) => (
                   <a key={c.name} href={`tel:${c.tel}`} className={`btn-outline ${i ? "phone-ring phone-ring-b" : "phone-ring"}`}>

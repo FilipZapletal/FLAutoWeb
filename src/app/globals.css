@@ -312,7 +312,7 @@
   }
 }
 
-/* Jemné animace: tlačítka s telefonem „zazvoní“ a bublinka Auto na přání občas zalesknou. */
+/* Jemné animace: tlačítka s telefonem „zazvoní“ a bublinka v rohu při střídání nabídek přejede leskem. */
 @layer components {
   .phone-ring {
     --ring-delay: 0s;
@@ -332,21 +332,32 @@
     animation-play-state: paused;
   }
 
-  .shine {
+  /* Bublinka (Auto na přání + služby): lesk jede zleva doprava a text pod ním maže,
+     pak zprava doleva a pod ním píše další. Délku přejezdu drží --sweep (musí sedět s BUBBLE_SWEEP_MS). */
+  .bubble-shine {
+    --sweep: 0.9s;
     position: relative;
     overflow: hidden;
   }
-  .shine::after {
+  .bubble-shine::after {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
     background: linear-gradient(110deg, transparent 38%, var(--shine) 50%, transparent 62%);
     transform: translateX(-130%);
-    animation: shine 8s ease-in-out 2s infinite;
   }
-  .shine:hover::after {
-    animation-play-state: paused;
+  .bubble-shine[data-phase="out"]::after {
+    animation: bubble-sweep-out var(--sweep) linear forwards;
+  }
+  .bubble-shine[data-phase="in"]::after {
+    animation: bubble-sweep-in var(--sweep) linear forwards;
+  }
+  .bubble-label[data-phase="out"] {
+    animation: bubble-erase var(--sweep) linear forwards;
+  }
+  .bubble-label[data-phase="in"] {
+    animation: bubble-write var(--sweep) linear forwards;
   }
 }
 
@@ -397,22 +408,49 @@
     transform: rotate(14deg);
   }
 }
-/* Lesk přejede bublinkou za první třetinu cyklu, pak je klid. */
-@keyframes shine {
-  0%,
-  35%,
-  100% {
+/* Lesk a text bublinky. Procenta odpovídají poloze lesku nad popiskem (bez křížku). */
+@keyframes bubble-sweep-out {
+  from {
     transform: translateX(-130%);
   }
-  55% {
+  to {
     transform: translateX(130%);
+  }
+}
+@keyframes bubble-sweep-in {
+  from {
+    transform: translateX(130%);
+  }
+  to {
+    transform: translateX(-130%);
+  }
+}
+@keyframes bubble-erase {
+  0%,
+  31% {
+    clip-path: inset(0 0 0 0);
+  }
+  64%,
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+@keyframes bubble-write {
+  0%,
+  36% {
+    clip-path: inset(0 0 0 100%);
+  }
+  69%,
+  100% {
+    clip-path: inset(0 0 0 0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .phone-ring,
   .phone-ring svg,
-  .shine::after {
+  .bubble-shine::after,
+  .bubble-label {
     animation: none !important;
   }
 
