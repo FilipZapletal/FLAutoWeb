@@ -47,9 +47,11 @@ export type SessionState = {
   bubbleOn: boolean;
   /** Návštěvník v této návštěvě bublinku skryl křížkem. */
   bubbleHidden: boolean;
+  /** Při objevení bublinky už v této návštěvě zaznělo cinknutí. */
+  chimed: boolean;
 };
 
-const EMPTY: SessionState = { engaged: false, chosen: false, inquirySent: false, shown: false, prefill: null, activeMs: 0, bubbleOn: false, bubbleHidden: false };
+const EMPTY: SessionState = { engaged: false, chosen: false, inquirySent: false, shown: false, prefill: null, activeMs: 0, bubbleOn: false, bubbleHidden: false, chimed: false };
 
 export function readSession(): SessionState {
   try {

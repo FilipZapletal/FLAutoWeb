@@ -20,6 +20,7 @@ import {
   showBubble,
   TIMER_MS,
 } from "./storage";
+import { armChime } from "./sound";
 import { WantedBubble } from "./WantedBubble";
 import { WantedCarForm } from "./WantedCarForm";
 
@@ -42,7 +43,7 @@ function userBusy() {
  *  3) myš míří k zavření stránky po hledání (na mobilu místo toho: po hledání chvíli nic nedělá,
  *     nebo odejde do jiné aplikace a vrátí se), 4) po 5 minutách strávených na webu.
  * V jedné návštěvě nejvýše jednou a celkem nejvýše třikrát. Čeká, až se návštěvník rozhodne v okně soukromí.
- * Bublinka v rohu (Auto na přání + služby servisu) se objeví po minutě na webu, nebo po zavření okna.
+ * Bublinka v rohu úvodní stránky (Auto na přání + služby servisu) se objeví po minutě na webu, nebo po zavření okna.
  */
 export function WantedCarPrompt() {
   const pathname = usePathname();
@@ -82,11 +83,13 @@ export function WantedCarPrompt() {
     [openWith],
   );
 
-  /** Bublinka se ukazuje, až se návštěvník rozhodl v okně soukromí a neskryl ji. */
+  /** Bublinka se ukazuje jen na úvodní stránce, až se návštěvník rozhodl v okně soukromí a neskryl ji. */
   const syncBubble = useCallback(() => {
-    setBubble(!isOpen.current && isConsentDecided() && bubbleWanted());
+    setBubble(pathname === "/" && !isOpen.current && isConsentDecided() && bubbleWanted());
     setOfferWanted(!isSubmitted());
-  }, []);
+  }, [pathname]);
+
+  useEffect(armChime, []);
 
   useEffect(() => {
     syncBubble();
@@ -214,6 +217,7 @@ export function WantedCarPrompt() {
     isOpen.current = false;
     setOpen(false);
     showBubble();
+    patchSession({ chimed: true }); // po zavření okna bublinka bez zvuku
     syncBubble();
   }, [syncBubble]);
 

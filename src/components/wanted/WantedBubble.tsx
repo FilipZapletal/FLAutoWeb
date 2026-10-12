@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { type ComponentType, useEffect, useRef, useState } from "react";
 import { HeartIcon, ShieldIcon, SparkleIcon, WrenchIcon } from "@/components/ui/icons";
+import { playChime } from "./sound";
+import { patchSession, readSession } from "./storage";
 
 type Item = {
   key: string;
@@ -41,6 +43,13 @@ export function WantedBubble({ offerWanted, onOpenWanted, onHide }: { offerWante
   const [kick, setKick] = useState(0);
   const paused = useRef(false);
   const phaseRef = useRef<Phase>("idle");
+
+  // Cinknutí při prvním objevení bublinky v této návštěvě (při návratu na úvodní stránku už ne).
+  useEffect(() => {
+    if (readSession().chimed) return;
+    patchSession({ chimed: true });
+    playChime();
+  }, []);
 
   useEffect(() => {
     phaseRef.current = phase;
