@@ -60,6 +60,11 @@ export function PushToggle() {
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
         setState(permission === "denied" ? "denied" : "off");
+        setNote(
+          permission === "denied"
+            ? "Prohlížeč upozornění zablokoval. Povolte je v nastavení webu (ikona vedle adresy → Oznámení → Povolit) a načtěte stránku znovu."
+            : "Prohlížeč upozornění nepovolil. Klikněte na ikonu vedle adresy webu → Oznámení → Povolit, načtěte stránku znovu a zkuste to ještě jednou.",
+        );
         return;
       }
       await navigator.serviceWorker.register(SW_URL, { scope: SW_SCOPE });
@@ -96,6 +101,7 @@ export function PushToggle() {
         await sub.unsubscribe();
       }
       setState("off");
+      setNote("Upozornění v tomto zařízení vypnuta.");
     } catch {
       setNote("Upozornění se nepodařilo vypnout.");
     } finally {
