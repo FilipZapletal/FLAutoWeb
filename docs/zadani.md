@@ -123,6 +123,8 @@ Poptávky, které nevedly k obchodu (stavy Nová, Kontaktováno, V jednání, Zt
 ## 23. Notifikace
 Po nové poptávce: zákazníkovi „Děkujeme za váš zájem. Autobazar vás bude kontaktovat.", adminovi „Nová poptávka" + vůz, jméno, telefon, e-mail, typ. Primárně e-mail; architektura připravená na SMS a WhatsApp.
 
+**Upozornění v zařízení správce (Web Push):** přihlášený správce v hlavičce administrace klikne na „Zapnout upozornění“ a od té chvíle mu při každé nové poptávce nebo objednávce přijde notifikace do telefonu či notebooku, i když je web zavřený (jako zprávy na Instagramu). Klepnutí otevře detail poptávky. Tlačítko „Vyzkoušet“ pošle zkušební upozornění. Na iPhonu to funguje jen s iOS 16.4+ a jen v aplikaci přidané na plochu (Sdílet → Přidat na plochu). Upozornění se zapíná zvlášť v každém zařízení a vypnout ho jde stejným tlačítkem.
+
 ## 24. SEO
 Každý vůz: vlastní slug, title, meta description, H1, canonical URL, alt texty, Open Graph, schema.org (Vehicle/Product/Offer). Po změně na PRODÁNO stránku nemazat; připravit 404, redirect a případně archiv prodaných vozů.
 

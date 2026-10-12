@@ -7,6 +7,7 @@ import { getSettings } from "@/lib/settings";
 import { siteUrl } from "@/lib/site";
 import type { SiteSettings } from "@/lib/validation/settings";
 import { sendEmail } from "./email";
+import { sendPush } from "./push";
 
 type LeadWithVehicle = Lead & {
   vehicle: { brand: string; model: string; version: string | null; slug: string } | null;
@@ -53,7 +54,13 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
   const service = lead.service?.title ?? null;
   const booking = formatBooking(lead);
 
-  const jobs: Promise<void>[] = [
+  const jobs: Promise<unknown>[] = [
+    sendPush({
+      title: wanted ? "Hledané auto" : booking ? "Nová objednávka do servisu" : "Nová poptávka",
+      body: [lead.name, wanted ? lead.car : (vehicleName ?? service ?? LEAD_TYPE_LABELS[lead.type]), booking].filter(Boolean).join(" · "),
+      url: `/admin/poptavky/${lead.id}`,
+      tag: `lead-${lead.id}`,
+    }),
     sendEmail({
       to: adminTo,
       replyTo: lead.email ?? undefined,

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { PushToggle } from "@/components/admin/PushToggle";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 import { requireAdminPage } from "@/lib/auth/session";
@@ -18,6 +19,7 @@ export default async function AdminPanelLayout({ children }: LayoutProps<"/admin
           </Link>
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-muted sm:block">{admin.email}</span>
+            <PushToggle />
             <ThemeSwitch />
           </div>
         </div>

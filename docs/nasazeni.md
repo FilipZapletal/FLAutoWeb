@@ -15,7 +15,7 @@ Předávací poznámky pro dalšího vývojáře nebo AI. Stav k 8. 10. 2026 ve�
 
 ### Proměnné ve Vercelu (Settings → Environment Variables)
 Vyplněno: `DATABASE_URL`, `SITE_URL`, `SESSION_SECRET`, `CRON_SECRET`, `STORAGE_DRIVER`, `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL`.
-Chybí: `RESEND_API_KEY`, `EMAIL_FROM`, `ADMIN_NOTIFY_EMAIL`.
+Chybí: `RESEND_API_KEY`, `EMAIL_FROM`, `ADMIN_NOTIFY_EMAIL`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (upozornění v adminu, viz níže).
 Popis všech proměnných je v `README.md` a `.env.example`.
 
 ### Jak vznikla databáze
@@ -48,7 +48,8 @@ Formulář → `POST /api/leads` → validace na serveru → uložení do tabulk
 4. **Obsah:** skutečná auta, ceny služeb (Služby), hodnocení z Googlu (Nastavení), fotky provozovny a týmu, místa označená `[DOPLNIT …]`, poskytovatelé (Vercel, Supabase, Resend) v Ochraně osobních údajů. **Smazat zkušební auta a poptávky.**
 5. **Design:** Michal chce ještě trochu doladit vzhled (zatím bez konkrétního zadání, zeptat se ho). Reference vzhledu je `prototype/autobazar.html`, design tokeny v `docs/specifikace.md`, světlý i tmavý režim povinně.
 6. **Před ostrým spuštěním:** Vercel → Settings → Functions → region Frankfurt (fra1). Vercel Hobby je podle podmínek jen nekomerční, pro web firmy tarif Pro. Supabase Free po neaktivitě uspává projekt, zvážit Pro.
-7. **Po spuštění (doporučení):** Google firemní profil a Google Search Console (sitemap je na `/sitemap.xml`).
+7. **Upozornění na nové poptávky v zařízení správce (Web Push):** nová tabulka `push_subscriptions` (migrace `push_subscriptions`) → po nasazení `npm run db:deploy` (Session pooler). Klíče vygenerovat jednou příkazem `npx web-push generate-vapid-keys` a vložit do Vercelu jako `VAPID_PUBLIC_KEY` a `VAPID_PRIVATE_KEY` (volitelně `VAPID_SUBJECT`, např. `mailto:info@flauto.cz`), pak Redeploy. Klíče pak neměnit, jinak se musí všichni správci k upozorněním přihlásit znovu. Každý správce se v admin panelu přihlásí a v hlavičce klikne na „Zapnout upozornění“ (a povolí je v prohlížeči). Na iPhonu nejdřív přidat administraci na plochu (Sdílet → Přidat na plochu) a zapnout upozornění z ikony. Otestovat tlačítkem „Vyzkoušet“ a zkušební poptávkou. Ověřeno lokálně jen odesílání a ukládání; skutečné doručení do telefonu je třeba vyzkoušet na ostrém webu.
+8. **Po spuštění (doporučení):** Google firemní profil a Google Search Console (sitemap je na `/sitemap.xml`).
 
 ## Při další práci
 - Změna schématu: `npm run db:migrate` lokálně, commit migrace. Po nasazení na Vercel spustit proti produkční DB `DATABASE_URL="<Session pooler URL>" npm run db:deploy`. Pro migrace používejte *Session pooler* (port 5432), ne Transaction pooler.

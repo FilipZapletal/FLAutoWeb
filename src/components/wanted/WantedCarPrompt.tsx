@@ -204,6 +204,8 @@ export function WantedCarPrompt() {
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
+      // Na telefonu se kvůli prvnímu poli nemá hned vysunout klávesnice: focus dostane okno samotné.
+      if (window.matchMedia("(hover: none)").matches) dialog.focus({ preventScroll: true });
       document.body.style.overflow = "hidden";
     }
     return () => {
@@ -234,12 +236,13 @@ export function WantedCarPrompt() {
         ref={dialogRef}
         aria-labelledby="wc-title"
         aria-describedby="wc-desc"
+        tabIndex={-1}
         onClose={finish}
         onCancel={finish}
         onClick={(e) => {
           if (e.target === e.currentTarget) closeDialog();
         }}
-        className="m-auto max-h-[calc(100dvh-1.5rem)] w-[min(36rem,calc(100vw-1.5rem))] overflow-y-auto rounded-card border border-line bg-card p-0 text-fg shadow-2xl backdrop:bg-black/70"
+        className="m-auto max-h-[calc(100dvh-1.5rem)] outline-none w-[min(36rem,calc(100vw-1.5rem))] overflow-y-auto rounded-card border border-line bg-card p-0 text-fg shadow-2xl backdrop:bg-black/70"
       >
         {open && (
           <WantedCarForm

@@ -44,11 +44,11 @@ export function WantedBubble({ offerWanted, onOpenWanted, onHide }: { offerWante
   const paused = useRef(false);
   const phaseRef = useRef<Phase>("idle");
 
-  // Cinknutí při prvním objevení bublinky v této návštěvě (při návratu na úvodní stránku už ne).
+  // Cinknutí při prvním objevení bublinky v této návštěvě. Pokud prohlížeč zvuk zatím nepovolil
+  // (návštěvník ještě nikam neklikl), zkusí se to při dalším zobrazení bublinky na úvodní stránce.
   useEffect(() => {
     if (readSession().chimed) return;
-    patchSession({ chimed: true });
-    playChime();
+    if (playChime()) patchSession({ chimed: true });
   }, []);
 
   useEffect(() => {

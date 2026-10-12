@@ -219,7 +219,25 @@ model Admin {
   passwordHash String   @map("password_hash")
   createdAt    DateTime @default(now()) @map("created_at")
 
+  pushSubscriptions PushSubscription[]
+
   @@map("admins")
+}
+
+/// Zařízení přihlášeného admina, kterému chodí upozornění na nové poptávky (Web Push).
+/// Vzniká tlačítkem „Zapnout upozornění“ v administraci; neplatná zařízení se mažou při odesílání.
+model PushSubscription {
+  id        Int      @id @default(autoincrement())
+  adminId   Int      @map("admin_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@map("push_subscriptions")
 }
 
 model Setting {

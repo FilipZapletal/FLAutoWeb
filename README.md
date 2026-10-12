@@ -111,6 +111,8 @@ Demo vozy ze seedu jsou označené „DEMO“ (v popisu i na fotkách). Před sp
 | `RESEND_API_KEY` | ne | bez něj se e-maily jen vypíšou do konzole |
 | `EMAIL_FROM` | s Resend | odesílatel, doména musí být ověřená v Resend |
 | `CRON_SECRET` | na Vercelu | tajemství pro denní úklid poptávek (`/api/cron/purge-leads`, plánuje `vercel.json`); bez něj je endpoint vypnutý |
+| `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | pro upozornění | klíče pro upozornění na nové poptávky do zařízení správců (Web Push), vygenerují se `npx web-push generate-vapid-keys`; bez nich se tlačítko „Zapnout upozornění“ v adminu nezobrazí. Po nasazení je neměňte. |
+| `VAPID_SUBJECT` | ne | kontakt pro push služby, např. `mailto:info@flauto.cz` (výchozí `ADMIN_NOTIFY_EMAIL`, jinak `SITE_URL`) |
 | `ADMIN_NOTIFY_EMAIL` | ne | kam chodí upozornění na poptávky (jinak e-mail z Nastavení webu). Upozornění dostává vždy i odpovědná osoba z Nastavení (druhý majitel). |
 
 ## Nasazení (Vercel + Supabase)
