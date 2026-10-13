@@ -117,6 +117,12 @@ Type: INTEREST, TEST_DRIVE, RESERVATION, FINANCING, TRADE_IN, CALLBACK, **SERVIC
 ## 22. CRM
 Detail leadu: zákazník, kontakt, konkrétní vůz, typ, zpráva, datum, stav. Admin mění stav v pořadí Nová → Kontaktováno → V jednání → Rezervace → Prodáno, nebo Ztraceno.
 
+## 22a. Termín servisní objednávky (změna klienta 10/2026)
+- Zákazník si u servisní objednávky vybere **přání** (den a dopoledne/odpoledne). Majitel mu po telefonu termín potvrdí nebo domluví jiný a v detailu objednávky ho uloží (**Domluvený termín**). Tím objednávka přejde do stavu **Potvrzeno** (zeleně). Zrušení potvrzení vrátí přání zákazníka a stav Kontaktováno.
+- Platí vždy domluvený termín, jinak přání zákazníka: ukazuje ho nástěnka (**Nadcházející servisní termíny**, nejbližších 15, s popiskem „potvrzeno“ / „přání zákazníka“), seznam poptávek i mazání (objednávka se nemaže před termínem).
+- **Ranní připomenutí** (cca v 7:00): pokud je dnes nějaký servisní termín, přijde oběma majitelům e-mail a upozornění do zařízení se seznamem dnešních objednávek (část dne, služba, zákazník, telefon, vůz). Když dnes nic není, neposílá se nic. Zajišťuje ho plánovač (`/api/cron/booking-reminders`, `vercel.json`, potřebuje `CRON_SECRET`).
+- Stav Potvrzeno se nabízí jen u servisních objednávek. Stejně jako ostatní otevřené poptávky se po termínu a 30 dnech od poslední změny automaticky smaže.
+
 ## 22b. Uchovávání poptávek (změna klienta 10/2026)
 Poptávky, které nevedly k obchodu (stavy Nová, Kontaktováno, V jednání, Ztraceno), se **30 dní od posledního kontaktu** (poslední změny stavu) automaticky mažou. Rezervace a Prodáno se nemažou. Servisní objednávka s budoucím termínem se nemaže před termínem.
 

@@ -110,7 +110,7 @@ Demo vozy ze seedu jsou označené „DEMO“ (v popisu i na fotkách). Před sp
 | `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL` | při `s3` | S3-kompatibilní úložiště fotek, `S3_PUBLIC_URL` = veřejná URL bucketu |
 | `RESEND_API_KEY` | ne | bez něj se e-maily jen vypíšou do konzole |
 | `EMAIL_FROM` | s Resend | odesílatel, doména musí být ověřená v Resend |
-| `CRON_SECRET` | na Vercelu | tajemství pro denní úklid poptávek (`/api/cron/purge-leads`, plánuje `vercel.json`); bez něj je endpoint vypnutý |
+| `CRON_SECRET` | na Vercelu | tajemství pro plánované úlohy: denní úklid poptávek (`/api/cron/purge-leads`) a ranní připomenutí servisních termínů (`/api/cron/booking-reminders`), plánuje je `vercel.json`; bez něj jsou endpointy vypnuté |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | pro upozornění | klíče pro upozornění na nové poptávky do zařízení správců (Web Push), vygenerují se `npx web-push generate-vapid-keys`; bez nich se tlačítko „Zapnout upozornění“ v adminu nezobrazí. Po nasazení je neměňte. |
 | `VAPID_SUBJECT` | ne | kontakt pro push služby, např. `mailto:info@flauto.cz` (výchozí `ADMIN_NOTIFY_EMAIL`, jinak `SITE_URL`) |
 | `ADMIN_NOTIFY_EMAIL` | ne | kam chodí upozornění na poptávky (jinak e-mail z Nastavení webu). Upozornění dostává vždy i odpovědná osoba z Nastavení (druhý majitel). |

@@ -74,7 +74,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
                 <td>{l.vehicle ? `${l.vehicle.brand} ${l.vehicle.model}` : (l.car ?? "—")}</td>
                 <td><LeadTypeLabel type={l.type} /></td>
                 <td className="whitespace-nowrap">{formatBooking(l) ?? "—"}</td>
-                <td><LeadStatusSelect key={l.status} id={l.id} status={l.status} /></td>
+                <td><LeadStatusSelect key={l.status} id={l.id} status={l.status} type={l.type} /></td>
               </tr>
             ))}
             {leads.length === 0 && (

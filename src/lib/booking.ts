@@ -38,9 +38,37 @@ export function formatBookingDate(d: Date | string) {
   );
 }
 
-/** "po 12. 10. 2026, dopoledne" – nebo null, když lead termín nemá (starší servisní poptávky). */
-export function formatBooking(lead: { preferredDate: Date | null; preferredSlot: TimeSlot | null }) {
-  if (!lead.preferredDate) return null;
-  const slot = lead.preferredSlot ? `, ${TIME_SLOT_LABELS[lead.preferredSlot].toLowerCase()}` : "";
-  return `${formatBookingDate(lead.preferredDate)}${slot}`;
+type BookingFields = {
+  preferredDate: Date | null;
+  preferredSlot: TimeSlot | null;
+  confirmedDate?: Date | null;
+  confirmedSlot?: TimeSlot | null;
+};
+
+/** Platný termín objednávky: domluvený majitelem, jinak přání zákazníka. */
+export function effectiveBooking(lead: BookingFields) {
+  return lead.confirmedDate
+    ? { date: lead.confirmedDate, slot: lead.confirmedSlot ?? null, confirmed: true }
+    : { date: lead.preferredDate, slot: lead.preferredSlot, confirmed: false };
+}
+
+function describe(date: Date | null, slot: TimeSlot | null) {
+  if (!date) return null;
+  return `${formatBookingDate(date)}${slot ? `, ${TIME_SLOT_LABELS[slot].toLowerCase()}` : ""}`;
+}
+
+/** „po 12. 10. 2026, dopoledne“ – platný termín (potvrzený, jinak přání zákazníka); null, když objednávka termín nemá. */
+export function formatBooking(lead: BookingFields) {
+  const b = effectiveBooking(lead);
+  return describe(b.date, b.slot);
+}
+
+/** Termín, který si přál zákazník při objednání. */
+export function formatPreferredBooking(lead: BookingFields) {
+  return describe(lead.preferredDate, lead.preferredSlot);
+}
+
+/** Termín domluvený majitelem, nebo null. */
+export function formatConfirmedBooking(lead: BookingFields) {
+  return describe(lead.confirmedDate ?? null, lead.confirmedSlot ?? null);
 }

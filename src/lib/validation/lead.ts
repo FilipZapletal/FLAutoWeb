@@ -79,4 +79,17 @@ export const wantedLeadSchema = z.object({
 export const leadSchema = z.discriminatedUnion("kind", [vehicleLeadSchema, serviceLeadSchema, wantedLeadSchema]);
 export type LeadInput = z.infer<typeof leadSchema>;
 
-export const leadUpdateSchema = z.object({ status: z.enum(LeadStatus) }).strict();
+/** Změna stavu poptávky, nebo domluvený termín servisní objednávky (datum "RRRR-MM-DD", prázdné = zrušit). */
+const confirmedDate = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, { error: "Vyberte platné datum" })
+  .refine((v) => {
+    const d = new Date(`${v}T00:00:00.000Z`);
+    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v;
+  }, { error: "Vyberte platné datum" })
+  .nullable();
+
+export const leadUpdateSchema = z.union([
+  z.object({ status: z.enum(LeadStatus) }).strict(),
+  z.object({ confirmedDate, confirmedSlot: z.enum(TimeSlot).nullable() }).strict(),
+]);

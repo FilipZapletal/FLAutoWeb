@@ -12,14 +12,15 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  * Poptávky, které vedly k obchodu (Rezervace, Prodáno), se nemažou – jsou podkladem ke smlouvě
  * a účetnictví. Mažou se jen otevřené a ztracené.
  */
-export const PURGEABLE_STATUSES: LeadStatus[] = ["NEW", "CONTACTED", "NEGOTIATION", "LOST"];
+export const PURGEABLE_STATUSES: LeadStatus[] = ["NEW", "CONTACTED", "NEGOTIATION", "CONFIRMED", "LOST"];
 
 /** Kdy se poptávka automaticky smaže (null = nemaže se). Slouží pro informaci v administraci. */
-export function leadExpiresAt(lead: { status: LeadStatus; updatedAt: Date; preferredDate: Date | null }) {
+export function leadExpiresAt(lead: { status: LeadStatus; updatedAt: Date; preferredDate: Date | null; confirmedDate?: Date | null }) {
   if (!PURGEABLE_STATUSES.includes(lead.status)) return null;
   const byAge = lead.updatedAt.getTime() + LEAD_RETENTION_DAYS * DAY_MS;
   // Servisní termín v budoucnosti poptávku „drží“ aspoň do dne po termínu.
-  const byBooking = lead.preferredDate ? lead.preferredDate.getTime() + DAY_MS : 0;
+  const bookingDate = lead.confirmedDate ?? lead.preferredDate;
+  const byBooking = bookingDate ? bookingDate.getTime() + DAY_MS : 0;
   return new Date(Math.max(byAge, byBooking));
 }
 
@@ -31,8 +32,8 @@ export async function purgeExpiredLeads(now = new Date()) {
     where: {
       status: { in: PURGEABLE_STATUSES },
       updatedAt: { lt: cutoff },
-      // Neuplynulý servisní termín (objednáno dopředu) se nemaže.
-      OR: [{ preferredDate: null }, { preferredDate: { lt: today } }],
+      // Neuplynulý servisní termín (domluvený, jinak přání zákazníka) se nemaže.
+      OR: [{ confirmedDate: { lt: today } }, { confirmedDate: null, OR: [{ preferredDate: null }, { preferredDate: { lt: today } }] }],
     },
   });
   return count;

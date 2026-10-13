@@ -1,6 +1,6 @@
 import "server-only";
-import type { LeadStatus, LeadType, Prisma } from "@/generated/prisma/client";
-import { pragueToday } from "@/lib/booking";
+import type { LeadStatus, LeadType, Prisma, TimeSlot } from "@/generated/prisma/client";
+import { effectiveBooking, pragueToday } from "@/lib/booking";
 import { db } from "@/lib/db";
 import { getPublishedService } from "@/lib/services/public";
 import { formatKm, formatPrice } from "@/lib/format";
@@ -74,17 +74,55 @@ export async function getLeads(f: LeadListFilters = {}, take = 200) {
   });
 }
 
-/** Servisní objednávky s termínem od dneška, které ještě nejsou uzavřené (dashboard). */
-export async function getUpcomingBookings(take = 10) {
-  return db.lead.findMany({
-    where: {
-      type: "SERVICE",
-      preferredDate: { gte: new Date(`${pragueToday()}T00:00:00.000Z`) },
-      status: { notIn: ["SOLD", "LOST"] },
-    },
-    orderBy: [{ preferredDate: "asc" }, { preferredSlot: "asc" }, { createdAt: "asc" }],
-    take,
+const utcDay = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
+
+/** Servisní objednávka, jejíž platný termín (domluvený, jinak přání zákazníka) splňuje podmínku na datum. */
+function bookingDateWhere(date: Prisma.DateTimeFilter): Prisma.LeadWhereInput {
+  return { OR: [{ confirmedDate: date }, { confirmedDate: null, preferredDate: date }] };
+}
+
+/** Řazení podle platného termínu (den, dopoledne před odpolednem, pak podle vzniku). */
+function byBooking(a: Parameters<typeof effectiveBooking>[0] & { createdAt: Date }, b: typeof a) {
+  const ea = effectiveBooking(a);
+  const eb = effectiveBooking(b);
+  return (
+    (ea.date?.getTime() ?? 0) - (eb.date?.getTime() ?? 0) ||
+    (ea.slot ?? "").localeCompare(eb.slot ?? "") ||
+    a.createdAt.getTime() - b.createdAt.getTime()
+  );
+}
+
+/** Servisní objednávky s platným termínem od dneška, které ještě nejsou uzavřené (dashboard). */
+export async function getUpcomingBookings(take = 15) {
+  const rows = await db.lead.findMany({
+    where: { type: "SERVICE", status: { notIn: ["SOLD", "LOST"] }, ...bookingDateWhere({ gte: utcDay(pragueToday()) }) },
     include: { service: serviceSelect },
+  });
+  return rows.sort(byBooking).slice(0, take);
+}
+
+/** Servisní objednávky s platným termínem v daný den ("RRRR-MM-DD"), seřazené podle části dne. */
+export async function getBookingsOn(isoDate: string) {
+  const rows = await db.lead.findMany({
+    where: { type: "SERVICE", status: { notIn: ["SOLD", "LOST"] }, ...bookingDateWhere({ equals: utcDay(isoDate) }) },
+    include: { service: serviceSelect },
+  });
+  return rows.sort(byBooking);
+}
+
+/**
+ * Domluvený termín servisní objednávky. Prázdné datum termín zruší (platí zase přání zákazníka).
+ * Uložení termínu posune novou nebo rozjednanou objednávku do stavu Potvrzeno, zrušení ji vrátí na Kontaktováno.
+ * Vrací null, když objednávka neexistuje nebo není servisní.
+ */
+export async function updateLeadBooking(id: number, booking: { date: string | null; slot: TimeSlot | null }) {
+  const lead = await db.lead.findUnique({ where: { id }, select: { type: true, status: true } });
+  if (!lead || lead.type !== "SERVICE") return null;
+  const open: LeadStatus[] = ["NEW", "CONTACTED", "NEGOTIATION"];
+  const status = booking.date ? (open.includes(lead.status) ? "CONFIRMED" : lead.status) : lead.status === "CONFIRMED" ? "CONTACTED" : lead.status;
+  return db.lead.update({
+    where: { id },
+    data: { confirmedDate: booking.date ? utcDay(booking.date) : null, confirmedSlot: booking.date ? booking.slot : null, status },
   });
 }
 
@@ -103,7 +141,7 @@ export async function getDashboardStats() {
     db.vehicle.count({ where: { status: "DOSTUPNE", archivedAt: null } }),
     db.lead.count({ where: { status: "NEW" } }),
     db.vehicle.count({ where: { status: "REZERVOVANO", archivedAt: null } }),
-    db.lead.count({ where: { type: "SERVICE", status: { in: ["NEW", "CONTACTED", "NEGOTIATION"] } } }),
+    db.lead.count({ where: { type: "SERVICE", status: { in: ["NEW", "CONTACTED", "NEGOTIATION", "CONFIRMED"] } } }),
     db.vehicle.count({ where: { status: "PRODANO", soldAt: { gte: monthStart } } }),
     getLeads({}, 10),
     getUpcomingBookings(),

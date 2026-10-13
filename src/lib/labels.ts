@@ -94,6 +94,7 @@ export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   NEW: "Nová",
   CONTACTED: "Kontaktováno",
   NEGOTIATION: "V jednání",
+  CONFIRMED: "Potvrzeno",
   RESERVED: "Rezervace",
   SOLD: "Prodáno",
   LOST: "Ztraceno",

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { LeadStatusBadge, LeadTypeLabel, PageHead, StatCard, tableClass } from "@/components/admin/ui";
-import { formatBooking } from "@/lib/booking";
+import { effectiveBooking, formatBooking } from "@/lib/booking";
 import { formatDateTime, phoneDigits } from "@/lib/format";
 import { getDashboardStats } from "@/lib/leads/service";
 
@@ -37,7 +37,10 @@ export default async function DashboardPage() {
           <tbody>
             {s.upcomingBookings.map((l) => (
               <tr key={l.id} className="hover:bg-card2">
-                <td className="whitespace-nowrap font-semibold">{formatBooking(l)}</td>
+                <td className="whitespace-nowrap">
+                  <span className="font-semibold">{formatBooking(l)}</span>
+                  <div className="text-xs text-muted">{effectiveBooking(l).confirmed ? "potvrzeno" : "přání zákazníka"}</div>
+                </td>
                 <td>{l.service?.title ?? "—"}</td>
                 <td>
                   <Link href={`/admin/poptavky/${l.id}`} className="font-semibold hover:text-acc">{l.name}</Link>

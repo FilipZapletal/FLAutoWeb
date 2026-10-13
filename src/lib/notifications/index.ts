@@ -15,7 +15,7 @@ type LeadWithVehicle = Lead & {
 };
 
 /** Upozornění dostávají oba majitelé: hlavní e-mail webu a odpovědná osoba. */
-function adminRecipients(settings: SiteSettings) {
+export function adminRecipients(settings: SiteSettings) {
   return [...new Set([process.env.ADMIN_NOTIFY_EMAIL || settings.email, settings.responsibleEmail].filter((e): e is string => Boolean(e)))];
 }
 

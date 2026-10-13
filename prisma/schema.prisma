@@ -84,6 +84,8 @@ enum LeadStatus {
   NEW
   CONTACTED
   NEGOTIATION
+  /// Jen u servisní objednávky: termín je domluvený (potvrzený termín je v confirmedDate)
+  CONFIRMED
   RESERVED
   SOLD
   LOST
@@ -201,6 +203,9 @@ model Lead {
   serviceId     Int?       @map("service_id")
   preferredDate DateTime?  @map("preferred_date") @db.Date
   preferredSlot TimeSlot?  @map("preferred_slot")
+  /// Termín domluvený majitelem (může se lišit od přání zákazníka). Je-li vyplněn, platí místo preferredDate.
+  confirmedDate DateTime?  @map("confirmed_date") @db.Date
+  confirmedSlot TimeSlot?  @map("confirmed_slot")
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @updatedAt @map("updated_at")
 
@@ -210,6 +215,7 @@ model Lead {
   @@index([status, createdAt])
   @@index([type])
   @@index([type, preferredDate])
+  @@index([type, confirmedDate])
   @@map("leads")
 }
 

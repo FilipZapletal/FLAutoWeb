@@ -33,6 +33,7 @@ const LEAD_STATUS_STYLE: Record<LeadStatus, string> = {
   NEW: "bg-acc text-white",
   CONTACTED: "bg-amber-500 text-black",
   NEGOTIATION: "bg-sky-500 text-black",
+  CONFIRMED: "bg-emerald-500 text-black",
   RESERVED: "bg-violet-500 text-white",
   SOLD: "bg-sold text-[#0b0c0e]",
   LOST: "bg-card2 text-muted",
