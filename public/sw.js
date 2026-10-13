@@ -10,13 +10,20 @@ self.addEventListener("push", (event) => {
     data = event.data ? event.data.json() : {};
   } catch {}
   event.waitUntil(
-    self.registration.showNotification(data.title || "FL Auto", {
-      body: data.body || "",
-      icon: "/icons/admin-192.png",
-      badge: "/icons/admin-192.png",
-      tag: data.tag || undefined,
-      data: { url: data.url || "/admin/poptavky" },
-    }),
+    (async () => {
+      // Zvuk upozornění určuje telefon (nastavení Oznámení), vlastní zvuk web push neumí. Je-li administrace
+      // právě otevřená, ozve se navíc cinknutí přímo ve stránce.
+      const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      windows.forEach((w) => w.postMessage({ type: "push", tag: data.tag || null }));
+      await self.registration.showNotification(data.title || "FL Auto", {
+        body: data.body || "",
+        icon: "/icons/admin-192.png",
+        tag: data.tag || undefined,
+        silent: false,
+        vibrate: [200, 100, 200],
+        data: { url: data.url || "/admin/poptavky" },
+      });
+    })(),
   );
 });
 

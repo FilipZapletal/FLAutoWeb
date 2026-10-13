@@ -11,7 +11,7 @@ export default async function AdminPanelLayout({ children }: LayoutProps<"/admin
   const admin = await requireAdminPage();
   return (
     <>
-      <header className="border-b border-line bg-bg">
+      <header className="border-b border-line bg-bg pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <Link href="/admin" className="flex items-center gap-3">
             <Logo height={36} sizes="90px" />
@@ -24,7 +24,7 @@ export default async function AdminPanelLayout({ children }: LayoutProps<"/admin
           </div>
         </div>
       </header>
-      <div className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 py-6 md:grid-cols-[180px_minmax(0,1fr)]">
+      <div className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 md:grid-cols-[180px_minmax(0,1fr)]">
         <AdminNav />
         <main className="min-w-0">{children}</main>
       </div>

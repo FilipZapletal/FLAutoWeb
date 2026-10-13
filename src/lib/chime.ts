@@ -1,4 +1,4 @@
-// Zvuk při objevení bublinky. Hraje se jen pokud ho prohlížeč povolí: zvuk smí začít až po prvním
+// Zvuk cinknutí (bublinka na webu, nová poptávka v otevřené administraci). Hraje se jen pokud ho prohlížeč povolí: zvuk smí začít až po prvním
 // kliknutí, klepnutí nebo stisku klávesy na webu (samotné posouvání stránky se nepočítá),
 // jinak se nezahraje nic a bublinka se objeví tiše.
 

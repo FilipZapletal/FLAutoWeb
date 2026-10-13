@@ -20,7 +20,7 @@ import {
   showBubble,
   TIMER_MS,
 } from "./storage";
-import { armChime } from "./sound";
+import { armChime } from "@/lib/chime";
 import { WantedBubble } from "./WantedBubble";
 import { WantedCarForm } from "./WantedCarForm";
 

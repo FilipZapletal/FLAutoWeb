@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BellIcon } from "@/components/ui/icons";
+import { armChime, playChime } from "@/lib/chime";
 
 type State = "loading" | "hidden" | "ios-install" | "unsupported" | "denied" | "off" | "on";
 
@@ -30,6 +31,18 @@ export function PushToggle() {
   const [state, setState] = useState<State>("loading");
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+
+  // Je-li administrace otevřená, nová poptávka navíc zacinká přímo ve stránce (zvuk systémového upozornění
+  // určuje telefon). Zvuk smí začít až po prvním klepnutí na stránku.
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+    armChime();
+    const onMessage = (e: MessageEvent) => {
+      if (e.data?.type === "push") playChime();
+    };
+    navigator.serviceWorker.addEventListener("message", onMessage);
+    return () => navigator.serviceWorker.removeEventListener("message", onMessage);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

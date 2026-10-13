@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // Administraci lze přidat na plochu telefonu (na iPhonu je to podmínka pro upozornění).
   manifest: "/admin.webmanifest",
   icons: { apple: "/icons/admin-180.png" },
-  appleWebApp: { capable: true, title: "FL Auto admin", statusBarStyle: "black-translucent" },
+  appleWebApp: { capable: true, title: "FL Auto admin", statusBarStyle: "black" },
 };
 
 export default function AdminRootLayout({ children }: LayoutProps<"/admin">) {

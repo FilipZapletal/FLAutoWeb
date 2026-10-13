@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: { default: `${SITE_NAME} – prodej ojetých vozů`, template: `%s | ${SITE_NAME}` },
   description: "Ojeté vozy s čistou historií. Každé auto prochází kontrolou před prodejem. Prodej, servis, mytí a příprava na STK.",
+  // Název ikony po přidání webu na plochu telefonu (web se přitom neotevírá jako samostatná aplikace).
+  appleWebApp: { capable: false, title: SITE_NAME },
   openGraph: { siteName: SITE_NAME, locale: "cs_CZ", type: "website", images: ["/logo-dark.png"] },
 };
 

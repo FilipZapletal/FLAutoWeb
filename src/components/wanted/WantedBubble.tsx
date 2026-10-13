@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { type ComponentType, useEffect, useRef, useState } from "react";
 import { HeartIcon, ShieldIcon, SparkleIcon, WrenchIcon } from "@/components/ui/icons";
-import { playChime } from "./sound";
+import { playChime } from "@/lib/chime";
 import { patchSession, readSession } from "./storage";
 
 type Item = {
