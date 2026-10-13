@@ -6,17 +6,21 @@ import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 import type { OwnerContact } from "@/lib/contacts";
 import { SITE_TAGLINE } from "@/lib/site";
 import { MobileMenu } from "./MobileMenu";
+import { StandaloneBackButton } from "./StandaloneBackButton";
 import { MAIN_NAV } from "./nav";
 
 export function Header({ contacts }: { contacts: OwnerContact[] }) {
   const callable = contacts.filter((c) => c.tel);
   return (
-    <header className="sticky top-0 z-30 border-b border-line/50 bg-bg/50 backdrop-blur-xl backdrop-saturate-150 pt-[env(safe-area-inset-top)]">
+    <header className="group/hdr sticky top-0 z-30 border-b border-line/50 bg-bg/50 backdrop-blur-xl backdrop-saturate-150 pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="FL Auto – úvodní stránka">
-          <Logo height={40} priority sizes="100px" />
-          <span className="ml-1 hidden text-[10px] uppercase tracking-widest text-muted lg:block">{SITE_TAGLINE}</span>
-        </Link>
+        <div className="flex min-w-0 items-center gap-2 max-sm:[&:has([data-back])_img]:!h-8">
+          <StandaloneBackButton />
+          <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="FL Auto – úvodní stránka">
+            <Logo height={40} priority sizes="100px" />
+            <span className="ml-1 hidden text-[10px] uppercase tracking-widest text-muted lg:block">{SITE_TAGLINE}</span>
+          </Link>
+        </div>
 
         <nav className="hidden items-center gap-6 text-sm md:flex" aria-label="Hlavní navigace">
           {MAIN_NAV.map((item) => (
@@ -28,7 +32,7 @@ export function Header({ contacts }: { contacts: OwnerContact[] }) {
           <ThemeSwitch />
         </nav>
 
-        <div className="flex items-center gap-3 md:hidden">
+        <div className="flex items-center gap-3 max-sm:group-has-[[data-back]]/hdr:gap-2 md:hidden">
           <FavoritesLink variant="mobile" />
           {callable.length === 1 ? (
             <a href={`tel:${callable[0].tel}`} className="btn-outline btn-sm" aria-label={`Zavolat ${callable[0].phone}`}>

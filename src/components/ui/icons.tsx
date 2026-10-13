@@ -152,3 +152,9 @@ export const BellIcon = (p: P) => (
     <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
   </Base>
 );
+
+export const ChevronLeftIcon = (p: P) => (
+  <Base {...p}>
+    <path d="m15 18-6-6 6-6" />
+  </Base>
+);
