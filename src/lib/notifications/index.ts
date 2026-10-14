@@ -57,7 +57,7 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
   const booking = formatBooking(lead);
   const items = parseOrderItems(lead.items);
   const total = orderTotal(items);
-  const ordered = Boolean(booking) || items.length > 0;
+  const ordered = lead.type === "SERVICE" && (Boolean(booking) || items.length > 0);
   const itemLines = items.length
     ? [
         "Objednané položky:",
@@ -80,9 +80,9 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
         ? `Hledané auto – ${lead.car}`
         : items.length > 0
           ? `Objednávka – ${service ?? "služba"}${booking ? ` – ${booking}` : ""}`
-          : booking
+          : booking && lead.type === "SERVICE"
             ? `Objednávka do servisu – ${booking}`
-            : `Nová poptávka – ${vehicleName ?? LEAD_TYPE_LABELS[lead.type]}`,
+            : `Nová poptávka – ${vehicleName ?? LEAD_TYPE_LABELS[lead.type]}${booking ? ` – ${booking}` : ""}`,
       text: [
         wanted ? "Zákazník hledá auto, které není v nabídce – poptávka z webu FL Auto" : "Nová poptávka z webu FL Auto",
         wanted ? "Odpovězte mu prosím, zda je poptávka reálná, případně ji potvrďte." : null,
@@ -126,7 +126,7 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
           vehicleName ? `\nVaše poptávka: ${vehicleName}` : null,
           service ? `\nSlužba: ${service}` : null,
           itemLines ? `\n${itemLines.join("\n")}` : null,
-          booking ? `Preferovaný termín: ${booking}` : null,
+          booking ? `Preferovaný termín: ${booking}${ordered ? "" : " (zatím předběžný, ozveme se vám a potvrdíme ho)"}` : null,
           "",
           "FL Auto",
           settings.address,

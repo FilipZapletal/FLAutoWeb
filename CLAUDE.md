@@ -19,7 +19,7 @@ Next.js (App Router) + TypeScript + Tailwind CSS, PostgreSQL (např. Supabase: D
 - Admin heslo nikdy v kódu, jen hash v DB / env proměnné.
 - Cena: u akční ceny se zobrazuje **pouze aktuální cena**, žádná přeškrtnutá původní.
 - Prodané vozy se **nemažou** – zůstávají v katalogu se zeleným štítkem „Prodáno" (rezervované červený „Rezervováno").
-- Výkup vozů se **nenabízí**. Místo něj je stránka Servis. Protiúčet zůstává jen jako typ poptávky u konkrétního vozu.
+- Výkup vozů se **nenabízí**. Místo něj je stránka Servis. Financování ani protiúčet se **nenabízí** (formulář u vozu je nemá; staré poptávky těchto typů zůstávají čitelné).
 - Světlý i tmavý režim jsou povinné (viz `docs/specifikace.md`).
 - Loga: `public/logo-dark.png` (tmavý režim), `public/logo-light.png` (světlý režim). Nekopírovat cizí loga ani vodoznakované návrhy.
 

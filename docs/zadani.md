@@ -63,12 +63,13 @@ V DB celý, veřejně maskovaný (např. `WBA********0001`), admin vidí celý. 
 Strukturovaný, rozšiřitelný systém (tabulky `equipment`, `vehicle_equipment`). Kategorie: Bezpečnost (ABS, ESP, airbagy, asistent jízdního pruhu, mrtvý úhel), Komfort (klimatizace, vyhřívaná sedadla, kůže, tempomat, parkovací kamera), Multimédia (CarPlay, Android Auto, Bluetooth, navigace), Exteriér (LED světla, alu kola, tažné zařízení).
 
 ## 12. Poptávka u vozu
-Blok „Máte zájem o tento vůz?": jméno, telefon, e-mail, typ zájmu (prohlídka, rezervace, financování, protiúčet, zavolat zpět), zpráva, CTA „Odeslat poptávku", vedle toho Zavolat a WhatsApp. Po odeslání: validace → uložení leadu → potvrzení → e-mail administraci → potvrzovací e-mail zákazníkovi.
+Blok „Máte zájem o tento vůz?": jméno, telefon, e-mail, typ zájmu (prohlídka, rezervace, zavolat zpět; **financování a protiúčet se nenabízí**), nepovinný preferovaný den a část dne (dopoledne/odpoledne, jako u servisu), zpráva, CTA „Odeslat poptávku", vedle toho Zavolat a WhatsApp. Po odeslání: validace → uložení leadu → potvrzení → e-mail administraci → potvrzovací e-mail zákazníkovi.
 
 ## 13. Rezervace prohlídky (fáze 2)
 Datum, čas, jméno, telefon, e-mail; propojeno s vozem; viditelné v adminu; stavy NOVÁ, POTVRZENA, ZRUŠENA, VYŘÍZENA.
 
-## 14. Financování (fáze 2)
+## 14. Financování (nenabízí se)
+**Klient 10/2026: FL Auto financování nenabízí.** Níže je původní nápad, neimplementovat.
 „Financování od X Kč/měsíc" a komponenta „Spočítat financování" (cena, akontace, délka). Výpočet vždy označit jako **orientační**, nevymýšlet úvěrové podmínky.
 
 ## 15. Servis `/servis` (nahrazuje výkup)
@@ -93,8 +94,8 @@ Samostatná služba na stránce Servis (`/servis/crystal-finish`) s vlastním ce
 ## 15d. Recenze zákazníků (změna klienta 10/2026)
 Sekce „Spokojení zákazníci“ na úvodní stránce (pod blokem O autobazaru) a na Servisu: karty s hvězdami, jménem a textem, listování prstem/šipkami, delší text se rozbalí. Recenze jsou dvojího původu: (1) zadá je admin (např. přepis z Googlu), (2) napíše je návštěvník tlačítkem **„Napsat recenzi“** (jméno, 1–5 hvězd, text bez odkazů). Recenze z webu se **zobrazí až po schválení** v administraci (Recenze → Schválit); majitelé dostanou e-mailem upozornění a na nástěnce je počet recenzí ke schválení. Ochrana proti spamu: skryté pole, limit 3 recenze za hodinu z jedné IP. Pilulka „Recenze nejsou ověřené“ uvádí, že se neověřuje, zda recenzi napsal skutečný zákazník (provozovatel potvrdil, že nebude zveřejňovat vymyšlené recenze).
 
-## 16. Protiúčet
-Jen jako typ poptávky `TRADE_IN` u konkrétního vozu (bez samostatné stránky).
+## 16. Protiúčet (nenabízí se)
+**Klient 10/2026: FL Auto protiúčet nenabízí.** Typ poptávky `TRADE_IN` už se ve formuláři u vozu neukazuje (zůstal jen kvůli starým poptávkám).
 
 ## 17. Administrace
 Zabezpečený login. Dashboard: aktivní vozy, nové poptávky, rezervace, servisní poptávky, prodáno tento měsíc, tabulka „Poslední poptávky" (zákazník, vůz, typ, datum, status).

@@ -52,7 +52,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
           <label className="label" htmlFor="flt-type">Typ</label>
           <select id="flt-type" name="type" defaultValue={type ?? ""} className="field w-auto">
             <option value="">Všechny</option>
-            {Object.entries(LEAD_TYPE_LABELS).map(([k, l]) => (
+            {Object.entries(LEAD_TYPE_LABELS).filter(([k]) => (k !== "FINANCING" && k !== "TRADE_IN") || k === type).map(([k, l]) => (
               <option key={k} value={k}>{l}</option>
             ))}
           </select>

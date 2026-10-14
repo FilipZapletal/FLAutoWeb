@@ -23,7 +23,16 @@ export async function createLead(input: LeadInput) {
   if (input.kind === "vehicle") {
     const vehicle = await db.vehicle.findFirst({ where: { id: input.vehicleId, ...PUBLIC_VEHICLE_WHERE }, select: { id: true } });
     if (!vehicle) throw new LeadVehicleNotFoundError();
-    data = { vehicleId: vehicle.id, name: input.name, phone: input.phone, email: input.email, type: input.type, message: input.message };
+    data = {
+      vehicleId: vehicle.id,
+      name: input.name,
+      phone: input.phone,
+      email: input.email,
+      type: input.type,
+      message: input.message,
+      preferredDate: input.preferredDate,
+      preferredSlot: input.preferredDate ? input.preferredSlot : null,
+    };
   } else if (input.kind === "wanted") {
     data = {
       vehicleId: null,

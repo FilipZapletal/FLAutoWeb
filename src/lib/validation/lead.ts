@@ -18,17 +18,6 @@ const email = z.preprocess(
 /** Honeypot – skryté pole, které vyplní jen roboti. */
 const honeypot = z.string().max(0).optional().or(z.literal(""));
 
-export const vehicleLeadSchema = z.object({
-  kind: z.literal("vehicle"),
-  vehicleId: z.number().int().positive(),
-  name: requiredText(120),
-  phone,
-  email,
-  type: z.enum(VEHICLE_LEAD_TYPES, { error: "Vyberte typ zájmu" }),
-  message: optionalText(3000),
-  website: honeypot,
-});
-
 /** Preferovaný den servisu "RRRR-MM-DD" → Date (UTC půlnoc). Pracovní den od zítřka do 60 dní. */
 const preferredDate = z
   .string({ error: "Vyberte datum" })
@@ -43,6 +32,23 @@ const preferredDate = z
     else if (isWeekend(s)) ctx.addIssue({ code: "custom", message: "Vyberte pracovní den (sobota jen po telefonické domluvě)" });
   })
   .transform((s) => new Date(`${s}T00:00:00.000Z`));
+
+/** Nepovinný den: prázdné pole → null, jinak stejná pravidla jako u objednávky do servisu. */
+const optionalPreferredDate = z.preprocess((v) => (v === "" || v == null ? null : v), preferredDate.nullable());
+
+export const vehicleLeadSchema = z.object({
+  kind: z.literal("vehicle"),
+  vehicleId: z.number().int().positive(),
+  name: requiredText(120),
+  phone,
+  email,
+  type: z.enum(VEHICLE_LEAD_TYPES, { error: "Vyberte typ zájmu" }),
+  /** Nepovinný preferovaný den a část dne (prohlídka, zavolání) */
+  preferredDate: optionalPreferredDate,
+  preferredSlot: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(TimeSlot).nullable()),
+  message: optionalText(3000),
+  website: honeypot,
+});
 
 export const serviceLeadSchema = z.object({
   kind: z.literal("service"),
@@ -59,9 +65,6 @@ export const serviceLeadSchema = z.object({
 });
 
 /** „Sehnat auto na přání“ – zákazník hledá vůz, který není v nabídce. */
-/** Nepovinný den: prázdné pole → null, jinak stejná pravidla jako u objednávky do servisu. */
-const optionalPreferredDate = z.preprocess((v) => (v === "" || v == null ? null : v), preferredDate.nullable());
-
 /** Objednávka s výběrem položek z ceníku služby (Crystal Finish). Ceny se na serveru vždy berou z ceníku, ne z formuláře. */
 export const orderLeadSchema = z.object({
   kind: z.literal("order"),

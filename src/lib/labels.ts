@@ -68,20 +68,16 @@ export const LEAD_TYPE_LABELS: Record<LeadType, string> = {
   WANTED_CAR: "Hledané auto",
 };
 
-/** Typy, které si zákazník vybírá ve formuláři u vozu (v tomto pořadí). */
+/** Typy, které si zákazník vybírá ve formuláři u vozu (v tomto pořadí). Financování a protiúčet se nenabízí (staré poptávky těchto typů zůstávají čitelné v LEAD_TYPE_LABELS). */
 export const VEHICLE_LEAD_TYPES = [
   "INTEREST",
   "RESERVATION",
-  "FINANCING",
-  "TRADE_IN",
   "CALLBACK",
 ] as const satisfies readonly LeadType[];
 
 export const VEHICLE_LEAD_TYPE_OPTIONS: Record<(typeof VEHICLE_LEAD_TYPES)[number], string> = {
   INTEREST: "Mám zájem o prohlídku",
   RESERVATION: "Chci vůz rezervovat",
-  FINANCING: "Chci financování",
-  TRADE_IN: "Chci protiúčet",
   CALLBACK: "Chci zavolat zpět",
 };
 
