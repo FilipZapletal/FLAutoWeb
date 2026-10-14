@@ -20,6 +20,8 @@ export default async function NewServicePage() {
           description: "",
           priceNote: "",
           contactPhone: "",
+          contactName: "",
+          pickItems: false,
           metaTitle: "",
           metaDescription: "",
           published: true,

@@ -1,7 +1,7 @@
 import "server-only";
 import { effectiveBooking, pragueToday } from "@/lib/booking";
 import { getBookingsOn } from "@/lib/leads/service";
-import { TIME_SLOT_LABELS } from "@/lib/labels";
+import { LEAD_TYPE_LABELS, TIME_SLOT_LABELS } from "@/lib/labels";
 import { getSettings } from "@/lib/settings";
 import { siteUrl } from "@/lib/site";
 import { sendEmail } from "./email";
@@ -12,7 +12,7 @@ import { sendPush } from "./push";
 const plural = (n: number, accusative = false) => (n === 1 ? (accusative ? "objednávku" : "objednávka") : n >= 2 && n <= 4 ? "objednávky" : "objednávek");
 
 /**
- * Ranní připomenutí: servisní objednávky s dnešním termínem (domluveným, jinak přáním zákazníka)
+ * Ranní připomenutí: objednávky (servis, prohlídky vozů…) s dnešním termínem (domluveným, jinak přáním zákazníka)
  * přijdou oběma majitelům e-mailem a jako upozornění do zařízení. Když dnes nic není, neposílá se nic.
  * Vrací počet dnešních objednávek.
  */
@@ -26,16 +26,16 @@ export async function sendBookingReminders(now = new Date()) {
       id: b.id,
       when: slot ? TIME_SLOT_LABELS[slot].toLowerCase() : "bez upřesnění",
       confirmed,
-      service: b.service?.title ?? "Servis",
+      service: b.type === "SERVICE" ? (b.service?.title ?? "Servis") : `${LEAD_TYPE_LABELS[b.type]}${b.vehicle ? `: ${b.vehicle.brand} ${b.vehicle.model}` : ""}`,
       name: b.name,
       phone: b.phone,
       car: b.car,
     };
   });
-  const title = `Dnes v servisu: ${items.length} ${plural(items.length)}`;
+  const title = `Dnes na programu: ${items.length} ${plural(items.length)}`;
 
   const text = [
-    `Dnes máte v servisu ${items.length} ${plural(items.length, true)}:`,
+    `Dnes máte na programu ${items.length} ${plural(items.length, true)}:`,
     "",
     ...items.map((i) =>
       [`• ${i.when}${i.confirmed ? "" : " (přání zákazníka, nepotvrzeno)"} – ${i.service}`, `  ${i.name}, ${i.phone}${i.car ? `, ${i.car}` : ""}`, `  ${siteUrl(`/admin/poptavky/${i.id}`)}`].join("\n"),

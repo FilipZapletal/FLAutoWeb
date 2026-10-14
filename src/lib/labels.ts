@@ -100,6 +100,9 @@ export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   LOST: "Ztraceno",
 };
 
+/** Pořadí stavů ve výběru (Potvrzeno = domluvený termín, před jednáním o koupi). */
+export const LEAD_STATUS_ORDER: LeadStatus[] = ["NEW", "CONTACTED", "CONFIRMED", "NEGOTIATION", "RESERVED", "SOLD", "LOST"];
+
 export const ORIGIN_OPTIONS = ["ČR", "Dovoz"] as const;
 
 export const SERVICE_ICON_LABELS: Record<ServiceIcon, string> = {

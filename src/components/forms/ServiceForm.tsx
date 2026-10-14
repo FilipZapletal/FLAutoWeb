@@ -11,7 +11,7 @@ import { useJsonSubmit } from "./useJsonSubmit";
  * Rozsah kalendáře se nastaví až v prohlížeči podle dnešního data (HTML stránky
  * může pocházet z cache a nemá se lišit mezi serverem a klientem). Kontroluje se i na serveru.
  */
-function setDateRange(el: HTMLInputElement | null) {
+export function setDateRange(el: HTMLInputElement | null) {
   if (!el) return;
   const { min, max } = bookingRange();
   el.min = min;

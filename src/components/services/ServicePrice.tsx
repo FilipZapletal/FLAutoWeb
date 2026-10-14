@@ -4,7 +4,7 @@ import type { ServicePrice } from "@/lib/validation/service";
 export const priceText = (p: Pick<ServicePrice, "price" | "from">) => `${p.from ? "od " : ""}${formatPrice(p.price)}`;
 
 /** Položky ceníku seskupené podle nadpisu sekce (pořadí zůstává, jak je zadané). */
-function groupPrices(prices: ServicePrice[]) {
+export function groupPrices(prices: ServicePrice[]) {
   const groups: { title: string | null; rows: ServicePrice[] }[] = [];
   for (const p of prices) {
     const last = groups[groups.length - 1];

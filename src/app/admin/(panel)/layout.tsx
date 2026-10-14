@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { PushToggle } from "@/components/admin/PushToggle";
+import { Toaster } from "@/components/admin/Toaster";
 import { StandaloneBackButton } from "@/components/layout/StandaloneBackButton";
 import { Logo } from "@/components/ui/Logo";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
@@ -32,6 +33,7 @@ export default async function AdminPanelLayout({ children }: LayoutProps<"/admin
         <AdminNav />
         <main className="min-w-0">{children}</main>
       </div>
+      <Toaster />
     </>
   );
 }

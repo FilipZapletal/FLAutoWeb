@@ -1,13 +1,16 @@
 import Link from "next/link";
+import { LeadDeleteButton } from "@/components/admin/LeadDeleteButton";
 import { LeadStatusSelect } from "@/components/admin/LeadStatusSelect";
 import { LeadTypeLabel, PageHead, tableClass } from "@/components/admin/ui";
 import { GetForm } from "@/components/ui/GetForm";
 import { LeadStatus, LeadType } from "@/generated/prisma/enums";
-import { formatBooking } from "@/lib/booking";
+import { effectiveBooking, formatBooking } from "@/lib/booking";
 import { formatDateTime, phoneDigits } from "@/lib/format";
-import { LEAD_STATUS_LABELS, LEAD_TYPE_LABELS } from "@/lib/labels";
+import { CARS_CATEGORY, WANTED_CATEGORY, leadCategory, serviceCategory } from "@/lib/lead-categories";
+import { LEAD_STATUS_LABELS, LEAD_STATUS_ORDER, LEAD_TYPE_LABELS, VEHICLE_STATUS_LABELS } from "@/lib/labels";
 import { LEAD_RETENTION_DAYS } from "@/lib/leads/retention";
 import { getLeads } from "@/lib/leads/service";
+import { getPublicServices } from "@/lib/services/public";
 
 export const metadata = { title: "Poptávky" };
 
@@ -15,7 +18,10 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
   const sp = await searchParams;
   const status = typeof sp.status === "string" && sp.status in LeadStatus ? (sp.status as LeadStatus) : undefined;
   const type = typeof sp.type === "string" && sp.type in LeadType ? (sp.type as LeadType) : undefined;
-  const leads = await getLeads({ status, type });
+  const services = await getPublicServices();
+  const categories = [CARS_CATEGORY, ...services.map(serviceCategory), WANTED_CATEGORY];
+  const section = typeof sp.sluzba === "string" && categories.some((c) => c.key === sp.sluzba) ? sp.sluzba : undefined;
+  const leads = await getLeads({ status, type, section });
 
   return (
     <>
@@ -28,8 +34,17 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
           <label className="label" htmlFor="flt-status">Stav</label>
           <select id="flt-status" name="status" defaultValue={status ?? ""} className="field w-auto">
             <option value="">Všechny</option>
-            {Object.entries(LEAD_STATUS_LABELS).map(([k, l]) => (
-              <option key={k} value={k}>{l}</option>
+            {LEAD_STATUS_ORDER.map((k) => (
+              <option key={k} value={k}>{LEAD_STATUS_LABELS[k]}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="label" htmlFor="flt-section">Služba</label>
+          <select id="flt-section" name="sluzba" defaultValue={section ?? ""} className="field w-auto">
+            <option value="">Všechny</option>
+            {categories.map((c) => (
+              <option key={c.key} value={c.key}>{c.label}</option>
             ))}
           </select>
         </div>
@@ -43,7 +58,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
           </select>
         </div>
         <button className="btn-outline">Filtrovat</button>
-        {(status || type) && <Link href="/admin/poptavky" className="pb-2 text-sm text-muted underline">Zrušit</Link>}
+        {(status || type || section) && <Link href="/admin/poptavky" className="pb-2 text-sm text-muted underline">Zrušit</Link>}
       </GetForm>
 
       <div className="card overflow-x-auto">
@@ -57,6 +72,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
               <th>Typ</th>
               <th>Termín</th>
               <th>Stav</th>
+              <th><span className="sr-only">Smazat</span></th>
             </tr>
           </thead>
           <tbody>
@@ -71,15 +87,30 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
                   <a href={`tel:${phoneDigits(l.phone)}`} className="hover:text-acc">{l.phone}</a>
                   {l.email && <div className="text-xs text-muted">{l.email}</div>}
                 </td>
-                <td>{l.vehicle ? `${l.vehicle.brand} ${l.vehicle.model}` : (l.car ?? "—")}</td>
-                <td><LeadTypeLabel type={l.type} /></td>
-                <td className="whitespace-nowrap">{formatBooking(l) ?? "—"}</td>
+                <td>
+                  {l.vehicle ? `${l.vehicle.brand} ${l.vehicle.model}` : (l.car ?? "—")}
+                  {l.vehicle && l.vehicle.status !== "DOSTUPNE" && <div className="text-xs text-muted">vůz: {VEHICLE_STATUS_LABELS[l.vehicle.status].toLowerCase()}</div>}
+                </td>
+                <td>
+                  <span className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: leadCategory(l).color }} aria-hidden="true" />
+                    <span>
+                      <LeadTypeLabel type={l.type} />
+                      {l.type === "SERVICE" && l.service && <span className="block text-xs text-muted">{l.service.title}</span>}
+                    </span>
+                  </span>
+                </td>
+                <td className="whitespace-nowrap">
+                  {formatBooking(l) ?? "—"}
+                  {formatBooking(l) && <div className="text-xs text-muted">{effectiveBooking(l).confirmed ? "potvrzeno" : "přání zákazníka"}</div>}
+                </td>
                 <td><LeadStatusSelect key={l.status} id={l.id} status={l.status} type={l.type} /></td>
+                <td><LeadDeleteButton id={l.id} name={l.name} /></td>
               </tr>
             ))}
             {leads.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-muted">Žádné poptávky.</td>
+                <td colSpan={8} className="text-muted">Žádné poptávky.</td>
               </tr>
             )}
           </tbody>

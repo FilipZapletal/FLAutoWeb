@@ -8,7 +8,7 @@ export function useAdminAction() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
-  async function run(url: string, method: "PUT" | "DELETE" | "POST", body?: unknown) {
+  async function run(url: string, method: "PUT" | "DELETE" | "POST", body?: unknown, onDone?: (data: Record<string, unknown>) => void) {
     setPending(true);
     try {
       const res = await fetch(url, {
@@ -25,6 +25,7 @@ export function useAdminAction() {
         alert(data.error ?? "Akce se nepovedla.");
         return false;
       }
+      if (onDone) onDone(await res.json().catch(() => ({})));
       router.refresh();
       return true;
     } finally {

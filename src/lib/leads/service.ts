@@ -1,18 +1,22 @@
 import "server-only";
-import type { LeadStatus, LeadType, Prisma, TimeSlot } from "@/generated/prisma/client";
+import type { LeadStatus, LeadType, Prisma, TimeSlot, VehicleStatus } from "@/generated/prisma/client";
 import { effectiveBooking, pragueToday } from "@/lib/booking";
 import { db } from "@/lib/db";
-import { getPublishedService } from "@/lib/services/public";
+import { CARS_CATEGORY, SERVICE_KEY_PREFIX, WANTED_CATEGORY, serviceCategory, type LeadCategory } from "@/lib/lead-categories";
+import { getPublicServices, getPublishedService } from "@/lib/services/public";
 import { formatKm, formatPrice } from "@/lib/format";
 import { BODY_TYPE_LABELS, FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/labels";
 import type { LeadInput } from "@/lib/validation/lead";
 import { countPendingReviews } from "@/lib/reviews/service";
 import { PUBLIC_VEHICLE_WHERE } from "@/lib/vehicles/public";
+import { parseServicePrices } from "@/lib/validation/service";
 
 export class LeadVehicleNotFoundError extends Error {}
+/** Vybrané položky ceníku neexistují (ceník se mezitím změnil). */
+export class LeadItemsError extends Error {}
 
-const vehicleSelect = { select: { brand: true, model: true, version: true, slug: true } } as const;
-const serviceSelect = { select: { title: true } } as const;
+const vehicleSelect = { select: { brand: true, model: true, version: true, slug: true, status: true } } as const;
+const serviceSelect = { select: { id: true, slug: true, title: true } } as const;
 
 export async function createLead(input: LeadInput) {
   let data: Prisma.LeadUncheckedCreateInput;
@@ -29,6 +33,29 @@ export async function createLead(input: LeadInput) {
       type: "WANTED_CAR",
       car: input.car,
       message: wantedCarMessage(input),
+    };
+  } else if (input.kind === "order") {
+    const service = await getPublishedService(input.serviceId);
+    if (!service || !service.pickItems) throw new LeadItemsError();
+    // Položky a ceny se berou z ceníku služby, ne z toho, co poslal prohlížeč.
+    const catalog = parseServicePrices(service.prices);
+    const items = [...new Set(input.items)].flatMap((label) => {
+      const hit = catalog.find((p) => p.label === label);
+      return hit ? [{ label: hit.label, price: hit.price, from: hit.from }] : [];
+    });
+    if (items.length === 0) throw new LeadItemsError();
+    data = {
+      vehicleId: null,
+      name: input.name,
+      phone: input.phone,
+      email: input.email,
+      type: "SERVICE",
+      message: input.message,
+      car: input.car,
+      serviceId: service.id,
+      items,
+      preferredDate: input.preferredDate,
+      preferredSlot: input.preferredDate ? input.preferredSlot : null,
     };
   } else {
     const service = input.serviceId ? await getPublishedService(input.serviceId) : null;
@@ -63,11 +90,11 @@ function wantedCarMessage(input: Extract<LeadInput, { kind: "wanted" }>) {
     .join("\n");
 }
 
-export type LeadListFilters = { status?: LeadStatus; type?: LeadType };
+export type LeadListFilters = { status?: LeadStatus; type?: LeadType; section?: string };
 
 export async function getLeads(f: LeadListFilters = {}, take = 200) {
   return db.lead.findMany({
-    where: { ...(f.status && { status: f.status }), ...(f.type && { type: f.type }) },
+    where: { ...(f.section && (await sectionWhere(f.section))), ...(f.status && { status: f.status }), ...(f.type && { type: f.type }) },
     orderBy: { createdAt: "desc" },
     take,
     include: { vehicle: vehicleSelect, service: serviceSelect },
@@ -76,7 +103,7 @@ export async function getLeads(f: LeadListFilters = {}, take = 200) {
 
 const utcDay = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
 
-/** Servisní objednávka, jejíž platný termín (domluvený, jinak přání zákazníka) splňuje podmínku na datum. */
+/** Objednávka, jejíž platný termín (domluvený, jinak přání zákazníka) splňuje podmínku na datum. */
 function bookingDateWhere(date: Prisma.DateTimeFilter): Prisma.LeadWhereInput {
   return { OR: [{ confirmedDate: date }, { confirmedDate: null, preferredDate: date }] };
 }
@@ -92,32 +119,38 @@ function byBooking(a: Parameters<typeof effectiveBooking>[0] & { createdAt: Date
   );
 }
 
-/** Servisní objednávky s platným termínem od dneška, které ještě nejsou uzavřené (dashboard). */
-export async function getUpcomingBookings(take = 15) {
-  const rows = await db.lead.findMany({
-    where: { type: "SERVICE", status: { notIn: ["SOLD", "LOST"] }, ...bookingDateWhere({ gte: utcDay(pragueToday()) }) },
-    include: { service: serviceSelect },
-  });
-  return rows.sort(byBooking).slice(0, take);
-}
-
-/** Servisní objednávky s platným termínem v daný den ("RRRR-MM-DD"), seřazené podle části dne. */
+/** Objednávky s platným termínem v daný den ("RRRR-MM-DD"), seřazené podle části dne (připomenutí). */
 export async function getBookingsOn(isoDate: string) {
   const rows = await db.lead.findMany({
-    where: { type: "SERVICE", status: { notIn: ["SOLD", "LOST"] }, ...bookingDateWhere({ equals: utcDay(isoDate) }) },
-    include: { service: serviceSelect },
+    where: { status: { notIn: ["SOLD", "LOST"] }, type: { not: "WANTED_CAR" }, ...bookingDateWhere({ equals: utcDay(isoDate) }) },
+    include: { service: serviceSelect, vehicle: vehicleSelect },
+  });
+  return rows.sort(byBooking);
+}
+
+/** Objednávky s platným termínem v rozmezí dnů (včetně) pro kalendář. Neuzavřené, od dneška dál. */
+export async function getBookingsBetween(fromIso: string, toIso: string) {
+  const from = fromIso > pragueToday() ? fromIso : pragueToday();
+  if (from > toIso) return [];
+  const rows = await db.lead.findMany({
+    where: {
+      status: { notIn: ["SOLD", "LOST"] },
+      type: { not: "WANTED_CAR" },
+      ...bookingDateWhere({ gte: utcDay(from), lte: utcDay(toIso) }),
+    },
+    include: { service: serviceSelect, vehicle: vehicleSelect },
   });
   return rows.sort(byBooking);
 }
 
 /**
- * Domluvený termín servisní objednávky. Prázdné datum termín zruší (platí zase přání zákazníka).
+ * Domluvený termín objednávky (servis, prohlídka vozu…). Prázdné datum termín zruší (platí zase přání zákazníka).
  * Uložení termínu posune novou nebo rozjednanou objednávku do stavu Potvrzeno, zrušení ji vrátí na Kontaktováno.
- * Vrací null, když objednávka neexistuje nebo není servisní.
+ * Vrací null, když objednávka neexistuje nebo jde o hledané auto (to termín nemá).
  */
 export async function updateLeadBooking(id: number, booking: { date: string | null; slot: TimeSlot | null }) {
   const lead = await db.lead.findUnique({ where: { id }, select: { type: true, status: true } });
-  if (!lead || lead.type !== "SERVICE") return null;
+  if (!lead || lead.type === "WANTED_CAR") return null;
   const open: LeadStatus[] = ["NEW", "CONTACTED", "NEGOTIATION"];
   const status = booking.date ? (open.includes(lead.status) ? "CONFIRMED" : lead.status) : lead.status === "CONFIRMED" ? "CONTACTED" : lead.status;
   return db.lead.update({
@@ -130,22 +163,109 @@ export async function getLead(id: number) {
   return db.lead.findUnique({ where: { id }, include: { vehicle: vehicleSelect, service: serviceSelect } });
 }
 
-export async function updateLeadStatus(id: number, status: LeadStatus) {
-  return db.lead.update({ where: { id }, data: { status } }).catch(() => null);
+/** Trvalé smazání poptávky (ruční, vedle automatického mazání po 30 dnech). Vrací false, když neexistuje. */
+export async function deleteLead(id: number) {
+  return db.lead.delete({ where: { id } }).then(
+    () => true,
+    () => false,
+  );
 }
 
-export async function getDashboardStats() {
+const DRIVING: LeadStatus[] = ["RESERVED", "SOLD"];
+
+/**
+ * Stav vozu následuje poptávku: Rezervace → vůz Rezervováno, Prodáno → vůz Prodáno (s datem prodeje).
+ * Opustí-li poptávka stav Rezervace/Prodáno (padla), vůz se vrátí do nabídky, pokud ho nedrží jiná poptávka.
+ * Skrytý vůz se nemění. Ruční změna stavu vozu ve správě vozidel zůstává možná.
+ * Vrací nový stav vozu, nebo null, když se nic nezměnilo.
+ */
+async function syncVehicleWithLead(leadId: number, vehicleId: number, previous: LeadStatus, status: LeadStatus): Promise<VehicleStatus | null> {
+  if (!DRIVING.includes(previous) && !DRIVING.includes(status)) return null;
+  const vehicle = await db.vehicle.findUnique({ where: { id: vehicleId }, select: { status: true, soldAt: true } });
+  if (!vehicle || vehicle.status === "SKRYTE") return null;
+  const others = await db.lead.findMany({ where: { vehicleId, id: { not: leadId }, status: { in: DRIVING } }, select: { status: true } });
+  const otherSold = others.some((o) => o.status === "SOLD");
+  const otherReserved = others.some((o) => o.status === "RESERVED");
+  let target: VehicleStatus | null;
+  if (status === "SOLD") target = "PRODANO";
+  else if (status === "RESERVED") target = otherSold ? null : "REZERVOVANO";
+  else target = otherSold ? "PRODANO" : otherReserved ? "REZERVOVANO" : "DOSTUPNE";
+  if (!target || target === vehicle.status) return null;
+  await db.vehicle.update({
+    where: { id: vehicleId },
+    data: { status: target, soldAt: target === "PRODANO" ? (vehicle.status === "PRODANO" ? vehicle.soldAt : new Date()) : null },
+  });
+  return target;
+}
+
+/** Změní stav poptávky a propíše ho do vozu. Vrací poptávku a případně nový stav vozu. */
+export async function updateLeadStatus(id: number, status: LeadStatus) {
+  const lead = await db.lead.findUnique({ where: { id }, select: { status: true, vehicleId: true } });
+  if (!lead) return null;
+  const updated = await db.lead.update({ where: { id }, data: { status } });
+  const vehicleStatus = lead.vehicleId && lead.status !== status ? await syncVehicleWithLead(id, lead.vehicleId, lead.status, status) : null;
+  return { ...updated, vehicleStatus };
+}
+
+// --- Nástěnka: rozdělení podle „služeb“ ---
+
+const OPEN: LeadStatus[] = ["NEW", "CONTACTED", "NEGOTIATION"];
+
+export type DashboardSection = LeadCategory & { newCount: number };
+
+/** Podmínka na poptávky jedné „služby“ (klíč ze záložky); neznámý klíč nebo „vse“ = všechny. */
+async function sectionWhere(key: string): Promise<Prisma.LeadWhereInput> {
+  if (key === CARS_CATEGORY.key) return { type: { notIn: ["SERVICE", "WANTED_CAR"] } };
+  if (key === WANTED_CATEGORY.key) return { type: "WANTED_CAR" };
+  if (key.startsWith(SERVICE_KEY_PREFIX)) return { type: "SERVICE", service: { slug: key.slice(SERVICE_KEY_PREFIX.length) } };
+  return {};
+}
+
+export async function getDashboard(sectionKey: string) {
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const [activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads, upcomingBookings, pendingReviews] = await Promise.all([
+  const services = await getPublicServices();
+  const categories: LeadCategory[] = [CARS_CATEGORY, ...services.map(serviceCategory), WANTED_CATEGORY];
+  const active = categories.find((c) => c.key === sectionKey) ?? null;
+  const where = active ? await sectionWhere(active.key) : {};
+  const today = utcDay(pragueToday());
+
+  const [activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, pendingReviews, newByType, newByService, todo, schedule] = await Promise.all([
     db.vehicle.count({ where: { status: "DOSTUPNE", archivedAt: null } }),
     db.lead.count({ where: { status: "NEW" } }),
     db.vehicle.count({ where: { status: "REZERVOVANO", archivedAt: null } }),
-    db.lead.count({ where: { type: "SERVICE", status: { in: ["NEW", "CONTACTED", "NEGOTIATION", "CONFIRMED"] } } }),
+    db.lead.count({ where: { type: "SERVICE", status: { in: [...OPEN, "CONFIRMED"] } } }),
     db.vehicle.count({ where: { status: "PRODANO", soldAt: { gte: monthStart } } }),
-    getLeads({}, 10),
-    getUpcomingBookings(),
     countPendingReviews(),
+    db.lead.groupBy({ by: ["type"], where: { status: "NEW" }, _count: true }),
+    db.lead.groupBy({ by: ["serviceId"], where: { status: "NEW", type: "SERVICE" }, _count: true }),
+    // K vyřízení: otevřené poptávky bez domluveného termínu, nejnovější nahoře.
+    db.lead.findMany({
+      where: { ...where, status: { in: OPEN }, confirmedDate: null },
+      orderBy: { createdAt: "desc" },
+      take: 15,
+      include: { service: serviceSelect, vehicle: vehicleSelect },
+    }),
+    // Potvrzené termíny od dneška.
+    db.lead.findMany({
+      where: { ...where, status: { notIn: ["SOLD", "LOST"] }, confirmedDate: { gte: today } },
+      include: { service: serviceSelect, vehicle: vehicleSelect },
+    }),
   ]);
-  return { activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, recentLeads, upcomingBookings, pendingReviews };
+
+  const newOf = (key: string) => {
+    if (key === CARS_CATEGORY.key) return newByType.filter((t) => t.type !== "SERVICE" && t.type !== "WANTED_CAR").reduce((n, t) => n + t._count, 0);
+    if (key === WANTED_CATEGORY.key) return newByType.find((t) => t.type === "WANTED_CAR")?._count ?? 0;
+    const svc = services.find((x) => serviceCategory(x).key === key);
+    return svc ? (newByService.find((t) => t.serviceId === svc.id)?._count ?? 0) : 0;
+  };
+  const sections: DashboardSection[] = categories.map((c) => ({ ...c, newCount: newOf(c.key) }));
+
+  return {
+    stats: { activeVehicles, newLeads, reserved, serviceLeads, soldThisMonth, pendingReviews },
+    sections,
+    active,
+    todo,
+    schedule: schedule.sort(byBooking).slice(0, 20),
+  };
 }

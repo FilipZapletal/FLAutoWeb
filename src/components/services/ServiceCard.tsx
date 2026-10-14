@@ -32,7 +32,7 @@ export function ServiceCard({ service: s }: { service: PublicService }) {
       {s.contactPhone && (
         <p className="mb-3 flex items-center gap-2 text-sm">
           <PhoneIcon size={16} className="text-acc" />
-          <span className="text-muted">Objednávky:</span>
+          <span className="text-muted">{s.contactName ? `${s.contactName}:` : "Objednávky:"}</span>
           <a href={`tel:${phoneDigits(s.contactPhone)}`} className="font-semibold hover:text-acc">{s.contactPhone}</a>
         </p>
       )}

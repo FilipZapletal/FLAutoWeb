@@ -16,6 +16,8 @@ export type ServiceFormValues = {
   description: string;
   priceNote: string;
   contactPhone: string;
+  contactName: string;
+  pickItems: boolean;
   metaTitle: string;
   metaDescription: string;
   published: boolean;
@@ -53,6 +55,7 @@ export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; in
     const result = await submit({
       ...data,
       published: data.published === "on",
+      pickItems: data.pickItems === "on",
       prices: rows.map((p) => ({ label: p.label, price: p.price, from: p.from, group: p.group, note: p.note, addon: p.addon })),
     });
     if (!result) {
@@ -140,7 +143,18 @@ export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; in
 
       <fieldset className="card grid gap-3 p-5">
         <h2 className="text-base">Vlastní kontakt služby</h2>
-        <InputField label="Telefon služby" name="contactPhone" defaultValue={v.contactPhone} error={fields.contactPhone} placeholder="např. +420 735 231 876" hint="Nepovinné. Je-li vyplněn, je to na stránce služby jediný kontakt a online objednávka se pro službu nenabízí (objednává se jen telefonicky). Kontakty majitelů se tam nezobrazí." />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <InputField label="Jméno kontaktu" name="contactName" defaultValue={v.contactName} error={fields.contactName} placeholder="např. Denis" />
+          <InputField label="Telefon služby" name="contactPhone" defaultValue={v.contactPhone} error={fields.contactPhone} placeholder="např. +420 773 578 684" />
+        </div>
+        <p className="text-xs text-muted">Nepovinné. Je-li telefon vyplněn, je to na stránce služby jediný kontakt (kontakty majitelů se tam nezobrazí) a obecný formulář s termínem se nenabízí.</p>
+        <label className="flex items-start gap-2 text-sm">
+          <input type="checkbox" name="pickItems" defaultChecked={v.pickItems} className="mt-0.5 accent-[var(--acc)]" />
+          <span>
+            Zákazník si na stránce vybere položky z ceníku (objednávkový formulář s cenou)
+            <span className="block text-xs text-muted">Hodí se pro služby s podrobným ceníkem, např. Crystal Finish. Položky ceníku se pak nabízejí k zaškrtnutí.</span>
+          </span>
+        </label>
       </fieldset>
 
       <fieldset className="card grid gap-3 p-5 sm:grid-cols-2">

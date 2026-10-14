@@ -1,7 +1,9 @@
 import "server-only";
 import type { Lead } from "@/generated/prisma/client";
 import { formatBooking } from "@/lib/booking";
+import { formatPrice } from "@/lib/format";
 import { LEAD_TYPE_LABELS } from "@/lib/labels";
+import { orderTotal, parseOrderItems } from "@/lib/order-items";
 import { phonesLine } from "@/lib/contacts";
 import { getSettings } from "@/lib/settings";
 import { siteUrl } from "@/lib/site";
@@ -53,10 +55,20 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
   const wanted = lead.type === "WANTED_CAR";
   const service = lead.service?.title ?? null;
   const booking = formatBooking(lead);
+  const items = parseOrderItems(lead.items);
+  const total = orderTotal(items);
+  const ordered = Boolean(booking) || items.length > 0;
+  const itemLines = items.length
+    ? [
+        "Objednané položky:",
+        ...items.map((i) => `• ${i.label} – ${i.from ? "od " : ""}${formatPrice(i.price)}`),
+        `Celkem ${total.fromAny ? "od " : ""}${formatPrice(total.sum)} (orientačně podle ceníku)`,
+      ]
+    : null;
 
   const jobs: Promise<unknown>[] = [
     sendPush({
-      title: wanted ? "Hledané auto" : booking ? "Nová objednávka do servisu" : "Nová poptávka",
+      title: wanted ? "Hledané auto" : ordered ? `Nová objednávka${service ? ` – ${service}` : ""}` : "Nová poptávka",
       body: [lead.name, wanted ? lead.car : (vehicleName ?? service ?? LEAD_TYPE_LABELS[lead.type]), booking].filter(Boolean).join(" · "),
       url: `/admin/poptavky/${lead.id}`,
       tag: `lead-${lead.id}`,
@@ -66,9 +78,11 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
       replyTo: lead.email ?? undefined,
       subject: wanted
         ? `Hledané auto – ${lead.car}`
-        : booking
-          ? `Objednávka do servisu – ${booking}`
-          : `Nová poptávka – ${vehicleName ?? LEAD_TYPE_LABELS[lead.type]}`,
+        : items.length > 0
+          ? `Objednávka – ${service ?? "služba"}${booking ? ` – ${booking}` : ""}`
+          : booking
+            ? `Objednávka do servisu – ${booking}`
+            : `Nová poptávka – ${vehicleName ?? LEAD_TYPE_LABELS[lead.type]}`,
       text: [
         wanted ? "Zákazník hledá auto, které není v nabídce – poptávka z webu FL Auto" : "Nová poptávka z webu FL Auto",
         wanted ? "Odpovězte mu prosím, zda je poptávka reálná, případně ji potvrďte." : null,
@@ -76,6 +90,7 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
         vehicleName ? `Vůz: ${vehicleName} (${siteUrl(`/vozy/${lead.vehicle!.slug}`)})` : null,
         `Typ: ${LEAD_TYPE_LABELS[lead.type]}`,
         service ? `Služba: ${service}` : null,
+        itemLines ? `\n${itemLines.join("\n")}\n` : null,
         booking ? `Preferovaný termín: ${booking}` : null,
         lead.car ? `${wanted ? "Hledaný vůz" : "Vůz zákazníka"}: ${lead.car}` : null,
         `Jméno: ${lead.name}`,
@@ -97,19 +112,20 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
         replyTo: settings.email,
         subject: wanted
           ? "Přijali jsme vaši poptávku na auto – FL Auto"
-          : booking
-            ? "Přijali jsme vaši objednávku do servisu – FL Auto"
+          : ordered
+            ? "Přijali jsme vaši objednávku – FL Auto"
             : "Děkujeme za váš zájem – FL Auto",
         text: [
           "Dobrý den,",
           "",
           wanted
             ? `děkujeme za poptávku. Vůz „${lead.car}“ se pokusíme pro vás sehnat. Ozveme se vám s odpovědí, zda je poptávka reálná, nebo ji potvrdíme.`
-            : booking
+            : ordered
               ? "děkujeme za objednávku. Termín je zatím předběžný, ozveme se vám a potvrdíme ho."
               : "děkujeme za váš zájem. Autobazar vás bude kontaktovat.",
           vehicleName ? `\nVaše poptávka: ${vehicleName}` : null,
           service ? `\nSlužba: ${service}` : null,
+          itemLines ? `\n${itemLines.join("\n")}` : null,
           booking ? `Preferovaný termín: ${booking}` : null,
           "",
           "FL Auto",

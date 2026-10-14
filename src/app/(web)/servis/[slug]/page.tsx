@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ServiceForm } from "@/components/forms/ServiceForm";
+import { ServiceOrderForm } from "@/components/forms/ServiceOrderForm";
 import { PriceList } from "@/components/services/ServicePrice";
 import { ServiceIconView } from "@/components/services/ServiceIconView";
 import { CheckIcon, PhoneIcon } from "@/components/ui/icons";
@@ -38,6 +39,7 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
   }
   const others = services.filter((o) => o.id !== s.id);
   const own = s.contactPhone; // služba s vlastním kontaktem (Crystal Finish): jediný kontakt je tento telefon
+  const orderable = !own || s.pickItems; // obecný termínový formulář se pro službu s vlastním kontaktem nenabízí, objednávka z ceníku ano
 
   return (
     <>
@@ -84,10 +86,13 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
           <PriceList prices={s.prices} note={s.priceNote} />
           {own ? (
             <div className="card mt-4 p-5">
-              <p className="text-sm text-muted">Objednávky a dotazy vyřizujeme telefonicky:</p>
-              <a href={`tel:${phoneDigits(own)}`} className="btn phone-ring mt-3">
-                <PhoneIcon size={16} /> {own}
-              </a>
+              <p className="text-sm text-muted">{s.pickItems ? "Objednejte přímo na webu, nebo nám zavolejte:" : "Objednávky a dotazy vyřizujeme telefonicky:"}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {s.pickItems && <a href="#objednavka" className="btn">Objednat</a>}
+                <a href={`tel:${phoneDigits(own)}`} className={s.pickItems ? "btn-outline phone-ring" : "btn phone-ring"}>
+                  <PhoneIcon size={16} /> {s.contactName ? `${s.contactName} ` : ""}{own}
+                </a>
+              </div>
             </div>
           ) : (
             <div className="mt-4 flex flex-wrap gap-2">
@@ -105,10 +110,14 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
         </aside>
       </div>
 
-      {!own && (
+      {orderable && (
         <section id="objednavka" className="mb-12 scroll-mt-24">
-          <SectionTitle className="mb-3">Objednat se do servisu</SectionTitle>
-          <ServiceForm services={bookableServices(services)} serviceId={s.id} />
+          <SectionTitle className="mb-3">{s.pickItems ? "Objednat" : "Objednat se do servisu"}</SectionTitle>
+          {s.pickItems ? (
+            <ServiceOrderForm serviceId={s.id} prices={s.prices} contactName={s.contactName} />
+          ) : (
+            <ServiceForm services={bookableServices(services)} serviceId={s.id} />
+          )}
         </section>
       )}
 

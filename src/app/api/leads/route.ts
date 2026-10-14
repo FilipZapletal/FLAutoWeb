@@ -2,7 +2,7 @@ import { after, NextResponse, type NextRequest } from "next/server";
 import { LeadStatus, LeadType } from "@/generated/prisma/enums";
 import { guardAdmin, jsonError, readJson, validationError } from "@/lib/api";
 import { purgeExpiredLeads } from "@/lib/leads/retention";
-import { createLead, getLeads, LeadVehicleNotFoundError } from "@/lib/leads/service";
+import { createLead, getLeads, LeadItemsError, LeadVehicleNotFoundError } from "@/lib/leads/service";
 import { notifyNewLead } from "@/lib/notifications";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { leadSchema } from "@/lib/validation/lead";
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (e) {
     if (e instanceof LeadVehicleNotFoundError) return jsonError(404, "Vůz už není v nabídce.");
+    if (e instanceof LeadItemsError) return jsonError(409, "Ceník se mezitím změnil. Načtěte stránku znovu a vyberte položky.");
     throw e;
   }
 }

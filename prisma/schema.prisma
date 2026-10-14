@@ -206,6 +206,8 @@ model Lead {
   /// Termín domluvený majitelem (může se lišit od přání zákazníka). Je-li vyplněn, platí místo preferredDate.
   confirmedDate DateTime?  @map("confirmed_date") @db.Date
   confirmedSlot TimeSlot?  @map("confirmed_slot")
+  /// Položky vybrané z ceníku služby (objednávka Crystal Finish): [{ label, price, from }]. Snapshot v době objednávky.
+  items         Json       @default("[]")
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @updatedAt @map("updated_at")
 
@@ -285,6 +287,10 @@ model Service {
   /// Vlastní kontakt služby (např. Crystal Finish). Je-li vyplněn, zobrazuje se na stránce služby
   /// jako jediný kontakt a online objednávka se pro službu nenabízí.
   contactPhone    String?     @map("contact_phone")
+  /// Jméno k vlastnímu kontaktu služby, např. „Denis“
+  contactName     String?     @map("contact_name")
+  /// Zákazník si na stránce služby vybere položky z ceníku (objednávkový formulář místo obecného termínu)
+  pickItems       Boolean     @default(false) @map("pick_items")
   metaTitle       String?     @map("meta_title")
   metaDescription String?     @map("meta_description")
   published       Boolean     @default(true)

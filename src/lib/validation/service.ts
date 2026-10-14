@@ -53,6 +53,8 @@ export const serviceSchema = z.object({
   prices: z.array(servicePriceSchema).max(50).default([]),
   priceNote: optionalText(300),
   contactPhone,
+  contactName: optionalText(60),
+  pickItems: z.boolean().default(false),
   metaTitle: optionalText(70),
   metaDescription: optionalText(170),
   published: z.boolean().default(true),

@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LeadBookingForm } from "@/components/admin/LeadBookingForm";
+import { LeadDeleteButton } from "@/components/admin/LeadDeleteButton";
 import { LeadStatusSelect } from "@/components/admin/LeadStatusSelect";
 import { LeadStatusBadge, LeadTypeLabel, PageHead } from "@/components/admin/ui";
 import { MailIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { parseId } from "@/lib/api";
 import { effectiveBooking, formatConfirmedBooking, formatPreferredBooking, pragueToday } from "@/lib/booking";
-import { formatDate, formatDateTime, phoneDigits, whatsappLink } from "@/lib/format";
+import { formatDate, formatDateTime, formatPrice, phoneDigits, whatsappLink } from "@/lib/format";
+import { VEHICLE_STATUS_LABELS } from "@/lib/labels";
+import { parseOrderItems, orderTotal } from "@/lib/order-items";
 import { leadExpiresAt } from "@/lib/leads/retention";
 import { getLead } from "@/lib/leads/service";
 
@@ -20,20 +23,41 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
   const preferred = formatPreferredBooking(lead);
   const confirmedText = formatConfirmedBooking(lead);
   const booking = effectiveBooking(lead);
+  const items = parseOrderItems(lead.items);
+  const total = orderTotal(items);
   const expires = leadExpiresAt(lead);
   // Prázdné hodnoty (false/null) jsou řádky, které se u daného typu poptávky nezobrazují.
   const rows: ([string, React.ReactNode] | false | null | "")[] = [
     ["Datum", formatDateTime(lead.createdAt)],
     ["Typ", <LeadTypeLabel key="t" type={lead.type} />],
     lead.service && ["Služba", lead.service.title],
+    items.length > 0 && [
+      "Objednané položky",
+      <div key="i">
+        <ul className="space-y-1">
+          {items.map((i) => (
+            <li key={i.label} className="flex justify-between gap-3">
+              <span>{i.label}</span>
+              <span className="whitespace-nowrap text-muted">{i.from ? "od " : ""}{formatPrice(i.price)}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 border-t border-line pt-2 font-semibold">
+          Celkem {total.fromAny ? "od " : ""}{formatPrice(total.sum)} <span className="font-normal text-muted">(orientační, podle ceníku)</span>
+        </p>
+      </div>,
+    ],
     confirmedText && ["Domluvený termín", <span key="c" className="font-semibold">{confirmedText}</span>],
     preferred && [confirmedText ? "Přání zákazníka" : "Termín", <span key="b" className={confirmedText ? "" : "font-semibold"}>{preferred}{!confirmedText && <span className="font-normal text-muted"> (přání zákazníka)</span>}</span>],
     [
       "Vůz",
       lead.vehicle ? (
-        <Link key="v" href={`/vozy/${lead.vehicle.slug}`} target="_blank" className="underline">
-          {[lead.vehicle.brand, lead.vehicle.model, lead.vehicle.version].filter(Boolean).join(" ")} ↗
-        </Link>
+        <span key="v">
+          <Link href={`/vozy/${lead.vehicle.slug}`} target="_blank" className="underline">
+            {[lead.vehicle.brand, lead.vehicle.model, lead.vehicle.version].filter(Boolean).join(" ")} ↗
+          </Link>
+          <span className="block text-xs text-muted">Stav vozu: {VEHICLE_STATUS_LABELS[lead.vehicle.status]} (mění se automaticky podle stavu poptávky)</span>
+        </span>
       ) : (
         (lead.car ?? "—")
       ),
@@ -69,15 +93,19 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
             <p className="label">Změnit stav</p>
             <LeadStatusSelect key={lead.status} id={lead.id} status={lead.status} type={lead.type} />
             <p className="mt-2 text-xs text-muted">
-              {lead.type === "SERVICE" ? "Nová → Kontaktováno → Potvrzeno (termín domluven) → hotovo" : "Nová → Kontaktováno → V jednání → Rezervace → Prodáno (nebo Ztraceno)"}
+              {lead.type === "SERVICE"
+                ? "Nová → Kontaktováno → Potvrzeno (termín domluven) → hotovo"
+                : lead.type === "WANTED_CAR"
+                  ? "Nová → Kontaktováno → V jednání → Prodáno (nebo Ztraceno)"
+                  : "Nová → Kontaktováno → Potvrzeno (prohlídka domluvena) → V jednání → Rezervace → Prodáno. Rezervace a Prodáno se propíšou do stavu vozu."}
             </p>
             <p className="mt-2 text-xs text-muted">
               {expires
-                ? `Automaticky se smaže ${formatDate(expires)}, pokud se do té doby nezmění její stav.${lead.type === "SERVICE" ? "" : " Rezervace a Prodáno se nemažou."}`
+                ? `Automaticky se smaže ${formatDate(expires)}, pokud se do té doby nezmění její stav.${lead.type === "SERVICE" || lead.type === "WANTED_CAR" ? "" : " Rezervace a Prodáno se nemažou."}`
                 : "Poptávka se nemaže (vedla k rezervaci nebo prodeji)."}
             </p>
           </div>
-          {lead.type === "SERVICE" && (
+          {lead.type !== "WANTED_CAR" && (
             <div className="border-t border-line pt-4">
               <LeadBookingForm
                 key={`${lead.confirmedDate?.getTime() ?? 0}-${lead.confirmedSlot}`}
@@ -93,6 +121,9 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
             <a href={`tel:${phoneDigits(lead.phone)}`} className="btn"><PhoneIcon size={16} /> Zavolat</a>
             <a href={whatsappLink(lead.phone)} target="_blank" rel="noopener noreferrer" className="btn-outline"><WhatsAppIcon size={16} /> WhatsApp</a>
             {lead.email && <a href={`mailto:${lead.email}`} className="btn-outline"><MailIcon size={16} /> E-mail</a>}
+          </div>
+          <div className="border-t border-line pt-4">
+            <LeadDeleteButton id={lead.id} name={lead.name} backTo="/admin/poptavky" label="Smazat poptávku" />
           </div>
         </div>
       </div>

@@ -59,6 +59,24 @@ export const serviceLeadSchema = z.object({
 });
 
 /** „Sehnat auto na přání“ – zákazník hledá vůz, který není v nabídce. */
+/** Nepovinný den: prázdné pole → null, jinak stejná pravidla jako u objednávky do servisu. */
+const optionalPreferredDate = z.preprocess((v) => (v === "" || v == null ? null : v), preferredDate.nullable());
+
+/** Objednávka s výběrem položek z ceníku služby (Crystal Finish). Ceny se na serveru vždy berou z ceníku, ne z formuláře. */
+export const orderLeadSchema = z.object({
+  kind: z.literal("order"),
+  serviceId: z.number().int().positive(),
+  items: z.array(z.string().trim().min(1).max(120)).min(1, { error: "Vyberte aspoň jednu položku z ceníku" }).max(30),
+  car: requiredText(120),
+  name: requiredText(120),
+  phone,
+  email,
+  preferredDate: optionalPreferredDate,
+  preferredSlot: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(TimeSlot).nullable()),
+  message: optionalText(3000),
+  website: honeypot,
+});
+
 export const wantedLeadSchema = z.object({
   kind: z.literal("wanted"),
   name: requiredText(120),
@@ -76,7 +94,7 @@ export const wantedLeadSchema = z.object({
   website: honeypot,
 });
 
-export const leadSchema = z.discriminatedUnion("kind", [vehicleLeadSchema, serviceLeadSchema, wantedLeadSchema]);
+export const leadSchema = z.discriminatedUnion("kind", [vehicleLeadSchema, serviceLeadSchema, orderLeadSchema, wantedLeadSchema]);
 export type LeadInput = z.infer<typeof leadSchema>;
 
 /** Změna stavu poptávky, nebo domluvený termín servisní objednávky (datum "RRRR-MM-DD", prázdné = zrušit). */

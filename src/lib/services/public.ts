@@ -21,6 +21,8 @@ function toPublicService(s: Service) {
     prices: parseServicePrices(s.prices),
     priceNote: s.priceNote,
     contactPhone: s.contactPhone,
+    contactName: s.contactName,
+    pickItems: s.pickItems,
     metaTitle: s.metaTitle,
     metaDescription: s.metaDescription,
   };
@@ -44,12 +46,12 @@ export async function findServiceSlugRedirect(slug: string) {
 }
 
 export async function getPublishedService(id: number) {
-  return db.service.findFirst({ where: { id, ...PUBLIC_SERVICE_WHERE }, select: { id: true, title: true, contactPhone: true } });
+  return db.service.findFirst({ where: { id, ...PUBLIC_SERVICE_WHERE }, select: { id: true, title: true, contactPhone: true, pickItems: true, prices: true } });
 }
 
 /** Služby, které se dají objednat online (služba s vlastním telefonním kontaktem se objednává jen telefonicky). */
 export function bookableServices(services: PublicService[]) {
-  return services.filter((s) => !s.contactPhone).map(({ id, title }) => ({ id, title }));
+  return services.filter((s) => !s.contactPhone && !s.pickItems).map(({ id, title }) => ({ id, title }));
 }
 
 export async function getSitemapServices() {
