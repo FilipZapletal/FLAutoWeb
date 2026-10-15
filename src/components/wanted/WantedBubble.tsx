@@ -36,8 +36,8 @@ type Phase = "idle" | "out" | "in";
  * Lesk jede zleva doprava a smaže aktuální popisek, pak zprava doleva a napíše další.
  * Po najetí myší (nebo při zaostření klávesnicí) se střídání zastaví.
  */
-export function WantedBubble({ offerWanted, onOpenWanted, onHide }: { offerWanted: boolean; onOpenWanted: () => void; onHide: () => void }) {
-  const items = offerWanted ? ITEMS : ITEMS.slice(1);
+export function WantedBubble({ onOpenWanted, onHide }: { onOpenWanted: () => void; onHide: () => void }) {
+  const items = ITEMS;
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("idle");
   const [kick, setKick] = useState(0);

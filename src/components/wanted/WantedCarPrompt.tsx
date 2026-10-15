@@ -11,7 +11,6 @@ import {
   BUBBLE_AFTER_MS,
   bubbleWanted,
   hideBubble,
-  isSubmitted,
   markShown,
   markSubmitted,
   patchSession,
@@ -52,8 +51,6 @@ export function WantedCarPrompt() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
   const [bubble, setBubble] = useState(false);
-  /** Nabízet v bublince i „Auto na přání“ (po odeslání poptávky už ne) */
-  const [offerWanted, setOfferWanted] = useState(true);
   const [prefill, setPrefill] = useState<Prefill>({});
   const isOpen = useRef(false);
   const startedAt = useRef(0);
@@ -86,7 +83,6 @@ export function WantedCarPrompt() {
   /** Bublinka se ukazuje jen na úvodní stránce, až se návštěvník rozhodl v okně soukromí a neskryl ji. */
   const syncBubble = useCallback(() => {
     setBubble(pathname === "/" && !isOpen.current && isConsentDecided() && bubbleWanted());
-    setOfferWanted(!isSubmitted());
   }, [pathname]);
 
   useEffect(armChime, []);
@@ -230,7 +226,7 @@ export function WantedCarPrompt() {
 
   return (
     <>
-      {bubble && !open && <WantedBubble offerWanted={offerWanted} onOpenWanted={() => openWith({})} onHide={() => { hideBubble(); setBubble(false); }} />}
+      {bubble && !open && <WantedBubble onOpenWanted={() => openWith({})} onHide={() => { hideBubble(); setBubble(false); }} />}
 
       <dialog
         ref={dialogRef}

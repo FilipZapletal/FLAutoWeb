@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { capitalizeFirst, capitalizeWords } from "@/lib/capitalize";
 
 // Obecné chybové hlášky česky (konkrétní hlášky jsou u jednotlivých polí).
 z.config(z.locales.cs());
@@ -63,3 +64,19 @@ export function fieldErrors(error: z.ZodError) {
   }
   return out;
 }
+
+/** Jméno a příjmení zákazníka: aspoň dvě slova, první písmena velká (i když je zákazník napsal malými). */
+export const personName = (max: number) =>
+  z
+    .string({ error: "Povinné pole" })
+    .trim()
+    .min(1, { error: "Povinné pole" })
+    .max(max, { error: `Maximálně ${max} znaků` })
+    .refine((v) => /\S\s+\S/.test(v), { error: "Zadejte jméno i příjmení" })
+    .transform((v) => capitalizeWords(v.replace(/\s+/g, " ")));
+
+/** Povinný text s velkými písmeny na začátku slov (značka a model vozu). */
+export const requiredTitleCase = (max: number) => requiredText(max).transform(capitalizeWords);
+
+/** Povinný text s velkým prvním písmenem (popis hledaného vozu). */
+export const requiredSentence = (max: number) => requiredText(max).transform(capitalizeFirst);

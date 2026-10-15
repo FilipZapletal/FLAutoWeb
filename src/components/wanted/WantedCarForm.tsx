@@ -51,10 +51,10 @@ export function WantedCarForm({ prefill, onSent, onClose }: Props) {
         </p>
       </div>
 
-      <InputField idPrefix={P} label="Jaké auto hledáte? *" name="car" required defaultValue={prefill.car} placeholder="Např. Škoda Octavia kombi, diesel, automat" error={fields.car} autoFocus />
+      <InputField idPrefix={P} label="Jaké auto hledáte? *" name="car" required capitalize="first" defaultValue={prefill.car} placeholder="Např. Škoda Octavia kombi, diesel, automat" error={fields.car} autoFocus />
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <InputField idPrefix={P} label="Jméno *" name="name" required autoComplete="name" error={fields.name} />
+        <InputField idPrefix={P} label="Jméno a příjmení *" name="name" required autoComplete="name" capitalize="words" error={fields.name} />
         <InputField idPrefix={P} label="Telefon *" name="phone" type="tel" required autoComplete="tel" inputMode="tel" error={fields.phone} />
         <InputField idPrefix={P} label="E-mail" name="email" type="email" autoComplete="email" error={fields.email} className="sm:col-span-2" hint="Odpověď vám pošleme e-mailem, nebo zavoláme." />
       </div>
@@ -81,7 +81,7 @@ export function WantedCarForm({ prefill, onSent, onClose }: Props) {
             <option value="">Je mi jedno</option>
             {options(TRANSMISSION_LABELS)}
           </SelectField>
-          <TextareaField idPrefix={P} label="Další požadavky" name="message" rows={3} className="sm:col-span-2" placeholder="Barva, výbava, vaše představy…" error={fields.message} />
+          <TextareaField idPrefix={P} label="Další požadavky" name="message" rows={3} capitalize="first" className="sm:col-span-2" placeholder="Barva, výbava, vaše představy…" error={fields.message} />
         </div>
       </details>
 

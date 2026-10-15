@@ -90,8 +90,8 @@ export function ServiceOrderForm({ serviceId, prices, contactName }: { serviceId
       </fieldset>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <InputField label="Značka a model vozu" name="car" required error={fields.car} className="md:col-span-2" />
-        <InputField label="Jméno" name="name" required autoComplete="name" error={fields.name} />
+        <InputField label="Značka a model vozu" name="car" required capitalize="words" error={fields.car} className="md:col-span-2" />
+        <InputField label="Jméno a příjmení" name="name" required autoComplete="name" capitalize="words" error={fields.name} />
         <InputField label="Telefon" name="phone" type="tel" required autoComplete="tel" inputMode="tel" error={fields.phone} />
         <InputField label="E-mail" name="email" type="email" autoComplete="email" hint="Pošleme vám potvrzení objednávky." error={fields.email} className="md:col-span-2" />
         <InputField
@@ -108,7 +108,7 @@ export function ServiceOrderForm({ serviceId, prices, contactName }: { serviceId
             <option key={k} value={k}>{l}</option>
           ))}
         </SelectField>
-        <TextareaField label="Poznámka" name="message" rows={3} placeholder="Např. stav vozu, zvláštní přání" className="md:col-span-2" error={fields.message} />
+        <TextareaField label="Poznámka" name="message" rows={3} capitalize="first" placeholder="Např. stav vozu, zvláštní přání" className="md:col-span-2" error={fields.message} />
       </div>
       <FormError message={error} />
       <button className="btn" disabled={sending || selected.size === 0}>

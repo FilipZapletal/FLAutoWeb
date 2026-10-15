@@ -36,7 +36,7 @@ export function LeadForm({ vehicleId }: { vehicleId: number }) {
   return (
     <form onSubmit={onSubmit} className="relative grid gap-3" noValidate>
       <Honeypot />
-      <InputField label="Jméno" name="name" required autoComplete="name" error={fields.name} />
+      <InputField label="Jméno a příjmení" name="name" required autoComplete="name" capitalize="words" error={fields.name} />
       <div className="grid gap-3 sm:grid-cols-2">
         <InputField label="Telefon" name="phone" type="tel" required autoComplete="tel" inputMode="tel" error={fields.phone} />
         <InputField label="E-mail" name="email" type="email" autoComplete="email" error={fields.email} hint="Nepovinné – pošleme potvrzení." />
@@ -62,7 +62,7 @@ export function LeadForm({ vehicleId }: { vehicleId: number }) {
           ))}
         </SelectField>
       </div>
-      <TextareaField label="Zpráva" name="message" rows={3} error={fields.message} />
+      <TextareaField label="Zpráva" name="message" rows={3} capitalize="first" error={fields.message} />
       <FormError message={error} />
       <button className="btn" disabled={sending}>
         {sending ? "Odesílám…" : "Odeslat poptávku"}

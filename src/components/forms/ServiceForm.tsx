@@ -71,11 +71,11 @@ export function ServiceForm({ services = [], serviceId }: Props) {
           <option key={k} value={k}>{l}</option>
         ))}
       </SelectField>
-      <InputField label="Značka a model vozu" name="car" required error={fields.car} />
-      <InputField label="Jméno" name="name" required autoComplete="name" error={fields.name} />
+      <InputField label="Značka a model vozu" name="car" required capitalize="words" error={fields.car} />
+      <InputField label="Jméno a příjmení" name="name" required autoComplete="name" capitalize="words" error={fields.name} />
       <InputField label="Telefon" name="phone" type="tel" required autoComplete="tel" inputMode="tel" error={fields.phone} />
       <InputField label="E-mail" name="email" type="email" autoComplete="email" hint="Pošleme vám potvrzení objednávky." error={fields.email} />
-      <TextareaField label="Poznámka" name="message" rows={3} placeholder="Co je potřeba udělat / STK do kdy platí" className="md:col-span-2" error={fields.message} />
+      <TextareaField label="Poznámka" name="message" rows={3} capitalize="first" placeholder="Co je potřeba udělat / STK do kdy platí" className="md:col-span-2" error={fields.message} />
       <div className="md:col-span-2">
         <FormError message={error} />
       </div>

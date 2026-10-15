@@ -2,7 +2,7 @@ import { z } from "zod";
 import { BodyType, Fuel, LeadStatus, TimeSlot, Transmission } from "@/generated/prisma/enums";
 import { bookingRange, isWeekend } from "@/lib/booking";
 import { VEHICLE_LEAD_TYPES } from "@/lib/labels";
-import { optionalEnum, optionalInt, optionalText, requiredText } from "./helpers";
+import { optionalEnum, optionalInt, optionalText, personName, requiredSentence, requiredTitleCase } from "./helpers";
 
 const phone = z
   .string({ error: "Zadejte telefon" })
@@ -39,7 +39,7 @@ const optionalPreferredDate = z.preprocess((v) => (v === "" || v == null ? null 
 export const vehicleLeadSchema = z.object({
   kind: z.literal("vehicle"),
   vehicleId: z.number().int().positive(),
-  name: requiredText(120),
+  name: personName(120),
   phone,
   email,
   type: z.enum(VEHICLE_LEAD_TYPES, { error: "Vyberte typ zájmu" }),
@@ -54,8 +54,8 @@ export const serviceLeadSchema = z.object({
   kind: z.literal("service"),
   /** Vybraná služba (nepovinné) */
   serviceId: optionalInt(1, 2_147_483_647),
-  name: requiredText(120),
-  car: requiredText(120),
+  name: personName(120),
+  car: requiredTitleCase(120),
   preferredDate,
   preferredSlot: z.enum(TimeSlot, { error: "Vyberte dopoledne, nebo odpoledne" }),
   phone,
@@ -70,8 +70,8 @@ export const orderLeadSchema = z.object({
   kind: z.literal("order"),
   serviceId: z.number().int().positive(),
   items: z.array(z.string().trim().min(1).max(120)).min(1, { error: "Vyberte aspoň jednu položku z ceníku" }).max(30),
-  car: requiredText(120),
-  name: requiredText(120),
+  car: requiredTitleCase(120),
+  name: personName(120),
   phone,
   email,
   preferredDate: optionalPreferredDate,
@@ -82,11 +82,11 @@ export const orderLeadSchema = z.object({
 
 export const wantedLeadSchema = z.object({
   kind: z.literal("wanted"),
-  name: requiredText(120),
+  name: personName(120),
   phone,
   email,
   /** Co hledá (značka, model, popis) */
-  car: requiredText(160),
+  car: requiredSentence(160),
   maxPrice: optionalInt(10_000, 100_000_000),
   yearFrom: optionalInt(1950, new Date().getFullYear() + 1),
   maxMileage: optionalInt(0, 3_000_000),
