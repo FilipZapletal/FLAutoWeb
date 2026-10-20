@@ -207,7 +207,7 @@ export function VehicleForm({ vehicleId, initial, equipment: initialEquipment, s
         </div>
       </fieldset>
 
-      <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center gap-3 border-t border-line bg-bg/95 px-1 py-3 backdrop-blur">
+      <div className="sticky bottom-[calc(3.6rem+env(safe-area-inset-bottom))] z-10 -mx-1 md:bottom-0 flex flex-wrap items-center gap-3 border-t border-line bg-bg/95 px-1 py-3 backdrop-blur">
         <button className="btn" disabled={sending}>
           {sending ? "Ukládám…" : isEdit ? "Uložit změny" : "Uložit a přidat fotky"}
         </button>

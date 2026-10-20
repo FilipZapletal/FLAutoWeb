@@ -43,11 +43,11 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
     <>
       <PageHead title="Dashboard">
         <div className="flex gap-2">
-          <Link href="/admin/kalendar" className="btn-outline">Kalendář</Link>
+          <Link href="/admin/kalendar" className="btn-outline max-md:hidden">Kalendář</Link>
           <Link href="/admin/vozidla/novy" className="btn">+ Přidat vozidlo</Link>
         </div>
       </PageHead>
-      <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-6 grid grid-cols-2 gap-2 md:mb-8 md:gap-3 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard label="Aktivní vozy" value={s.activeVehicles} href="/admin/vozidla" />
         <StatCard label="Nové poptávky" value={s.newLeads} href="/admin/poptavky?status=NEW" />
         <StatCard label="Rezervované vozy" value={s.reserved} href="/admin/vozidla" />

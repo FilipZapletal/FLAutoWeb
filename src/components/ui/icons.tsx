@@ -158,3 +158,33 @@ export const ChevronLeftIcon = (p: P) => (
     <path d="m15 18-6-6 6-6" />
   </Base>
 );
+
+export const HomeIcon = (p: P) => (
+  <Base {...p}>
+    <path d="M3 11.5 12 4l9 7.5" />
+    <path d="M5 10v10h5v-6h4v6h5V10" />
+  </Base>
+);
+
+export const InboxIcon = (p: P) => (
+  <Base {...p}>
+    <path d="M3 13h5l1.5 3h5L16 13h5" />
+    <path d="M5.5 5h13L21 13v6H3v-6z" />
+  </Base>
+);
+
+export const CalendarIcon = (p: P) => (
+  <Base {...p}>
+    <rect x="3" y="5" width="18" height="16" rx="3" />
+    <path d="M3 10h18M8 3v4M16 3v4" />
+  </Base>
+);
+
+export const GridIcon = (p: P) => (
+  <Base {...p}>
+    <rect x="4" y="4" width="6.5" height="6.5" rx="1.5" />
+    <rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5" />
+    <rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5" />
+    <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5" />
+  </Base>
+);

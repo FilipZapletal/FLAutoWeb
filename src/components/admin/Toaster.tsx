@@ -28,7 +28,7 @@ export function Toaster() {
 
   if (!message) return null;
   return (
-    <div role="status" className="fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-50 mx-auto w-fit max-w-md rounded-full border border-line bg-card px-5 py-3 text-center text-sm shadow-xl">
+    <div role="status" className="fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] md:bottom-4 z-50 mx-auto w-fit max-w-md rounded-full border border-line bg-card px-5 py-3 text-center text-sm shadow-xl">
       {message}
     </div>
   );

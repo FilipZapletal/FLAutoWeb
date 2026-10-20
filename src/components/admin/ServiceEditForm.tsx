@@ -175,7 +175,7 @@ export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; in
         <TextareaField label="SEO popis" name="metaDescription" rows={2} maxLength={170} defaultValue={v.metaDescription} error={fields.metaDescription} className="sm:col-span-2" hint="Do 160 znaků. Prázdné = krátký popis." />
       </fieldset>
 
-      <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center gap-3 border-t border-line bg-bg/95 px-1 py-3 backdrop-blur">
+      <div className="sticky bottom-[calc(3.6rem+env(safe-area-inset-bottom))] z-10 -mx-1 md:bottom-0 flex flex-wrap items-center gap-3 border-t border-line bg-bg/95 px-1 py-3 backdrop-blur">
         <button className="btn" disabled={sending}>
           {sending ? "Ukládám…" : isEdit ? "Uložit změny" : "Vytvořit službu"}
         </button>

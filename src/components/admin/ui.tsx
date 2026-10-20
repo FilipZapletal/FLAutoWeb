@@ -16,16 +16,16 @@ export function PageHead({ title, children }: { title: string; children?: React.
 export function StatCard({ label, value, href }: { label: string; value: number; href?: string }) {
   const body = (
     <>
-      <div className="text-xs text-muted">{label}</div>
-      <div className="font-display text-3xl font-bold">{value}</div>
+      <div className="text-[11px] leading-tight text-muted md:text-xs">{label}</div>
+      <div className="font-display text-2xl font-bold md:text-3xl">{value}</div>
     </>
   );
   return href ? (
-    <Link href={href} className="card block p-4 transition-colors hover:border-acc">
+    <Link href={href} className="card block p-3 transition-colors hover:border-acc md:p-4">
       {body}
     </Link>
   ) : (
-    <div className="card p-4">{body}</div>
+    <div className="card p-3 md:p-4">{body}</div>
   );
 }
 
