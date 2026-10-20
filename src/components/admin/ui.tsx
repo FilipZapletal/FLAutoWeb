@@ -47,4 +47,4 @@ export function LeadTypeLabel({ type }: { type: LeadType }) {
   return <span className={type === "SERVICE" ? "text-acc" : ""}>{LEAD_TYPE_LABELS[type]}</span>;
 }
 
-export const tableClass = "w-full border-collapse text-sm [&_td]:border-b [&_td]:border-line [&_td]:px-3 [&_td]:py-2.5 [&_td]:align-middle [&_th]:border-b [&_th]:border-line [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-display [&_th]:text-xs [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-muted";
+export const tableClass = "table-cards w-full border-collapse text-sm [&_td]:border-b [&_td]:border-line [&_td]:px-3 [&_td]:py-2.5 [&_td]:align-middle [&_th]:border-b [&_th]:border-line [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-display [&_th]:text-xs [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-muted";

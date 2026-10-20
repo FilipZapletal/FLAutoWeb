@@ -37,22 +37,22 @@ export default async function ReviewsPage() {
           <tbody>
             {reviews.map((r) => (
               <tr key={r.id} className="hover:bg-card2">
-                <td>
+                <td data-label="Zákazník">
                   <Link href={`/admin/recenze/${r.id}`} className="font-semibold hover:text-acc">{r.author}</Link>
                   {r.source && <div className="text-xs text-muted">{r.source}</div>}
                   {!r.approved && <div className="mt-1"><span className="badge bg-acc text-white">Čeká na schválení</span></div>}
                 </td>
-                <td><Stars rating={r.rating} size={14} /></td>
-                <td><div className="max-w-[320px] truncate text-muted">{r.text}</div></td>
-                <td className="whitespace-nowrap">
+                <td data-label="Hodnocení"><Stars rating={r.rating} size={14} /></td>
+                <td data-label="Text"><div className="max-w-[320px] truncate text-muted">{r.text}</div></td>
+                <td data-label="Zobrazení" className="whitespace-nowrap">
                   {!r.approved ? (
                     <span className="text-muted">Zatím neviditelná</span>
                   ) : (
                     [r.showOnHome && "Úvod", r.showOnService && "Servis"].filter(Boolean).join(", ") || <span className="text-muted">Skrytá</span>
                   )}
                 </td>
-                <td>{r.sortOrder}</td>
-                <td>
+                <td data-label="Pořadí">{r.sortOrder}</td>
+                <td data-label="">
                   <div className="flex gap-1.5">
                     {(!r.approved || r.fromCustomer) && <ReviewApproveButton id={r.id} approved={r.approved} />}
                     <Link href={`/admin/recenze/${r.id}`} className="btn-outline btn-sm">Upravit</Link>

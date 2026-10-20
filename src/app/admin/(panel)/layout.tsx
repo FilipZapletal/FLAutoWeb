@@ -29,7 +29,7 @@ export default async function AdminPanelLayout({ children }: LayoutProps<"/admin
           </div>
         </div>
       </header>
-      <div className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 md:grid-cols-[180px_minmax(0,1fr)]">
+      <div className="mx-auto grid w-full max-w-7xl flex-1 content-start gap-6 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 md:grid-cols-[180px_minmax(0,1fr)]">
         <AdminNav />
         <main className="min-w-0">{children}</main>
       </div>

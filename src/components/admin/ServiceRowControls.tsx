@@ -12,7 +12,7 @@ export function ServiceActions({ id, slug, published }: { id: number; slug: stri
   }
 
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="flex min-w-[15rem] flex-wrap gap-1.5">
       <Link href={`/admin/sluzby/${id}`} className="btn-outline btn-sm">Upravit</Link>
       {published && (
         <Link href={`/servis/${slug}`} target="_blank" className="btn-outline btn-sm">Na webu ↗</Link>

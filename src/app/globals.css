@@ -77,6 +77,10 @@
     min-height: 100dvh;
     /* Telefon na šířku s výřezem: obsah nesmí zajet pod výřez po stranách (jinde je okraj 0). */
     padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+    /* Pojistka: náhodně přetékající prvek nesmí stránku na telefonu posunout do strany ani zoomovat. */
+    overflow-x: hidden;
+    /* Bez přibližování dvojitým klepnutím (omylem zoomovaná stránka na telefonu); štípnutí prsty zůstává. */
+    touch-action: manipulation;
   }
   h1,
   h2,
@@ -176,6 +180,13 @@
   }
   .field[aria-invalid="true"] {
     border-color: var(--acc);
+  }
+  /* Datum v iPhonu: bez minimální šířky a s výškou, jinak přetéká nebo se smrskne. */
+  input.field[type="date"] {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 2.75rem;
   }
   select.field {
     appearance: none;
@@ -538,5 +549,59 @@
   .legal .table-scroll[data-wide] td:first-child,
   .legal .table-scroll[data-wide] th:first-child {
     min-width: 8rem;
+  }
+}
+
+/* iPhone při klepnutí do pole s písmem menším než 16 px stránku přiblíží a už se nevrátí zpět.
+   Na dotykových zařízeních proto mají všechna pole písmo 16 px. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Tabulky v administraci se na telefonu změní na karty (řádek = karta, popisky z hlavičky),
+   aby se nemusely posouvat do strany a tlačítka se nezalamovala do úzkého sloupce. */
+@media (max-width: 767px) {
+  .table-cards,
+  .table-cards tbody {
+    display: block;
+  }
+  .table-cards thead {
+    display: none;
+  }
+  .table-cards tr {
+    display: block;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .table-cards tr:last-child {
+    border-bottom: 0;
+  }
+  .table-cards td {
+    display: block;
+    border: 0 !important;
+    padding: 0.35rem 0.9rem !important;
+    min-width: 0 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+  }
+  .table-cards td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.15rem;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .table-cards td[data-label=""]::before {
+    display: none;
+  }
+  .table-cards td[colspan]::before {
+    display: none;
   }
 }

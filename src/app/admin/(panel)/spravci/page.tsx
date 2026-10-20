@@ -31,9 +31,9 @@ export default async function AdminsPage() {
           <tbody>
             {admins.map((a) => (
               <tr key={a.id} className="hover:bg-card2">
-                <td className="font-semibold">{a.email}</td>
-                <td className="whitespace-nowrap">{a.createdAt.toLocaleDateString("cs-CZ")}</td>
-                <td>
+                <td data-label="E-mail" className="font-semibold">{a.email}</td>
+                <td data-label="Založen" className="whitespace-nowrap">{a.createdAt.toLocaleDateString("cs-CZ")}</td>
+                <td data-label="">
                   {a.id === session?.id ? (
                     <span className="text-xs text-muted">To jste vy</span>
                   ) : (

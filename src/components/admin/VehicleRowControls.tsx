@@ -48,7 +48,7 @@ export function VehicleActions({ id, slug, archived, publicVisible }: { id: numb
   }
 
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="flex min-w-[15rem] flex-wrap gap-1.5">
       <Link href={`/admin/vozidla/${id}`} className="btn-outline btn-sm">Upravit</Link>
       <Link href={`/admin/vozidla/${id}/fotky`} className="btn-outline btn-sm">Fotografie</Link>
       {publicVisible && (

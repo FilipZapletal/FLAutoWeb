@@ -78,20 +78,20 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
           <tbody>
             {leads.map((l) => (
               <tr key={l.id} className="hover:bg-card2">
-                <td className="whitespace-nowrap text-muted">{formatDateTime(l.createdAt)}</td>
-                <td>
+                <td data-label="Datum" className="whitespace-nowrap text-muted">{formatDateTime(l.createdAt)}</td>
+                <td data-label="Zákazník">
                   <Link href={`/admin/poptavky/${l.id}`} className="font-semibold hover:text-acc">{l.name}</Link>
                   {l.message && <div className="max-w-[260px] truncate text-xs text-muted">{l.message}</div>}
                 </td>
-                <td className="whitespace-nowrap">
+                <td data-label="Kontakt" className="whitespace-nowrap">
                   <a href={`tel:${phoneDigits(l.phone)}`} className="hover:text-acc">{l.phone}</a>
                   {l.email && <div className="text-xs text-muted">{l.email}</div>}
                 </td>
-                <td>
+                <td data-label="Vůz">
                   {l.vehicle ? `${l.vehicle.brand} ${l.vehicle.model}` : (l.car ?? "—")}
                   {l.vehicle && l.vehicle.status !== "DOSTUPNE" && <div className="text-xs text-muted">vůz: {VEHICLE_STATUS_LABELS[l.vehicle.status].toLowerCase()}</div>}
                 </td>
-                <td>
+                <td data-label="Typ">
                   <span className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: leadCategory(l).color }} aria-hidden="true" />
                     <span>
@@ -100,12 +100,12 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
                     </span>
                   </span>
                 </td>
-                <td className="whitespace-nowrap">
+                <td data-label="Termín" className="whitespace-nowrap">
                   {formatBooking(l) ?? "—"}
                   {formatBooking(l) && <div className="text-xs text-muted">{effectiveBooking(l).confirmed ? "potvrzeno" : "přání zákazníka"}</div>}
                 </td>
-                <td><LeadStatusSelect key={l.status} id={l.id} status={l.status} type={l.type} /></td>
-                <td><LeadDeleteButton id={l.id} name={l.name} /></td>
+                <td data-label="Stav"><LeadStatusSelect key={l.status} id={l.id} status={l.status} type={l.type} /></td>
+                <td data-label=""><LeadDeleteButton id={l.id} name={l.name} /></td>
               </tr>
             ))}
             {leads.length === 0 && (

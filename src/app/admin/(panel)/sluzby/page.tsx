@@ -36,17 +36,17 @@ export default async function AdminServicesPage() {
               const low = lowestPrice(prices);
               return (
                 <tr key={s.id} className="hover:bg-card2">
-                  <td className="text-muted">{s.sortOrder}</td>
-                  <td className="min-w-[220px]">
+                  <td data-label="Pořadí" className="text-muted">{s.sortOrder}</td>
+                  <td data-label="Služba" className="min-w-[220px]">
                     <div className="flex items-center gap-2">
                       <span className="text-acc"><ServiceIconView icon={s.icon} size={18} /></span>
                       <Link href={`/admin/sluzby/${s.id}`} className="font-semibold hover:text-acc">{s.title}</Link>
                     </div>
                     <div className="text-xs text-muted">/servis/{s.slug} · {s.items.length} odrážek · {prices.length} položek ceníku</div>
                   </td>
-                  <td className="whitespace-nowrap">{low ? `${low.from ? "od " : ""}${formatPrice(low.price)}` : <span className="text-muted">na dotaz</span>}</td>
-                  <td>{s.published ? <span className="text-sold">Ano</span> : <span className="text-muted">Skrytá</span>}</td>
-                  <td><ServiceActions id={s.id} slug={s.slug} published={s.published} /></td>
+                  <td data-label="Cena" className="whitespace-nowrap">{low ? `${low.from ? "od " : ""}${formatPrice(low.price)}` : <span className="text-muted">na dotaz</span>}</td>
+                  <td data-label="Na webu">{s.published ? <span className="text-sold">Ano</span> : <span className="text-muted">Skrytá</span>}</td>
+                  <td data-label="Akce"><ServiceActions id={s.id} slug={s.slug} published={s.published} /></td>
                 </tr>
               );
             })}

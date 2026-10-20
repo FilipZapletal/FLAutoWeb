@@ -89,12 +89,12 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
           <tbody>
             {d.todo.map((l) => (
               <tr key={l.id} className="hover:bg-card2">
-                <td className="whitespace-nowrap text-muted">{formatDateTime(l.createdAt)}</td>
-                <td><Customer l={l} /></td>
-                <td><Dot color={leadCategory(l).color} />{subject(l)}</td>
-                <td><LeadTypeLabel type={l.type} /></td>
-                <td className="whitespace-nowrap">{formatBooking(l) ?? "—"}</td>
-                <td><LeadStatusBadge status={l.status} /></td>
+                <td data-label="Přijato" className="whitespace-nowrap text-muted">{formatDateTime(l.createdAt)}</td>
+                <td data-label="Zákazník"><Customer l={l} /></td>
+                <td data-label="Co chce"><Dot color={leadCategory(l).color} />{subject(l)}</td>
+                <td data-label="Typ"><LeadTypeLabel type={l.type} /></td>
+                <td data-label="Přání termínu" className="whitespace-nowrap">{formatBooking(l) ?? "—"}</td>
+                <td data-label="Stav"><LeadStatusBadge status={l.status} /></td>
               </tr>
             ))}
             {d.todo.length === 0 && (
@@ -126,17 +126,17 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
           <tbody>
             {d.schedule.map((l) => (
               <tr key={l.id} className="hover:bg-card2">
-                <td className="whitespace-nowrap">
+                <td data-label="Termín" className="whitespace-nowrap">
                   <span className="font-semibold">{formatBooking(l)}</span>
                   {effectiveBooking(l).confirmed && <div className="text-xs text-muted">potvrzeno</div>}
                 </td>
-                <td className="whitespace-nowrap">
+                <td data-label="Služba" className="whitespace-nowrap">
                   <Dot color={leadCategory(l).color} />
                   {l.type === "SERVICE" ? (l.service?.title ?? "Servis") : LEAD_TYPE_LABELS[l.type]}
                 </td>
-                <td><Customer l={l} /></td>
-                <td>{subject(l)}</td>
-                <td><LeadStatusBadge status={l.status} /></td>
+                <td data-label="Zákazník"><Customer l={l} /></td>
+                <td data-label="Co">{subject(l)}</td>
+                <td data-label="Stav"><LeadStatusBadge status={l.status} /></td>
               </tr>
             ))}
             {d.schedule.length === 0 && (
