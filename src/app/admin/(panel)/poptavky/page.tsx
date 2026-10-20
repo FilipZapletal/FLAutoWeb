@@ -72,7 +72,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
               <th>Typ</th>
               <th>Termín</th>
               <th>Stav</th>
-              <th><span className="sr-only">Smazat</span></th>
+              <th aria-label="Smazat"></th>
             </tr>
           </thead>
           <tbody>

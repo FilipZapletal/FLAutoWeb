@@ -5,7 +5,7 @@ export function LegalPage({ title, effectiveDate, children }: { title: string; e
   return (
     <>
       <SectionTitle as="h1" className="mb-6">{title}</SectionTitle>
-      <article className="card legal max-w-3xl p-6 md:p-8">
+      <article className="card legal max-w-3xl p-5 md:p-8">
         {children}
         <p className="mt-8 border-t border-line pt-4 text-sm text-muted">
           Účinné od: <Fill value={effectiveDate} label="datum účinnosti" />

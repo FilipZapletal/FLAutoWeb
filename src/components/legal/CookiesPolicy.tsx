@@ -15,7 +15,8 @@ export function CookiesPolicy() {
       <p>
         Při první návštěvě se zobrazí okno <strong>Nastavení soukromí</strong>. Nezbytné údaje se ukládají vždy, pohodlné funkce jen s vaším souhlasem. Svou volbu můžete kdykoli změnit odkazem „Nastavení soukromí“ v patičce webu. Při odmítnutí se pohodlné funkce nezapisují a dříve uložené údaje se smažou.
       </p>
-      <table>
+      <div className="table-scroll" data-wide>
+<table>
         <thead>
           <tr>
             <th>Název</th>
@@ -56,6 +57,7 @@ export function CookiesPolicy() {
           </tr>
         </tbody>
       </table>
+</div>
       <p>
         <strong>Analytické, reklamní ani sledovací cookies nepoužíváme.</strong> Údaje označené jako nezbytné jsou potřeba k fungování webu nebo k provedení vámi zvolené akce, proto k nim souhlas nepotřebujeme (§ 89 odst. 3 zákona č. 127/2005 Sb., o elektronických komunikacích). Pohodlné funkce ukládáme jen s vaším souhlasem.
       </p>

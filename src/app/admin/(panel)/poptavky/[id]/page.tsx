@@ -71,18 +71,18 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
       <PageHead title={lead.name}>
         <Link href="/admin/poptavky" className="btn-outline">← Všechny poptávky</Link>
       </PageHead>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className="card p-5">
           <dl className="divide-y divide-line text-sm">
             {rows.filter((r) => !!r).map(([label, value]) => (
-              <div key={label} className="grid grid-cols-[120px_1fr] gap-3 py-2">
+              <div key={label} className="grid grid-cols-[100px_minmax(0,1fr)] gap-3 py-2 sm:grid-cols-[120px_minmax(0,1fr)]">
                 <dt className="text-muted">{label}</dt>
-                <dd>{value}</dd>
+                <dd className="[overflow-wrap:anywhere]">{value}</dd>
               </div>
             ))}
           </dl>
           <h2 className="mb-2 mt-5 text-base">Zpráva</h2>
-          <p className="whitespace-pre-line rounded-inner bg-card2 p-3 text-sm">{lead.message || "—"}</p>
+          <p className="whitespace-pre-line rounded-inner bg-card2 p-3 text-sm [overflow-wrap:anywhere]">{lead.message || "—"}</p>
         </div>
         <div className="card h-fit space-y-4 p-5">
           <div>

@@ -78,7 +78,7 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
             <StatusBadge status={v.status} />
           </div>
           <FavoriteButton vehicleId={v.id} label={title} variant="labeled" className="mt-3" />
-          <dl className="mt-4 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
+          <dl className="mt-4 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
             {facts.map(([label, value]) => (
               <div key={label} className="card px-3 py-2">
                 <dt className="text-xs text-muted">{label}</dt>
@@ -132,7 +132,7 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
 
       {!sold && (
         <section id="poptavka" className="mt-10 scroll-mt-24">
-          <div className="card grid gap-6 p-5 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:p-6">
+          <div className="card grid grid-cols-[minmax(0,1fr)] gap-6 p-5 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:p-6">
             <div>
               <h2 className="mb-4 text-xl">Máte zájem o tento vůz?</h2>
               <LeadForm vehicleId={v.id} />
@@ -141,10 +141,10 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
               <p className="text-sm text-muted">Raději se domluvíte přímo?</p>
               {contacts.map((c, i) => (
                 <div key={c.name} className="grid gap-2">
-                  <a href={`tel:${c.tel}`} className={`${i === 0 ? "btn" : "btn-outline"} ${i ? "phone-ring phone-ring-b" : "phone-ring"}`}>
+                  <a href={`tel:${c.tel}`} className={`${i === 0 ? "btn" : "btn-outline"} max-sm:whitespace-normal max-sm:px-4 max-sm:text-center ${i ? "phone-ring phone-ring-b" : "phone-ring"}`}>
                     <PhoneIcon size={16} /> Zavolat – {c.firstName} {c.phone}
                   </a>
-                  <a href={whatsappLink(c.phone!, waText)} target="_blank" rel="noopener noreferrer" className="btn-outline">
+                  <a href={whatsappLink(c.phone!, waText)} target="_blank" rel="noopener noreferrer" className="btn-outline max-sm:whitespace-normal max-sm:px-4 max-sm:text-center">
                     <WhatsAppIcon size={16} /> WhatsApp – {c.firstName}
                   </a>
                 </div>

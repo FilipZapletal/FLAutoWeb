@@ -137,8 +137,8 @@ export default async function CalendarPage({ searchParams }: PageProps<"/admin/k
             <div key={b.id} className="card flex flex-wrap items-center gap-x-4 gap-y-1 p-3 text-sm" style={{ borderLeft: `4px solid ${cat.color}` }}>
               <span className="w-24 shrink-0 font-semibold">{slot ? TIME_SLOT_LABELS[slot] : "Bez upřesnění"}</span>
               <span className="min-w-0 flex-1">
-                <Link href={`/admin/poptavky/${b.id}`} className="font-semibold hover:text-acc">{b.name}</Link>
-                <span className="block text-xs text-muted">
+                <Link href={`/admin/poptavky/${b.id}`} className="font-semibold [overflow-wrap:anywhere] hover:text-acc">{b.name}</Link>
+                <span className="block text-xs text-muted [overflow-wrap:anywhere]">
                   {b.type === "SERVICE" ? (b.service?.title ?? "Servis") : `${LEAD_TYPE_LABELS[b.type]}: ${b.vehicle ? `${b.vehicle.brand} ${b.vehicle.model}` : "—"}`}
                   {b.car ? ` · ${b.car}` : ""} · {confirmed ? "potvrzeno" : "přání zákazníka"}
                 </span>

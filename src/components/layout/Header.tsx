@@ -33,18 +33,21 @@ export function Header({ contacts }: { contacts: OwnerContact[] }) {
         </nav>
 
         <div className="flex items-center gap-3 max-sm:group-has-[[data-back]]/hdr:gap-2 md:hidden">
-          <FavoritesLink variant="mobile" />
+          {/* Na nejužších telefonech s tlačítkem Zpět se srdíčko schová (oblíbená auta jsou i v menu). */}
+          <div className="flex max-[359px]:group-has-[[data-back]]/hdr:hidden">
+            <FavoritesLink variant="mobile" />
+          </div>
           {callable.length === 1 ? (
             <a href={`tel:${callable[0].tel}`} className="btn-outline btn-sm" aria-label={`Zavolat ${callable[0].phone}`}>
               <PhoneIcon size={16} />
             </a>
           ) : (
             callable.length > 1 && (
-              <details className="relative">
+              <details>
                 <summary className="btn-outline btn-sm list-none [&::-webkit-details-marker]:hidden" aria-label="Zavolat">
                   <PhoneIcon size={16} />
                 </summary>
-                <ul className="absolute right-0 top-full z-40 mt-2 w-60 rounded-inner border border-line bg-card/90 p-2 shadow-xl backdrop-blur-xl">
+                <ul className="absolute right-4 top-full z-40 mt-2 w-[min(15rem,calc(100vw-2rem))] rounded-inner border border-line bg-card/90 p-2 shadow-xl backdrop-blur-xl">
                   {callable.map((c) => (
                     <li key={c.name}>
                       <a href={`tel:${c.tel}`} className="block rounded-inner px-3 py-2 hover:bg-card2">

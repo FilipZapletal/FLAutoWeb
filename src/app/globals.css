@@ -75,6 +75,8 @@
     color: var(--fg);
     font-family: var(--font-sans);
     min-height: 100dvh;
+    /* Telefon na šířku s výřezem: obsah nesmí zajet pod výřez po stranách (jinde je okraj 0). */
+    padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
   }
   h1,
   h2,
@@ -516,5 +518,25 @@
   }
   .legal th {
     background: var(--card2);
+  }
+  /* Tabulka se na úzkém displeji posouvá do strany uvnitř karty, nerozšiřuje stránku. */
+  .legal .table-scroll {
+    overflow-x: auto;
+    margin-bottom: 0.8rem;
+  }
+  .legal .table-scroll table {
+    margin-bottom: 0;
+  }
+  .legal .table-scroll[data-wide] table {
+    min-width: 34rem;
+  }
+  /* Úzká dvousloupcová tabulka se zalamuje kdekoli; široké tabulky se posouvají, nezalamují slova po písmenech. */
+  .legal .table-scroll:not([data-wide]) td,
+  .legal .table-scroll:not([data-wide]) th {
+    overflow-wrap: anywhere;
+  }
+  .legal .table-scroll[data-wide] td:first-child,
+  .legal .table-scroll[data-wide] th:first-child {
+    min-width: 8rem;
   }
 }

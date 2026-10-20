@@ -37,7 +37,8 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
       </ul>
 
       <h2>3. Proč údaje zpracováváme a na jakém právním základě</h2>
-      <table>
+      <div className="table-scroll" data-wide>
+<table>
         <thead>
           <tr>
             <th>Účel</th>
@@ -71,6 +72,7 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
           </tr>
         </tbody>
       </table>
+</div>
       <p>Poskytnutí údajů ve formulářích je dobrovolné. Bez jména a telefonu ale vaši poptávku nedokážeme vyřídit. Obchodní sdělení (newslettery) neposíláme a na webu nepoužíváme analytické ani reklamní nástroje.</p>
 
       <h2>4. Jak dlouho údaje uchováváme</h2>

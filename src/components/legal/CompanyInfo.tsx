@@ -26,7 +26,8 @@ export function CompanyInfo({ s }: { s: SiteSettings }) {
   return (
     <>
       <h2>Provozovatel webu a prodejce vozidel</h2>
-      <table>
+      <div className="table-scroll">
+<table>
         <tbody>
           {rows.map(([label, value]) => (
             <tr key={label}>
@@ -36,6 +37,7 @@ export function CompanyInfo({ s }: { s: SiteSettings }) {
           ))}
         </tbody>
       </table>
+</div>
 
       <h2>Orgány dozoru</h2>
       <ul>
