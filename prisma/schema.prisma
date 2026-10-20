@@ -328,3 +328,24 @@ model Review {
   @@index([approved])
   @@map("reviews")
 }
+
+/// Anonymní statistika návštěvnosti (bez cookies, bez ukládání IP adresy).
+/// `visitor` je jednodenní anonymní otisk (HMAC s klíčem platným jen pro daný den), z něhož nejde zjistit IP ani sledovat člověka přes více dnů.
+model AnalyticsEvent {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  visitor   String
+  /// "view" = zobrazení stránky, "action" = akce (zavolání, WhatsApp, odeslaná poptávka…)
+  kind      String
+  /// Cesta stránky (view) nebo název akce (action)
+  name      String
+  /// Cesta stránky, na které se to stalo (bez parametrů)
+  path      String
+  /// Zdroj vstupu (Přímý vstup, Google, Seznam, Facebook, …) – jen u první stránky návštěvy
+  source    String?
+  device    String?
+
+  @@index([createdAt])
+  @@index([visitor, createdAt])
+  @@map("analytics_events")
+}

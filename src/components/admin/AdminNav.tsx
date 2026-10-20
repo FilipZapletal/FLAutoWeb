@@ -15,6 +15,7 @@ const MAIN = [
 ];
 
 const MORE = [
+  { href: "/admin/analyza", label: "Analýza" },
   { href: "/admin/sluzby", label: "Služby" },
   { href: "/admin/recenze", label: "Recenze", badge: "pendingReviews" as const },
   { href: "/admin/nastaveni", label: "Nastavení" },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { track } from "@/lib/analytics-client";
 import { canPersist } from "@/lib/consent";
 
 // Oblíbená auta bez registrace: seznam ID vozů v prohlížeči (localStorage `fl_favorites`).
@@ -46,6 +47,7 @@ function notify() {
 
 export function toggleFavorite(id: number) {
   ensureLoaded();
+  if (!ids.includes(id)) track("favorite_add");
   ids = ids.includes(id) ? ids.filter((x) => x !== id) : [id, ...ids].slice(0, MAX);
   persist();
   notify();

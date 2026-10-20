@@ -44,7 +44,7 @@ Nejlevnější, nejdražší, nejnovější, nejstarší, nejnižší nájezd, n
 Srdíčko u každého vozu (karta v katalogu i detail) uloží vůz do oblíbených **bez registrace** – seznam je v prohlížeči zákazníka (localStorage) a jen s jeho souhlasem s pohodlnými funkcemi. Odkaz „Oblíbená auta“ s počtem je v hlavičce, stránka `/oblibene` zobrazí uložené vozy (vozy, které už nejsou v nabídce, ze seznamu zmizí). Seznam se nesynchronizuje mezi zařízeními.
 
 ## 6b. Nastavení soukromí (souhlas, změna klienta 10/2026)
-Při první návštěvě okno „Nastavení soukromí“ (Souhlasím / Nastavení / odmítnout). Web nesleduje návštěvníky; souhlas se týká pohodlných funkcí v prohlížeči (světlý/tmavý režim, oblíbená auta, zapamatování okna „Auto na přání“). Bez souhlasu se tyto údaje neukládají. Volbu lze změnit odkazem „Nastavení soukromí“ v patičce; platí 12 měsíců.
+Při první návštěvě okno „Nastavení soukromí“ (Souhlasím / Nastavení / odmítnout). Web nepoužívá sledovací cookies a návštěvnost měří jen anonymně (viz 22d); souhlas se týká pohodlných funkcí v prohlížeči (světlý/tmavý režim, oblíbená auta, zapamatování okna „Auto na přání“). Bez souhlasu se tyto údaje neukládají. Volbu lze změnit odkazem „Nastavení soukromí“ v patičce; platí 12 měsíců.
 
 ## 7. Detail vozu
 SEO URL, např. `/vozy/skoda-octavia-2022` (ne `/car?id=…`). Obsahuje název, **aktuální cenu** (u akce jen akční), rok, nájezd, palivo, převodovku, výkon, galerii, technické parametry, výbavu, popis, **maskovaný VIN**, STK, majitele, původ, barvu, počet míst a dveří.
@@ -117,6 +117,11 @@ Type: INTEREST, TEST_DRIVE, RESERVATION, FINANCING, TRADE_IN, CALLBACK, **SERVIC
 
 ## 22. CRM
 Detail leadu: zákazník, kontakt, konkrétní vůz, typ, zpráva, datum, stav. Admin mění stav v pořadí Nová → Kontaktováno → V jednání → Rezervace → Prodáno, nebo Ztraceno.
+
+## 22d. Analýza návštěvnosti a admin na telefonu (změna klienta 10/2026)
+- **Admin na telefonu:** spodní lišta (Přehled, Poptávky, Kalendář, Vozidla, Více) a seznamy jako kompaktní řádky (název, stav, shrnutí, klepnutím detail). Archivace a smazání vozu a služby jsou na stránce úprav. Na počítači zůstává boční menu a tabulky.
+- **Analýza návštěvnosti** (Administrace → Analýza, na přehledu odkaz se shrnutím za 7 dní): období 7 / 30 / 90 dní. Ukazuje návštěvníky, návštěvy a zobrazení stránek, **konverze** (návštěva, při které návštěvník klepnul na telefon, WhatsApp nebo e-mail, nebo odeslal poptávku či objednávku), kolik návštěv **odešlo bez akce**, kolik jen **na jednu stránku**, graf po dnech, **cestu k akci** (návštěva → nabídka vozů → detail vozu → kontakt) s upozorněním, před kterým krokem se ztratí nejvíc lidí, **stránky, na kterých nejčastěji odcházejí** (poslední stránka návštěv bez konverze a kolik % zobrazení té stránky tím skončilo), zdroje návštěv (Google, Seznam, Facebook, Instagram, přímý vstup…), zařízení, přehled akcí a nejsledovanější stránky a vozy.
+- **Měření je anonymní:** vlastní jednoduchý nástroj bez cookies, bez čehokoli v zařízení návštěvníka a bez ukládání IP adresy. Návštěvník se pozná jen podle jednodenního anonymního otisku (HMAC z IP a prohlížeče s klíčem platným jen pro daný den), takže ho nejde sledovat v čase (kdo přijde ve více dnech, počítá se vícekrát). Respektuje „Do Not Track“, nepočítají se roboti ani přihlášení správci. Data se po 13 měsících mažou (denní úloha). Texty v Ochraně osobních údajů, Cookies a v okně soukromí jsou upravené (návrh, doporučena kontrola právníkem).
 
 ## 22c. Jméno a velká písmena ve formulářích (změna klienta 10/2026)
 Ve formulářích poptávek, objednávek a hledaného auta se zadává **jméno a příjmení** (aspoň dvě slova, jinak chyba „Zadejte jméno i příjmení“), aby se zákazníci se stejným jménem nepletli. Při psaní se automaticky doplňují **velká písmena**: u jména a značky vozu na začátku každého slova, u zprávy a popisu hledaného vozu na začátku textu (na telefonu se navíc zapne velké písmeno v klávesnici). Totéž dělá server při ukládání, takže jména jsou jednotná i bez JavaScriptu. Jména u recenzí se tím neřídí (zákazník smí napsat např. „Petr N.“).

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@/lib/analytics-client";
 import { PinIcon } from "@/components/ui/icons";
 
 /** Mapa se načte až po kliknutí – Google nedostane data návštěvníka bez jeho akce. */
@@ -23,7 +24,10 @@ export function MapEmbed({ address }: { address: string }) {
     <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-inner bg-card2 p-6 text-center">
       <PinIcon size={32} className="text-acc" />
       <p className="text-sm text-muted">Mapa se načte ze služby Google Maps.</p>
-      <button type="button" onClick={() => setShow(true)} className="btn-outline btn-sm">
+      <button type="button" onClick={() => {
+          track("map_show");
+          setShow(true);
+        }} className="btn-outline btn-sm">
         Zobrazit mapu
       </button>
     </div>

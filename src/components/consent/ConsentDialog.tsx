@@ -6,7 +6,7 @@ import { getConsent, saveConsent, useConsent } from "@/lib/consent";
 
 /**
  * Okno „Nastavení soukromí“. Při první návštěvě se ukáže samo, později ho otevře odkaz v patičce.
- * Web nesleduje návštěvníky – souhlas se týká jen pohodlných funkcí uložených v jejich prohlížeči.
+ * Web nepoužívá sledovací cookies (návštěvnost se měří anonymně) – souhlas se týká jen pohodlných funkcí uložených v prohlížeči.
  */
 export function ConsentDialog() {
   const { ready, decided } = useConsent();
@@ -60,7 +60,7 @@ export function ConsentDialog() {
           {view === "main" ? (
             <>
               <p id="consent-text" className="mx-auto mt-6 max-w-xl text-sm leading-relaxed sm:text-base">
-                Náš web vás nesleduje a nepoužívá analytické ani reklamní cookies. Ukládáme jen to, co je nutné pro jeho fungování, a – pokud
+                Náš web nepoužívá analytické ani reklamní cookies a návštěvnost měříme jen anonymně, bez cookies a bez ukládání vaší IP adresy. Ukládáme jen to, co je nutné pro jeho fungování, a – pokud
                 souhlasíte – pohodlné funkce: světlý či tmavý režim, oblíbená auta a zapamatování zavřeného okna „Auto na přání“. Kliknutím na
                 „Souhlasím“ tyto funkce povolíte. Podrobnosti najdete v{" "}
                 <Link href="/cookies" className="underline" onClick={() => setManual(false)}>
@@ -109,7 +109,7 @@ export function ConsentDialog() {
                   </span>
                 </label>
                 <p className="text-muted">
-                  Analytické ani reklamní cookies nepoužíváme, proto je tu nenabízíme.
+                  Analytické ani reklamní cookies nepoužíváme. Anonymní měření návštěvnosti nic neukládá do vašeho zařízení, proto je tu nenabízíme.
                 </p>
               </div>
               <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">

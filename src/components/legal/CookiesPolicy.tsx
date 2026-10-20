@@ -61,6 +61,9 @@ export function CookiesPolicy() {
       <p>
         <strong>Analytické, reklamní ani sledovací cookies nepoužíváme.</strong> Údaje označené jako nezbytné jsou potřeba k fungování webu nebo k provedení vámi zvolené akce, proto k nim souhlas nepotřebujeme (§ 89 odst. 3 zákona č. 127/2005 Sb., o elektronických komunikacích). Pohodlné funkce ukládáme jen s vaším souhlasem.
       </p>
+      <p>
+        <strong>Anonymní měření návštěvnosti.</strong> Abychom věděli, kolik lidí web navštěvuje a které stránky jsou užitečné, měříme návštěvnost vlastním jednoduchým nástrojem. Nepoužívá cookies ani nic neukládá do vašeho zařízení. IP adresu neukládáme. Z IP adresy a údajů o prohlížeči se jen krátce spočítá anonymní jednodenní otisk, ze kterého nejde zjistit, kdo jste, a druhý den vznikne jiný. Měří se zobrazené stránky, klepnutí na telefon, WhatsApp nebo e-mail, odeslání formuláře, zdroj návštěvy (např. Google) a typ zařízení. Měření respektuje nastavení „Do Not Track“ ve vašem prohlížeči. Data uchováváme 13 měsíců.
+      </p>
 
       <h2>Obsah třetích stran</h2>
       <p>

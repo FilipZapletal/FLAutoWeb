@@ -113,6 +113,7 @@ Demo vozy ze seedu jsou označené „DEMO“ (v popisu i na fotkách). Před sp
 | `CRON_SECRET` | na Vercelu | tajemství pro plánované úlohy: denní úklid poptávek (`/api/cron/purge-leads`) a ranní připomenutí servisních termínů (`/api/cron/booking-reminders`), plánuje je `vercel.json`; bez něj jsou endpointy vypnuté |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | pro upozornění | klíče pro upozornění na nové poptávky do zařízení správců (Web Push), vygenerují se `npx web-push generate-vapid-keys`; bez nich se tlačítko „Zapnout upozornění“ v adminu nezobrazí. Po nasazení je neměňte. |
 | `VAPID_SUBJECT` | ne | kontakt pro push služby, např. `mailto:info@flauto.cz` (výchozí `ADMIN_NOTIFY_EMAIL`, jinak `SITE_URL`) |
+| `ANALYTICS_SALT` | ne | tajný řetězec pro anonymní otisk návštěvníka v analýze návštěvnosti (jinak se použije `SESSION_SECRET`) |
 | `ADMIN_NOTIFY_EMAIL` | ne | kam chodí upozornění na poptávky (jinak e-mail z Nastavení webu). Upozornění dostává vždy i odpovědná osoba z Nastavení (druhý majitel). |
 
 ## Nasazení (Vercel + Supabase)
@@ -170,7 +171,7 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Homepage: hero s rychlým hledáním, rychlé kategorie, doporučené vozy, akční nabídky, nově v nabídce, blok Servis, kontakt.
 - Katalog s kombinovatelnými filtry nad databází (základní, technické, karoserie, další), 7 způsobů řazení, stránkování po 12. Prodané vozy jsou na konci, dají se skrýt.
 - Detail vozu: SEO URL, galerie (náhledy, šipky, fullscreen, klávesnice, swipe, lazy loading), aktuální cena, štítek statusu, technické údaje ve 4 skupinách, výbava podle kategorií, maskovaný VIN, poptávkový formulář, Zavolat a WhatsApp, na mobilu spodní lišta.
-- Oblíbená auta bez registrace (srdíčko, `/oblibene`, v prohlížeči) a okno Nastavení soukromí (souhlas s pohodlnými funkcemi; web nesleduje návštěvníky).
+- Oblíbená auta bez registrace (srdíčko, `/oblibene`, v prohlížeči) a okno Nastavení soukromí (souhlas s pohodlnými funkcemi; web používá jen anonymní měření návštěvnosti, nesleduje návštěvníky).
 - Hledané auto na přání: vyskakovací okno „Nenašli jste, co hledáte?“ pro zákazníka, který si z nabídky nevybral (prázdný katalog, návrat zpět z katalogu, odchod ze stránky); poptávka jde e-mailem oběma majitelům. Logika v `src/components/wanted/`.
 - Ochrana dat: poptávky bez obchodu se **30 dní od posledního kontaktu automaticky mažou** (denní úklid přes Vercel Cron + pojistka při každé nové poptávce). Rezervace a Prodáno se nemažou; servisní objednávka s budoucím termínem se nemaže před termínem. Logika v `src/lib/leads/retention.ts`.
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.

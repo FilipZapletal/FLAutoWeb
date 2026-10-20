@@ -1,4 +1,5 @@
 import { after, NextResponse, type NextRequest } from "next/server";
+import { recordEvent, refererPath } from "@/lib/analytics/record";
 import { jsonError, readJson, validationError } from "@/lib/api";
 import { notifyNewReview } from "@/lib/notifications";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
@@ -19,5 +20,6 @@ export async function POST(req: NextRequest) {
   }
   const review = await submitReview(parsed.data);
   after(() => notifyNewReview(review));
+  after(() => recordEvent(req, { kind: "action", name: "review", path: refererPath(req) }).catch(() => false));
   return NextResponse.json({ ok: true }, { status: 201 });
 }

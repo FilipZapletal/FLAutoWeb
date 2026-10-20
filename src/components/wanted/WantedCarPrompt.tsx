@@ -19,6 +19,7 @@ import {
   showBubble,
   TIMER_MS,
 } from "./storage";
+import { track } from "@/lib/analytics-client";
 import { armChime } from "@/lib/chime";
 import { WantedBubble } from "./WantedBubble";
 import { WantedCarForm } from "./WantedCarForm";
@@ -226,7 +227,10 @@ export function WantedCarPrompt() {
 
   return (
     <>
-      {bubble && !open && <WantedBubble onOpenWanted={() => openWith({})} onHide={() => { hideBubble(); setBubble(false); }} />}
+      {bubble && !open && <WantedBubble onOpenWanted={() => {
+            track("wanted_open");
+            openWith({});
+          }} onHide={() => { hideBubble(); setBubble(false); }} />}
 
       <dialog
         ref={dialogRef}

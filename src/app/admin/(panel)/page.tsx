@@ -6,6 +6,7 @@ import { formatBooking, effectiveBooking } from "@/lib/booking";
 import { formatDateTime, phoneDigits } from "@/lib/format";
 import { LEAD_TYPE_LABELS } from "@/lib/labels";
 import { leadCategory } from "@/lib/lead-categories";
+import { getAnalytics } from "@/lib/analytics/stats";
 import { getDashboard } from "@/lib/leads/service";
 
 export const metadata = { title: "Dashboard" };
@@ -27,7 +28,7 @@ function Customer({ l }: { l: Row }) {
 
 export default async function DashboardPage({ searchParams }: PageProps<"/admin">) {
   const sp = await searchParams;
-  const d = await getDashboard(typeof sp.sekce === "string" ? sp.sekce : "");
+  const [d, visits] = await Promise.all([getDashboard(typeof sp.sekce === "string" ? sp.sekce : ""), getAnalytics(7)]);
   const s = d.stats;
   const tab = (active: boolean) => `btn-outline btn-sm shrink-0 ${active ? "border-acc text-acc" : ""}`;
   const totalNew = d.sections.reduce((n, c) => n + c.newCount, 0);
@@ -48,6 +49,18 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
         <StatCard label="Prodáno tento měsíc" value={s.soldThisMonth} />
         <StatCard label="Recenze ke schválení" value={s.pendingReviews} href="/admin/recenze" />
       </div>
+
+      <Link href="/admin/analyza" className="card mb-5 flex items-center justify-between gap-3 p-3 transition-colors hover:border-acc md:p-4">
+        <span className="min-w-0 text-sm">
+          <span className="block font-semibold">Návštěvnost za 7 dní</span>
+          <span className="text-muted">
+            {visits.hasData
+              ? `${visits.totals.visitors.toLocaleString("cs-CZ")} návštěvníků · ${visits.totals.conversionRate} % kontaktovalo nás · ${visits.totals.noConversionRate} % odešlo bez akce`
+              : "Zatím žádná data, měření právě začíná"}
+          </span>
+        </span>
+        <span className="shrink-0 text-sm text-acc">Podrobnosti →</span>
+      </Link>
 
       <nav aria-label="Služby" className="-mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1">
         <Link href="/admin" className={tab(!d.active)} aria-current={!d.active ? "page" : undefined}>

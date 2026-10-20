@@ -3,6 +3,7 @@ import { LeadStatus, LeadType } from "@/generated/prisma/enums";
 import { guardAdmin, jsonError, readJson, validationError } from "@/lib/api";
 import { purgeExpiredLeads } from "@/lib/leads/retention";
 import { createLead, getLeads, LeadItemsError, LeadVehicleNotFoundError } from "@/lib/leads/service";
+import { recordEvent, refererPath } from "@/lib/analytics/record";
 import { notifyNewLead } from "@/lib/notifications";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { leadSchema } from "@/lib/validation/lead";
@@ -34,6 +35,9 @@ export async function POST(req: NextRequest) {
   try {
     const lead = await createLead(parsed.data);
     after(() => notifyNewLead(lead));
+    // Konverze v anonymní statistice: odeslaná poptávka (typ podle formuláře).
+    const kind = parsed.data.kind === "vehicle" ? parsed.data.type.toLowerCase() : parsed.data.kind;
+    after(() => recordEvent(req, { kind: "action", name: `lead_${kind}`, path: refererPath(req) }).catch(() => false));
     // Pojistka: úklid proběhne i bez plánovače, kdykoli přijde nová poptávka.
     after(() => purgeExpiredLeads().catch((e) => console.error("Úklid poptávek selhal:", e)));
     return NextResponse.json({ ok: true }, { status: 201 });

@@ -34,6 +34,7 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
         <li><strong>Komunikace</strong>: obsah e-mailů, zpráv a záznamy o telefonickém a osobním jednání týkajícím se vaší poptávky.</li>
         <li><strong>Údaje v prohlížeči</strong>: vaši volbu v okně Nastavení soukromí a – s vaším souhlasem – světlý či tmavý režim, oblíbená auta a údaj, že jste zavřeli okno „Nenašli jste, co hledáte?“. Zůstávají jen ve vašem zařízení (viz <Link href="/cookies">Cookies</Link>), nikam se neodesílají.</li>
         <li><strong>Technické údaje</strong>: IP adresa a údaje o prohlížeči. Používáme je jen krátkodobě k ochraně formulářů před zneužitím (omezení počtu odeslání) a k zajištění bezpečného provozu webu.</li>
+        <li><strong>Anonymní statistika návštěvnosti</strong>: zobrazené stránky, klepnutí na telefon, WhatsApp nebo e-mail, odeslání formuláře, zdroj návštěvy (např. Google) a typ zařízení (telefon, počítač). Bez cookies a bez uložení IP adresy: návštěvník se pozná jen podle anonymního jednodenního otisku, ze kterého nejde zjistit totožnost ani návštěvníka sledovat v čase. Respektujeme nastavení „Do Not Track“.</li>
       </ul>
 
       <h2>3. Proč údaje zpracováváme a na jakém právním základě</h2>
@@ -67,17 +68,22 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
             <td>Plnění právní povinnosti – čl. 6 odst. 1 písm. c) GDPR</td>
           </tr>
           <tr>
+            <td>Anonymní měření návštěvnosti a zlepšování webu (které stránky a nabídky jsou užitečné)</td>
+            <td>Oprávněný zájem – čl. 6 odst. 1 písm. f) GDPR</td>
+          </tr>
+          <tr>
             <td>Ochrana webu a formulářů před zneužitím, uplatnění a obrana právních nároků</td>
             <td>Oprávněný zájem – čl. 6 odst. 1 písm. f) GDPR</td>
           </tr>
         </tbody>
       </table>
 </div>
-      <p>Poskytnutí údajů ve formulářích je dobrovolné. Bez jména a telefonu ale vaši poptávku nedokážeme vyřídit. Obchodní sdělení (newslettery) neposíláme a na webu nepoužíváme analytické ani reklamní nástroje.</p>
+      <p>Poskytnutí údajů ve formulářích je dobrovolné. Bez jména a telefonu ale vaši poptávku nedokážeme vyřídit. Obchodní sdělení (newslettery) neposíláme a na webu nepoužíváme reklamní nástroje ani analytické nástroje třetích stran. Návštěvnost měříme vlastním anonymním měřením (viz výše a stránka Cookies).</p>
 
       <h2>4. Jak dlouho údaje uchováváme</h2>
       <ul>
         <li>Poptávky, které nevedly k uzavření smlouvy: <strong>{LEAD_RETENTION_DAYS} dní</strong> od posledního kontaktu s vámi, poté je automaticky smažeme. Poptávka, která vedla k rezervaci nebo koupi vozu, se dále uchovává jako podklad ke smlouvě podle následujícího bodu.</li>
+        <li>Anonymní statistika návštěvnosti: <strong>13 měsíců</strong>, poté se automaticky smaže.</li>
         <li>Recenze: po dobu zveřejnění na webu. Souhlas můžete kdykoli odvolat a my recenzi na vaši žádost smažeme (kontakt viz bod 1).</li>
         <li>Údaje ze smluv a účetní a daňové doklady: po dobu, kterou nám ukládají právní předpisy (zejména zákon o účetnictví a zákon o dani z přidané hodnoty), a po dobu, po kterou lze uplatnit práva ze smlouvy.</li>
         <li>Technické údaje pro ochranu formulářů: jen v paměti serveru, nejvýše několik desítek minut.</li>
