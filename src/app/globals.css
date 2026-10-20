@@ -207,6 +207,7 @@
 
   .badge {
     display: inline-block;
+    white-space: nowrap;
     font-family: var(--font-display);
     font-size: 0.7rem;
     font-weight: 700;
@@ -559,49 +560,5 @@
   select,
   textarea {
     font-size: 16px !important;
-  }
-}
-
-/* Tabulky v administraci se na telefonu změní na karty (řádek = karta, popisky z hlavičky),
-   aby se nemusely posouvat do strany a tlačítka se nezalamovala do úzkého sloupce. */
-@media (max-width: 767px) {
-  .table-cards,
-  .table-cards tbody {
-    display: block;
-  }
-  .table-cards thead {
-    display: none;
-  }
-  .table-cards tr {
-    display: block;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .table-cards tr:last-child {
-    border-bottom: 0;
-  }
-  .table-cards td {
-    display: block;
-    border: 0 !important;
-    padding: 0.35rem 0.9rem !important;
-    min-width: 0 !important;
-    white-space: normal !important;
-    overflow-wrap: anywhere;
-  }
-  .table-cards td::before {
-    content: attr(data-label);
-    display: block;
-    margin-bottom: 0.15rem;
-    font-family: var(--font-display);
-    font-size: 0.68rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .table-cards td[data-label=""]::before {
-    display: none;
-  }
-  .table-cards td[colspan]::before {
-    display: none;
   }
 }

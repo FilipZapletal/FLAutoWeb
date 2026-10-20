@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHead } from "@/components/admin/ui";
 import { ServiceEditForm } from "@/components/admin/ServiceEditForm";
+import { ServiceManage } from "@/components/admin/ServiceRowControls";
 import { parseId } from "@/lib/api";
 import { getAdminService } from "@/lib/services/admin";
 import { parseServicePrices } from "@/lib/validation/service";
@@ -42,6 +43,7 @@ export default async function EditServicePage({ params }: PageProps<"/admin/sluz
           prices: parseServicePrices(s.prices),
         }}
       />
+      <ServiceManage id={s.id} published={s.published} />
     </>
   );
 }

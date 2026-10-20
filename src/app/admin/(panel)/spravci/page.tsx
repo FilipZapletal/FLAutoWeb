@@ -19,7 +19,18 @@ export default async function AdminsPage() {
         Lidé, kteří se mohou přihlásit do administrace. Každý by měl mít vlastní účet. Sami sebe ani posledního správce
         odebrat nejde.
       </p>
-      <div className="card mb-6 overflow-x-auto">
+      <ul className="card mb-6 divide-y divide-line md:hidden">
+        {admins.map((a) => (
+          <li key={a.id} className="flex items-center justify-between gap-3 px-4 py-3">
+            <span className="min-w-0">
+              <span className="block truncate font-semibold">{a.email}</span>
+              <span className="text-xs text-muted">Založen {a.createdAt.toLocaleDateString("cs-CZ")}</span>
+            </span>
+            {a.id === session?.id ? <span className="text-xs text-muted">To jste vy</span> : admins.length > 1 && <AdminDeleteButton id={a.id} email={a.email} />}
+          </li>
+        ))}
+      </ul>
+      <div className="card mb-6 overflow-x-auto max-md:hidden">
         <table className={tableClass}>
           <thead>
             <tr>
@@ -31,9 +42,9 @@ export default async function AdminsPage() {
           <tbody>
             {admins.map((a) => (
               <tr key={a.id} className="hover:bg-card2">
-                <td data-label="E-mail" className="font-semibold">{a.email}</td>
-                <td data-label="Založen" className="whitespace-nowrap">{a.createdAt.toLocaleDateString("cs-CZ")}</td>
-                <td data-label="">
+                <td className="font-semibold">{a.email}</td>
+                <td className="whitespace-nowrap">{a.createdAt.toLocaleDateString("cs-CZ")}</td>
+                <td>
                   {a.id === session?.id ? (
                     <span className="text-xs text-muted">To jste vy</span>
                   ) : (

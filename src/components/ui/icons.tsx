@@ -188,3 +188,9 @@ export const GridIcon = (p: P) => (
     <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5" />
   </Base>
 );
+
+export const ChevronRightIcon = (p: P) => (
+  <Base {...p}>
+    <path d="m9 18 6-6-6-6" />
+  </Base>
+);

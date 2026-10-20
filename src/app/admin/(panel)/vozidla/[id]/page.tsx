@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHead } from "@/components/admin/ui";
 import { VehicleForm } from "@/components/admin/VehicleForm";
+import { VehicleManage } from "@/components/admin/VehicleRowControls";
 import { parseId } from "@/lib/api";
 import { getAdminVehicle, getEquipmentCatalog } from "@/lib/vehicles/admin";
 import { toFormValues } from "@/lib/vehicles/form-values";
@@ -30,6 +31,7 @@ export default async function EditVehiclePage({ params }: PageProps<"/admin/vozi
         equipment={equipment}
         selectedEquipment={vehicle.equipment.map((e) => e.equipmentId)}
       />
+      <VehicleManage id={vehicle.id} archived={Boolean(vehicle.archivedAt)} />
     </>
   );
 }

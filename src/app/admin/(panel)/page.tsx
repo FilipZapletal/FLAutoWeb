@@ -1,25 +1,18 @@
 import Link from "next/link";
+import { LeadRow, leadSubject } from "@/components/admin/LeadRow";
+import { RowList } from "@/components/admin/MobileRows";
 import { LeadStatusBadge, LeadTypeLabel, PageHead, StatCard, tableClass } from "@/components/admin/ui";
 import { formatBooking, effectiveBooking } from "@/lib/booking";
 import { formatDateTime, phoneDigits } from "@/lib/format";
 import { LEAD_TYPE_LABELS } from "@/lib/labels";
 import { leadCategory } from "@/lib/lead-categories";
 import { getDashboard } from "@/lib/leads/service";
-import { parseOrderItems } from "@/lib/order-items";
 
 export const metadata = { title: "Dashboard" };
 
 type Row = Awaited<ReturnType<typeof getDashboard>>["todo"][number];
 
 const Dot = ({ color }: { color: string }) => <span className="mr-2 inline-block h-2.5 w-2.5 shrink-0 rounded-full align-middle" style={{ background: color }} aria-hidden="true" />;
-
-/** Co zákazník chce: vůz, služba (a počet objednaných položek), hledané auto. */
-function subject(l: Row) {
-  if (l.vehicle) return `${l.vehicle.brand} ${l.vehicle.model}`;
-  const items = parseOrderItems(l.items);
-  if (l.type === "SERVICE") return [l.service?.title, items.length ? `${items.length} položek` : null, l.car].filter(Boolean).join(" · ") || "—";
-  return l.car ?? "—";
-}
 
 function Customer({ l }: { l: Row }) {
   return (
@@ -74,7 +67,12 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
         K vyřízení{d.active ? ` – ${d.active.label}` : ""}
       </h2>
       <p className="mb-3 text-sm text-muted">Otevřené poptávky a objednávky, u kterých ještě není domluvený termín.</p>
-      <div className="card mb-8 overflow-x-auto">
+      <RowList empty="Nic nečeká na vyřízení.">
+        {d.todo.map((l) => (
+          <LeadRow key={l.id} lead={l} />
+        ))}
+      </RowList>
+      <div className="card mb-8 overflow-x-auto max-md:hidden">
         <table className={tableClass}>
           <thead>
             <tr>
@@ -89,12 +87,12 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
           <tbody>
             {d.todo.map((l) => (
               <tr key={l.id} className="hover:bg-card2">
-                <td data-label="Přijato" className="whitespace-nowrap text-muted">{formatDateTime(l.createdAt)}</td>
-                <td data-label="Zákazník"><Customer l={l} /></td>
-                <td data-label="Co chce"><Dot color={leadCategory(l).color} />{subject(l)}</td>
-                <td data-label="Typ"><LeadTypeLabel type={l.type} /></td>
-                <td data-label="Přání termínu" className="whitespace-nowrap">{formatBooking(l) ?? "—"}</td>
-                <td data-label="Stav"><LeadStatusBadge status={l.status} /></td>
+                <td className="whitespace-nowrap text-muted">{formatDateTime(l.createdAt)}</td>
+                <td><Customer l={l} /></td>
+                <td><Dot color={leadCategory(l).color} />{leadSubject(l)}</td>
+                <td><LeadTypeLabel type={l.type} /></td>
+                <td className="whitespace-nowrap">{formatBooking(l) ?? "—"}</td>
+                <td><LeadStatusBadge status={l.status} /></td>
               </tr>
             ))}
             {d.todo.length === 0 && (
@@ -112,7 +110,12 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
         </h2>
         <Link href="/admin/kalendar" className="text-sm text-muted underline">Zobrazit v kalendáři</Link>
       </div>
-      <div className="card overflow-x-auto">
+      <RowList empty="Žádné potvrzené termíny.">
+        {d.schedule.map((l) => (
+          <LeadRow key={l.id} lead={l} />
+        ))}
+      </RowList>
+      <div className="card overflow-x-auto max-md:hidden">
         <table className={tableClass}>
           <thead>
             <tr>
@@ -126,17 +129,17 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
           <tbody>
             {d.schedule.map((l) => (
               <tr key={l.id} className="hover:bg-card2">
-                <td data-label="Termín" className="whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   <span className="font-semibold">{formatBooking(l)}</span>
                   {effectiveBooking(l).confirmed && <div className="text-xs text-muted">potvrzeno</div>}
                 </td>
-                <td data-label="Služba" className="whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   <Dot color={leadCategory(l).color} />
                   {l.type === "SERVICE" ? (l.service?.title ?? "Servis") : LEAD_TYPE_LABELS[l.type]}
                 </td>
-                <td data-label="Zákazník"><Customer l={l} /></td>
-                <td data-label="Co">{subject(l)}</td>
-                <td data-label="Stav"><LeadStatusBadge status={l.status} /></td>
+                <td><Customer l={l} /></td>
+                <td>{leadSubject(l)}</td>
+                <td><LeadStatusBadge status={l.status} /></td>
               </tr>
             ))}
             {d.schedule.length === 0 && (

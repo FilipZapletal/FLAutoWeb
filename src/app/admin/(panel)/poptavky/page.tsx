@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { LeadDeleteButton } from "@/components/admin/LeadDeleteButton";
+import { LeadRow } from "@/components/admin/LeadRow";
 import { LeadStatusSelect } from "@/components/admin/LeadStatusSelect";
+import { RowList } from "@/components/admin/MobileRows";
 import { LeadTypeLabel, PageHead, tableClass } from "@/components/admin/ui";
 import { GetForm } from "@/components/ui/GetForm";
 import { LeadStatus, LeadType } from "@/generated/prisma/enums";
@@ -23,45 +25,61 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
   const section = typeof sp.sluzba === "string" && categories.some((c) => c.key === sp.sluzba) ? sp.sluzba : undefined;
   const leads = await getLeads({ status, type, section });
 
+  const filters = (idp: string) => (
+  <GetForm action="/admin/poptavky" className="flex flex-wrap items-end gap-2">
+      <div>
+        <label className="label" htmlFor={`${idp}-status`}>Stav</label>
+        <select id={`${idp}-status`} name="status" defaultValue={status ?? ""} className="field w-auto">
+          <option value="">Všechny</option>
+          {LEAD_STATUS_ORDER.map((k) => (
+            <option key={k} value={k}>{LEAD_STATUS_LABELS[k]}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="label" htmlFor={`${idp}-section`}>Služba</label>
+        <select id={`${idp}-section`} name="sluzba" defaultValue={section ?? ""} className="field w-auto">
+          <option value="">Všechny</option>
+          {categories.map((c) => (
+            <option key={c.key} value={c.key}>{c.label}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="label" htmlFor={`${idp}-type`}>Typ</label>
+        <select id={`${idp}-type`} name="type" defaultValue={type ?? ""} className="field w-auto">
+          <option value="">Všechny</option>
+          {Object.entries(LEAD_TYPE_LABELS).filter(([k]) => (k !== "FINANCING" && k !== "TRADE_IN") || k === type).map(([k, l]) => (
+            <option key={k} value={k}>{l}</option>
+          ))}
+        </select>
+      </div>
+      <button className="btn-outline">Filtrovat</button>
+      {(status || type || section) && <Link href="/admin/poptavky" className="pb-2 text-sm text-muted underline">Zrušit</Link>}
+    </GetForm>
+  );
+
   return (
     <>
       <PageHead title="Poptávky" />
       <p className="mb-4 text-sm text-muted">
         Poptávky, které nevedly k obchodu, se {LEAD_RETENTION_DAYS} dní od posledního kontaktu (poslední změny stavu) automaticky mažou. Poptávky ve stavu Rezervace a Prodáno se nemažou.
       </p>
-      <GetForm action="/admin/poptavky" className="mb-4 flex flex-wrap items-end gap-2">
-        <div>
-          <label className="label" htmlFor="flt-status">Stav</label>
-          <select id="flt-status" name="status" defaultValue={status ?? ""} className="field w-auto">
-            <option value="">Všechny</option>
-            {LEAD_STATUS_ORDER.map((k) => (
-              <option key={k} value={k}>{LEAD_STATUS_LABELS[k]}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="label" htmlFor="flt-section">Služba</label>
-          <select id="flt-section" name="sluzba" defaultValue={section ?? ""} className="field w-auto">
-            <option value="">Všechny</option>
-            {categories.map((c) => (
-              <option key={c.key} value={c.key}>{c.label}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="label" htmlFor="flt-type">Typ</label>
-          <select id="flt-type" name="type" defaultValue={type ?? ""} className="field w-auto">
-            <option value="">Všechny</option>
-            {Object.entries(LEAD_TYPE_LABELS).filter(([k]) => (k !== "FINANCING" && k !== "TRADE_IN") || k === type).map(([k, l]) => (
-              <option key={k} value={k}>{l}</option>
-            ))}
-          </select>
-        </div>
-        <button className="btn-outline">Filtrovat</button>
-        {(status || type || section) && <Link href="/admin/poptavky" className="pb-2 text-sm text-muted underline">Zrušit</Link>}
-      </GetForm>
+      {/* Telefon: filtry jsou sbalené, ať seznam začíná hned nahoře. Počítač: filtry vždy vidět. */}
+      <details className="mb-4 md:hidden" open={Boolean(status || type || section)}>
+        <summary className="btn-outline btn-sm cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+          Filtry{status || type || section ? ` (${[status, type, section].filter(Boolean).length})` : ""}
+        </summary>
+        <div className="mt-3">{filters("m")}</div>
+      </details>
+      <div className="mb-4 max-md:hidden">{filters("d")}</div>
 
-      <div className="card overflow-x-auto">
+      <RowList empty="Žádné poptávky.">
+        {leads.map((l) => (
+          <LeadRow key={l.id} lead={l} />
+        ))}
+      </RowList>
+      <div className="card overflow-x-auto max-md:hidden">
         <table className={tableClass}>
           <thead>
             <tr>
@@ -78,20 +96,20 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
           <tbody>
             {leads.map((l) => (
               <tr key={l.id} className="hover:bg-card2">
-                <td data-label="Datum" className="whitespace-nowrap text-muted">{formatDateTime(l.createdAt)}</td>
-                <td data-label="Zákazník">
+                <td className="whitespace-nowrap text-muted">{formatDateTime(l.createdAt)}</td>
+                <td>
                   <Link href={`/admin/poptavky/${l.id}`} className="font-semibold hover:text-acc">{l.name}</Link>
                   {l.message && <div className="max-w-[260px] truncate text-xs text-muted">{l.message}</div>}
                 </td>
-                <td data-label="Kontakt" className="whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   <a href={`tel:${phoneDigits(l.phone)}`} className="hover:text-acc">{l.phone}</a>
                   {l.email && <div className="text-xs text-muted">{l.email}</div>}
                 </td>
-                <td data-label="Vůz">
+                <td>
                   {l.vehicle ? `${l.vehicle.brand} ${l.vehicle.model}` : (l.car ?? "—")}
                   {l.vehicle && l.vehicle.status !== "DOSTUPNE" && <div className="text-xs text-muted">vůz: {VEHICLE_STATUS_LABELS[l.vehicle.status].toLowerCase()}</div>}
                 </td>
-                <td data-label="Typ">
+                <td>
                   <span className="flex items-center gap-2">
                     <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: leadCategory(l).color }} aria-hidden="true" />
                     <span>
@@ -100,12 +118,12 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/popt
                     </span>
                   </span>
                 </td>
-                <td data-label="Termín" className="whitespace-nowrap">
+                <td className="whitespace-nowrap">
                   {formatBooking(l) ?? "—"}
                   {formatBooking(l) && <div className="text-xs text-muted">{effectiveBooking(l).confirmed ? "potvrzeno" : "přání zákazníka"}</div>}
                 </td>
-                <td data-label="Stav"><LeadStatusSelect key={l.status} id={l.id} status={l.status} type={l.type} /></td>
-                <td data-label=""><LeadDeleteButton id={l.id} name={l.name} /></td>
+                <td><LeadStatusSelect key={l.status} id={l.id} status={l.status} type={l.type} /></td>
+                <td><LeadDeleteButton id={l.id} name={l.name} /></td>
               </tr>
             ))}
             {leads.length === 0 && (

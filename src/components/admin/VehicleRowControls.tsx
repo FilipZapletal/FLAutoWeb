@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { VehicleStatus } from "@/generated/prisma/enums";
 import { VEHICLE_STATUS_LABELS } from "@/lib/labels";
 import { StarIcon } from "@/components/ui/icons";
@@ -59,5 +60,29 @@ export function VehicleActions({ id, slug, archived, publicVisible }: { id: numb
       </button>
       <button type="button" disabled={pending} onClick={remove} className="btn-outline btn-sm text-acc">Smazat</button>
     </div>
+  );
+}
+
+/** Archivace a smazání vozu na stránce úprav (na telefonu se v seznamu nezobrazují). */
+export function VehicleManage({ id, archived }: { id: number; archived: boolean }) {
+  const { run, pending } = useAdminAction();
+  const router = useRouter();
+
+  async function remove() {
+    if (!confirm("Opravdu vůz TRVALE smazat i s fotkami? Prodané vozy je lepší ponechat (zůstávají jako reference) nebo archivovat.")) return;
+    if (await run(`/api/vehicles/${id}`, "DELETE")) router.replace("/admin/vozidla");
+  }
+
+  return (
+    <section className="card mt-6 p-5">
+      <h2 className="mb-3 text-base">Správa vozu</h2>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" disabled={pending} onClick={() => run(`/api/vehicles/${id}`, "PUT", { archived: !archived })} className="btn-outline">
+          {archived ? "Obnovit z archivu" : "Archivovat"}
+        </button>
+        <button type="button" disabled={pending} onClick={remove} className="btn-outline text-acc">Smazat vůz</button>
+      </div>
+      <p className="mt-2 text-xs text-muted">Archivovaný vůz se na webu nezobrazuje, ale zůstává v adminu. Smazání je nevratné.</p>
+    </section>
   );
 }

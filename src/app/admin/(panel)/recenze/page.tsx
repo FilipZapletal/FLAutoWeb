@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ReviewApproveButton } from "@/components/admin/ReviewApproveButton";
 import { ReviewDeleteButton } from "@/components/admin/ReviewDeleteButton";
+import { Row, RowList } from "@/components/admin/MobileRows";
 import { PageHead, tableClass } from "@/components/admin/ui";
 import { Stars } from "@/components/reviews/Stars";
 import { getAdminReviews } from "@/lib/reviews/service";
@@ -22,7 +23,23 @@ export default async function ReviewsPage() {
         Hodnocení na Googlu{settings.googleRating !== null ? ` (${settings.googleRating.toLocaleString("cs-CZ")})` : ""} se nastavuje v{" "}
         <Link href="/admin/nastaveni" className="underline">Nastavení</Link>.
       </p>
-      <div className="card overflow-x-auto">
+      <RowList empty="Zatím žádné recenze.">
+        {reviews.map((r) => (
+          <Row
+            key={r.id}
+            href={`/admin/recenze/${r.id}`}
+            title={r.author}
+            chip={!r.approved ? <span className="badge shrink-0 bg-acc text-white">Čeká</span> : <Stars rating={r.rating} size={13} />}
+            lines={[
+              r.text,
+              !r.approved ? "Zatím neviditelná, schvalte ji" : ([r.showOnHome && "Úvod", r.showOnService && "Servis"].filter(Boolean).join(", ") || "Skrytá"),
+            ]}
+            aside={!r.approved ? <ReviewApproveButton id={r.id} approved={r.approved} /> : undefined}
+          />
+        ))}
+      </RowList>
+
+      <div className="card overflow-x-auto max-md:hidden">
         <table className={tableClass}>
           <thead>
             <tr>
@@ -37,22 +54,22 @@ export default async function ReviewsPage() {
           <tbody>
             {reviews.map((r) => (
               <tr key={r.id} className="hover:bg-card2">
-                <td data-label="Zákazník">
+                <td>
                   <Link href={`/admin/recenze/${r.id}`} className="font-semibold hover:text-acc">{r.author}</Link>
                   {r.source && <div className="text-xs text-muted">{r.source}</div>}
                   {!r.approved && <div className="mt-1"><span className="badge bg-acc text-white">Čeká na schválení</span></div>}
                 </td>
-                <td data-label="Hodnocení"><Stars rating={r.rating} size={14} /></td>
-                <td data-label="Text"><div className="max-w-[320px] truncate text-muted">{r.text}</div></td>
-                <td data-label="Zobrazení" className="whitespace-nowrap">
+                <td><Stars rating={r.rating} size={14} /></td>
+                <td><div className="max-w-[320px] truncate text-muted">{r.text}</div></td>
+                <td className="whitespace-nowrap">
                   {!r.approved ? (
                     <span className="text-muted">Zatím neviditelná</span>
                   ) : (
                     [r.showOnHome && "Úvod", r.showOnService && "Servis"].filter(Boolean).join(", ") || <span className="text-muted">Skrytá</span>
                   )}
                 </td>
-                <td data-label="Pořadí">{r.sortOrder}</td>
-                <td data-label="">
+                <td>{r.sortOrder}</td>
+                <td>
                   <div className="flex gap-1.5">
                     {(!r.approved || r.fromCustomer) && <ReviewApproveButton id={r.id} approved={r.approved} />}
                     <Link href={`/admin/recenze/${r.id}`} className="btn-outline btn-sm">Upravit</Link>
