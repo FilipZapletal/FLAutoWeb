@@ -33,6 +33,9 @@ export default async function AdminPanelLayout({ children }: LayoutProps<"/admin
         <AdminNav />
         <main className="min-w-0">{children}</main>
       </div>
+      <p className="px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-center text-xs text-muted">
+        Verze webu: {process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "lokální"}
+      </p>
       <Toaster />
     </>
   );
