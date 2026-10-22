@@ -54,7 +54,7 @@ export function ServiceOrderForm({ serviceId, prices, contactName }: { serviceId
   }
 
   return (
-    <form onSubmit={onSubmit} className="card relative grid max-w-3xl gap-4 p-5" noValidate>
+    <form onSubmit={onSubmit} className="card relative grid max-w-3xl grid-cols-[minmax(0,1fr)] gap-4 p-5" noValidate>
       <Honeypot />
       <fieldset>
         <legend className="mb-2 text-sm font-semibold">Co chcete objednat? *</legend>
@@ -89,7 +89,7 @@ export function ServiceOrderForm({ serviceId, prices, contactName }: { serviceId
         <p className="mt-1 text-xs text-muted">Cena je orientační, přesnou potvrdíme po prohlídce vozu.</p>
       </fieldset>
 
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-3 md:grid-cols-2">
         <InputField label="Značka a model vozu" name="car" required capitalize="words" error={fields.car} className="md:col-span-2" />
         <InputField label="Jméno a příjmení" name="name" required autoComplete="name" capitalize="words" error={fields.name} />
         <InputField label="Telefon" name="phone" type="tel" required autoComplete="tel" inputMode="tel" error={fields.phone} />

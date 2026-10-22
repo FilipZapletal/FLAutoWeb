@@ -46,7 +46,7 @@ export function ServiceForm({ services = [], serviceId }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="card relative grid max-w-2xl gap-3 p-5 md:grid-cols-2" noValidate>
+    <form onSubmit={onSubmit} className="card relative grid max-w-2xl grid-cols-[minmax(0,1fr)] gap-3 p-5 md:grid-cols-2" noValidate>
       <Honeypot />
       {services.length > 0 && (
         <SelectField label="Služba" name="serviceId" defaultValue={serviceId ?? ""} error={fields.serviceId} className="md:col-span-2">

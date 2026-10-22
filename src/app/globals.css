@@ -182,8 +182,12 @@
     border-color: var(--acc);
   }
   /* Datum v iPhonu: bez minimální šířky a s výškou, jinak přetéká nebo se smrskne. */
-  input.field[type="date"] {
+  input.field[type="date"],
+  input.field[type="month"] {
     display: block;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
     min-width: 0;
     max-width: 100%;
     min-height: 2.75rem;

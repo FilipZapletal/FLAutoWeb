@@ -34,10 +34,10 @@ export function LeadForm({ vehicleId }: { vehicleId: number }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="relative grid gap-3" noValidate>
+    <form onSubmit={onSubmit} className="relative grid grid-cols-[minmax(0,1fr)] gap-3" noValidate>
       <Honeypot />
       <InputField label="Jméno a příjmení" name="name" required autoComplete="name" capitalize="words" error={fields.name} />
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2">
         <InputField label="Telefon" name="phone" type="tel" required autoComplete="tel" inputMode="tel" error={fields.phone} />
         <InputField label="E-mail" name="email" type="email" autoComplete="email" error={fields.email} hint="Nepovinné – pošleme potvrzení." />
       </div>
@@ -46,7 +46,7 @@ export function LeadForm({ vehicleId }: { vehicleId: number }) {
           <option key={value} value={value}>{label}</option>
         ))}
       </SelectField>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2">
         <InputField
           label="Preferovaný den (nepovinné)"
           name="preferredDate"
