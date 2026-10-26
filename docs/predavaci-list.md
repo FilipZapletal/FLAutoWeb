@@ -85,8 +85,9 @@ Pořadí tak, aby se nic nedělalo dvakrát. Postup krok za krokem je v souboru 
 - [ ] Dodavatel je pozván jako člen do Vercelu a Supabase
 - [ ] Převod projektu Supabase a Vercel na účty objednatele, kontrola, že web běží
 - [x] Doména připojena k webu (DNS u WEDOSu, ve Vercelu „Valid Configuration“)
-- [ ] Ve Vercelu `SITE_URL` = `https://www.flauto.cz` a Redeploy, sitemap ukazuje adresy s www
-- [ ] Google Search Console: doména ověřená, odeslaná sitemap, objednatel přidán jako vlastník
+- [x] Ve Vercelu `SITE_URL` = `https://www.flauto.cz` a Redeploy (26. 10.)
+- [x] Google Search Console: doména ověřená, odeslaná sitemap (26. 10.)
+- [ ] Google Search Console: objednatel (Jarkův Gmail) přidán jako vlastník
 - [ ] Google firemní profil založen (nebo převzat) a ověřen, s odkazem na web
 - [ ] Po převodu Vercelu zkontrolovat, že doména pořád svítí „Valid Configuration“
 - [ ] Resend (účet na e-mail objednatele): DNS záznamy u WEDOSu, ověřená doména, klíč ve Vercelu, zkušební objednávka došla e-mailem majitelům i zákazníkovi
