@@ -10,10 +10,11 @@ function secretKey() {
   return new TextEncoder().encode(secret);
 }
 
-export type SessionPayload = { adminId: number; email: string };
+/** `ver` = verze přihlášení admina v DB; po změně hesla starší cookies neplatí. */
+export type SessionPayload = { adminId: number; email: string; ver: number };
 
 export async function signSession(payload: SessionPayload) {
-  return new SignJWT({ email: payload.email })
+  return new SignJWT({ email: payload.email, ver: payload.ver })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(String(payload.adminId))
     .setIssuedAt()
@@ -27,7 +28,10 @@ export async function verifySession(token: string | undefined): Promise<SessionP
     const { payload } = await jwtVerify(token, secretKey(), { algorithms: ["HS256"] });
     const adminId = Number(payload.sub);
     if (!Number.isInteger(adminId) || typeof payload.email !== "string") return null;
-    return { adminId, email: payload.email };
+    // Cookies vydané před zavedením verze se berou jako verze 0.
+    const ver = payload.ver === undefined ? 0 : payload.ver;
+    if (!Number.isInteger(ver)) return null;
+    return { adminId, email: payload.email, ver: ver as number };
   } catch {
     return null;
   }

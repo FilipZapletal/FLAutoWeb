@@ -2,7 +2,7 @@ import { after, NextResponse, type NextRequest } from "next/server";
 import { recordEvent, refererPath } from "@/lib/analytics/record";
 import { jsonError, readJson, validationError } from "@/lib/api";
 import { notifyNewReview } from "@/lib/notifications";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitDb } from "@/lib/rate-limit";
 import { submitReview } from "@/lib/reviews/service";
 import { reviewSubmitSchema } from "@/lib/validation/review";
 
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     return validationError(parsed.error);
   }
   // Limit se počítá jen u platných recenzí, aby překlepy ve formuláři nikoho nezablokovaly.
-  if (!rateLimit(`review:${clientIp(req)}`, 3, 60 * 60_000).ok) {
+  if (!(await rateLimitDb(`review:${clientIp(req)}`, 3, 60 * 60_000)).ok) {
     return jsonError(429, "Odeslali jste příliš mnoho recenzí. Zkuste to prosím později.");
   }
   const review = await submitReview(parsed.data);

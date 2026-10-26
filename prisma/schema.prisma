@@ -222,10 +222,12 @@ model Lead {
 }
 
 model Admin {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id             Int      @id @default(autoincrement())
+  email          String   @unique
+  passwordHash   String   @map("password_hash")
+  /// Zvýší se při změně hesla – všechna dříve vydaná přihlášení (cookies) tím přestanou platit.
+  sessionVersion Int      @default(0) @map("session_version")
+  createdAt      DateTime @default(now()) @map("created_at")
 
   pushSubscriptions PushSubscription[]
 
@@ -348,4 +350,14 @@ model AnalyticsEvent {
   @@index([createdAt])
   @@index([visitor, createdAt])
   @@map("analytics_events")
+}
+
+/// Počítadla pro omezení počtu pokusů (přihlášení, formuláře). V DB, aby platila pro všechny instance serveru.
+model RateLimit {
+  key     String   @id
+  count   Int
+  resetAt DateTime @map("reset_at")
+
+  @@index([resetAt])
+  @@map("rate_limits")
 }
