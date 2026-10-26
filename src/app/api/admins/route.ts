@@ -3,7 +3,7 @@ import { guardAdmin, jsonError, readJson, validationError } from "@/lib/api";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { rateLimitDb } from "@/lib/rate-limit";
 import { adminCreateSchema } from "@/lib/validation/admin";
 
 /**
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return jsonError(401, "Nejste přihlášeni.");
 
-  const limit = rateLimit(`admins:${clientIp(req)}`, 5, 15 * 60_000);
+  const limit = await rateLimitDb(`admins:${session.id}`, 5, 15 * 60_000);
   if (!limit.ok) return jsonError(429, `Příliš mnoho pokusů. Zkuste to znovu za ${Math.ceil(limit.retryAfter / 60)} min.`);
 
   const parsed = adminCreateSchema.safeParse(await readJson(req));

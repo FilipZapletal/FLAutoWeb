@@ -19,12 +19,13 @@ export async function destroySession() {
   (await cookies()).delete(SESSION_COOKIE);
 }
 
-/** Přihlášený admin, nebo null. Ověřuje i to, že účet v DB stále existuje. */
+/** Přihlášený admin, nebo null. Ověřuje i to, že účet v DB stále existuje a cookie nebyla zneplatněna změnou hesla. */
 export async function getSession() {
   const payload = await verifySession((await cookies()).get(SESSION_COOKIE)?.value);
   if (!payload) return null;
-  const admin = await db.admin.findUnique({ where: { id: payload.adminId }, select: { id: true, email: true } });
-  return admin;
+  const admin = await db.admin.findUnique({ where: { id: payload.adminId }, select: { id: true, email: true, sessionVersion: true } });
+  if (!admin || admin.sessionVersion !== payload.ver) return null;
+  return { id: admin.id, email: admin.email };
 }
 
 /** Pro stránky administrace – nepřihlášeného přesměruje na login. */

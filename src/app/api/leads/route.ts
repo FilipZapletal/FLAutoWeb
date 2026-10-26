@@ -5,7 +5,7 @@ import { purgeExpiredLeads } from "@/lib/leads/retention";
 import { createLead, getLeads, LeadItemsError, LeadVehicleNotFoundError } from "@/lib/leads/service";
 import { recordEvent, refererPath } from "@/lib/analytics/record";
 import { notifyNewLead } from "@/lib/notifications";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimitDb } from "@/lib/rate-limit";
 import { leadSchema } from "@/lib/validation/lead";
 
 export async function GET(req: NextRequest) {
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
 /** Veřejné: poptávka u vozu i objednávka do servisu. */
 export async function POST(req: NextRequest) {
-  const limit = rateLimit(`lead:${clientIp(req)}`, 5, 10 * 60_000);
+  const limit = await rateLimitDb(`lead:${clientIp(req)}`, 5, 10 * 60_000);
   if (!limit.ok) return jsonError(429, "Odeslali jste příliš mnoho poptávek. Zkuste to prosím za chvíli, nebo nám zavolejte.");
 
   const parsed = leadSchema.safeParse(await readJson(req));
