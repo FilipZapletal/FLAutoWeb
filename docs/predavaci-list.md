@@ -11,8 +11,8 @@ Tímto listem dodavatel předává objednateli hotový web autobazaru a servisu 
 | Objednatel | Lukáš Gvožď, IČO 07481233 (FL Auto) |
 | Kontaktní osoby objednatele | Jarek Frejkovský, Lukáš Gvožď |
 | Dodavatel | Michal \[DOPLNIT příjmení, IČO / adresa\] |
-| Adresa webu | \[DOPLNIT, např. https://flauto.cz\] |
-| Administrace | adresa webu + /admin (např. https://flauto.cz/admin) |
+| Adresa webu | https://www.flauto.cz (flauto.cz přesměruje na www) |
+| Administrace | https://www.flauto.cz/admin |
 | Datum předání | \[DOPLNIT\] |
 
 ## Co bylo dodáno
@@ -24,7 +24,7 @@ Tímto listem dodavatel předává objednateli hotový web autobazaru a servisu 
 - Servis: služby s ceníkem, online objednávka termínu, Crystal Finish
 - Okno „Auto na přání“ pro hledaný vůz
 - Recenze, O nás, Kontakt, právní stránky (obchodní údaje, ochrana osobních údajů, cookies, reklamační řád), nastavení soukromí
-- Světlý a tmavý režim, mobilní verze, SEO (sitemap, náhledy při sdílení)
+- Světlý a tmavý režim, mobilní verze, SEO (sitemap, náhledy při sdílení, údaje o firmě pro Google)
 
 **Administrace**
 
@@ -44,7 +44,9 @@ Všechny účty patří objednateli a platí je objednatel. Dodavatel je v nich 
 | Vercel | běh webu | FL Auto | Pro \[DOPLNIT cenu\] |
 | Supabase | databáze a fotky | FL Auto | Free \[případně Pro, DOPLNIT\] |
 | Resend | odesílání e-mailů | FL Auto | Free |
-| Doména \[DOPLNIT\] | adresa webu | FL Auto, registrátor \[DOPLNIT\] | \[DOPLNIT\] Kč ročně, prodloužení k \[DOPLNIT\] |
+| Doména flauto.cz | adresa webu, DNS záznamy (web, Resend, Google) | FL Auto, registrátor WEDOS | \[DOPLNIT\] Kč ročně, prodloužení k \[DOPLNIT\] |
+| Google Search Console | hlídání webu ve vyhledávání Google, sitemap | dodavatel, objednatel přidán jako vlastník | zdarma |
+| Google firemní profil | karta FL Auto v Mapách a ve vyhledávání | FL Auto (Gmail Jarka Frejkovského) | zdarma |
 | GitHub | zdrojový kód | dodavatel | zdarma |
 
 ## Přístupy
@@ -55,7 +57,9 @@ Hesla nejsou v tomto listu ani v žádném e-mailu. Každý si je nastaví sám 
 | --- | --- | --- |
 | Administrace webu | Jarek Frejkovský, Lukáš Gvožď | vlastní e-mail a heslo; účty zakládá správce v Administrace → Správci, heslo si každý změní v Administrace → Změna hesla |
 | Vercel, Supabase, Resend | objednatel (vlastník), dodavatel (člen) | firemní e-mail objednatele \[DOPLNIT\] |
-| Doména | objednatel | u registrátora na jméno objednatele |
+| Doména | objednatel | klientská sekce WEDOS na jméno objednatele, upomínky na prodloužení chodí na jeho e-mail |
+| Google Search Console | objednatel, dodavatel | objednatel se přihlásí svým Gmailem (přidán jako vlastník) |
+| Google firemní profil | objednatel | business.google.com, Gmail Jarka Frejkovského |
 
 Odkaz do administrace na webu záměrně není, adresa /admin se zadává ručně.
 
@@ -77,11 +81,15 @@ Web běží sám, dokud objednatel platí služby výše. Údržba znamená opra
 Pořadí tak, aby se nic nedělalo dvakrát. Postup krok za krokem je v souboru předání webu.
 
 - [ ] Objednatel má firemní e-mail a založí si účty Vercel (tým, tarif Pro), Supabase (organizace) a Resend
-- [ ] Objednatel koupí doménu na své jméno
+- [x] Objednatel koupí doménu na své jméno (flauto.cz, WEDOS, 26. 10. 2026)
 - [ ] Dodavatel je pozván jako člen do Vercelu a Supabase
 - [ ] Převod projektu Supabase a Vercel na účty objednatele, kontrola, že web běží
-- [ ] Doména připojena k webu, adresa webu změněna
-- [ ] Resend: ověřená doména, klíč ve Vercelu, zkušební objednávka došla e-mailem majitelům i zákazníkovi
+- [x] Doména připojena k webu (DNS u WEDOSu, ve Vercelu „Valid Configuration“)
+- [ ] Ve Vercelu `SITE_URL` = `https://www.flauto.cz` a Redeploy, sitemap ukazuje adresy s www
+- [ ] Google Search Console: doména ověřená, odeslaná sitemap, objednatel přidán jako vlastník
+- [ ] Google firemní profil založen (nebo převzat) a ověřen, s odkazem na web
+- [ ] Po převodu Vercelu zkontrolovat, že doména pořád svítí „Valid Configuration“
+- [ ] Resend (účet na e-mail objednatele): DNS záznamy u WEDOSu, ověřená doména, klíč ve Vercelu, zkušební objednávka došla e-mailem majitelům i zákazníkovi
 - [ ] Admin účet pro oba majitele (Administrace → Správci), každý si změnil heslo
 - [ ] Smazána zkušební auta a poptávky, vyplněno Nastavení a místa \[DOPLNIT\] na webu
 - [ ] Dohodnuta podpora (varianta A nebo B)
