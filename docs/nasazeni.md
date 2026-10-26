@@ -1,17 +1,18 @@
 # Nasazení – aktuální stav a další kroky
 
-Předávací poznámky pro dalšího vývojáře nebo AI. Stav k 8. 10. 2026 večer.
+Předávací poznámky pro dalšího vývojáře nebo AI. Stav k 26. 10. 2026 večer.
 **Tajné hodnoty (hesla, klíče, connection stringy) sem nikdy nepište.** Jsou jen ve Vercelu a v Supabase.
 
 ## Co běží
 
 | Část | Kde | Poznámka |
 |---|---|---|
-| Web (Next.js) | **Vercel**, projekt FLAutoWeb, tarif Hobby | adresa `*.vercel.app` (vlastní doména zatím není). Každý push do `main` se nasadí automaticky. |
+| Web (Next.js) | **Vercel**, projekt FLAutoWeb, tarif Hobby | adresa **https://www.flauto.cz** (od 26. 10.; `flauto.cz` přesměruje na www). Každý push do `main` se nasadí automaticky. |
 | Databáze (PostgreSQL) | **Supabase**, projekt `flauto`, region Frankfurt, tarif Free | aplikace se připojuje přes *Transaction pooler* (port 6543) |
 | Fotky | **Supabase Storage**, veřejný bucket **`Photos`** (velké P) | přes S3 rozhraní (`STORAGE_DRIVER=s3`). **Funguje, ověřeno 8. 10.** `S3_BUCKET` i konec `S3_PUBLIC_URL` musí přesně odpovídat názvu bucketu včetně velikosti písmen (původní chyba `NoSuchBucket`). |
 | E-maily | **zatím nenastaveno** | bez `RESEND_API_KEY` se e-maily jen vypisují do logu. Poptávky a objednávky se ukládají do adminu, ale **nikdo nedostane upozornění** a zákazník nedostane potvrzení. |
 | Denní úklid poptávek | Vercel Cron (`vercel.json`) | chráněno `CRON_SECRET` |
+| Doména `flauto.cz` | **WEDOS** (koupena 26. 10. 2026) | DNS spravuje WEDOS (ne Vercel DNS). Výchozí A/AAAA záznamy WEDOSu smazány, místo nich záznamy podle Vercelu (A pro `flauto.cz`, CNAME pro `www`). Sem se přidávají i záznamy pro Resend a ověření Google. |
 
 ### Proměnné ve Vercelu (Settings → Environment Variables)
 Vyplněno: `DATABASE_URL`, `SITE_URL`, `SESSION_SECRET`, `CRON_SECRET`, `STORAGE_DRIVER`, `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL`.
@@ -43,7 +44,7 @@ Formulář → `POST /api/leads` → validace na serveru → uložení do tabulk
 ## Co zbývá (v tomto pořadí)
 
 1. **E-maily (Resend)**, nejdůležitější. Bez nich se objednávky přehlédnou. Resend potřebuje ověřenou vlastní doménu; bez ní posílá jen na e-mail majitele Resend účtu. Postup: účet na resend.com, přidat doménu, nastavit DNS záznamy u registrátora, ve Vercelu doplnit `RESEND_API_KEY`, `EMAIL_FROM` (např. `FL Auto <poptavky@flauto.cz>`), `ADMIN_NOTIFY_EMAIL`, pak Redeploy a otestovat zkušební objednávkou.
-2. **Doména:** doporučeno `flauto.cz` (podle DNS vypadá volná, ověřit u registrátora). Koupit u českého registrátora (Wedos, Forpsi, Active24), ne přes Vercel. Ve Vercelu → Settings → Domains ji přidat, u registrátora nastavit DNS podle Vercelu, pak změnit `SITE_URL` a dát Redeploy.
+2. **Doména:** `flauto.cz` koupena u WEDOSu a připojena (26. 10.). Hlavní adresa je `www.flauto.cz`, proto `SITE_URL` = `https://www.flauto.cz` (bez lomítka) a Redeploy; ověřit, že `/sitemap.xml` ukazuje adresy s www. Kdo byl přihlášený do adminu na staré adrese `*.vercel.app`, musí se přihlásit znovu. Po převodu Vercelu na majitele zkontrolovat v Settings → Domains „Valid Configuration“ (případně doplnit ověřovací TXT záznam u WEDOSu).
 3. **Admin účty pro majitele** (Jarek Frejkovský, Lukáš Gvožď): v Administraci → **Správci** zadat e-mail a dočasné heslo (a pro potvrzení své heslo). Po prvním přihlášení si majitel změní heslo v Administraci → Změna hesla. SQL ani seed už nejsou potřeba (seed jen jako nouzovka, když se nikdo nemůže přihlásit, viz `README.md`).
 4. **Obsah:** skutečná auta, ceny služeb (Služby), hodnocení z Googlu (Nastavení), fotky provozovny a týmu, místa označená `[DOPLNIT …]`, poskytovatelé (Vercel, Supabase, Resend) v Ochraně osobních údajů. **Smazat zkušební auta a poptávky.**
 5. **Design:** Michal chce ještě trochu doladit vzhled (zatím bez konkrétního zadání, zeptat se ho). Reference vzhledu je `prototype/autobazar.html`, design tokeny v `docs/specifikace.md`, světlý i tmavý režim povinně.
@@ -52,7 +53,7 @@ Formulář → `POST /api/leads` → validace na serveru → uložení do tabulk
 8. **Potvrzení objednávek, kalendář a objednávka z ceníku Crystal Finish:** nové migrace `service_confirmed_booking` (pole `confirmed_date`, `confirmed_slot` a stav `CONFIRMED`) a `order_items_and_service_contact` (položky objednávky, jméno kontaktu a přepínač objednávky z ceníku u služby; **přepíše kontakt Crystal Finish na Denis +420 773 578 684**) → po nasazení `npm run db:deploy`. Připomenutí posílá druhý plánovač ve `vercel.json` (`/api/cron/booking-reminders`, denně v 5:00 UTC = 7:00 letního / 6:00 zimního času). Potřebuje stejné `CRON_SECRET` jako úklid poptávek; e-mail potřebuje Resend (bod 1), upozornění do zařízení klíče z bodu 7.
 9. **Analýza návštěvnosti:** nová migrace `analytics_events` → po nasazení `npm run db:deploy`. Funguje hned, žádné klíče nejsou potřeba. Volitelně `ANALYTICS_SALT` (libovolný tajný řetězec pro anonymní otisk, jinak se použije `SESSION_SECRET`). Staré záznamy (13 měsíců) maže denní úloha `purge-leads` (potřebuje `CRON_SECRET`). Údaje začnou přibývat od nasazení.
 10. **Bezpečnost (26. 10.):** nová migrace `security_hardening` (sloupec `admins.session_version`, tabulka `rate_limits`, RLS na všech tabulkách). **Migraci spustit dřív než Redeploy** (v Supabase SQL Editoru soubor `migrace-2026-10-26-bezpecnost.sql`, nebo `npm run db:deploy`): starý kód novým sloupcem nic nerozbije, nový kód bez něj nepřihlásí. Co se změnilo: Next.js 16.4.3 a zod (bezpečnostní opravy), bezpečnostní hlavičky (CSP, zákaz vložení do cizí stránky, HSTS), limity pokusů u přihlášení a formulářů jsou v DB (platí pro všechny instance Vercelu, u přihlášení i na účet), změna hesla odhlásí ostatní zařízení (nouzové odhlášení ukradené cookie = změnit si heslo), limit velikosti JSON požadavků, kontrola původu u přihlášení a odhlášení. Doporučeno ručně: Supabase → Project Settings → Data API → vypnout (web ho nepoužívá, připojuje se přímo k Postgresu).
-11. **Po spuštění (doporučení):** Google firemní profil a Google Search Console (sitemap je na `/sitemap.xml`).
+11. **Google:** Search Console založena na Michalově Google účtu, ověření doménou (TXT záznam u WEDOSu), odeslat `sitemap.xml` a v Nastavení → Uživatelé a oprávnění přidat Jarkův Gmail jako vlastníka. **Firemní profil** (Mapy) založit na Jarkově Gmailu s ním u počítače (ověření videem provozovny nebo telefonem); když už FL Auto v Mapách je, profil převzít, nezakládat nový. Volitelně Seznam Webmaster a Firmy.cz. Podrobně `plan/google-a-domena.md` ve sdílených souborech projektu.
 
 ## Při další práci
 - Změna schématu: `npm run db:migrate` lokálně, commit migrace. Po nasazení na Vercel spustit proti produkční DB `DATABASE_URL="<Session pooler URL>" npm run db:deploy`. Pro migrace používejte *Session pooler* (port 5432), ne Transaction pooler.

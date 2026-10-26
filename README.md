@@ -85,7 +85,7 @@ Adresa `/admin` – zadává se ručně, na veřejném webu na administraci zám
 
 **Další admin:** v administraci → *Správci*. Zadá se e-mail a dočasné heslo nového správce a pro potvrzení heslo přihlášeného admina. Tamtéž jde správce odebrat (sebe ani posledního ne); odebraný správce je hned odhlášen.
 
-**Zapomenuté heslo:** jiný správce ho odebere a založí znovu s dočasným heslem. Když žádný jiný není: nastavte `ADMIN_EMAIL` a nové `ADMIN_PASSWORD` a spusťte znovu `npm run db:seed` (existující účet dostane nové heslo).
+**Zapomenuté heslo:** jiný správce ho odebere a založí znovu s dočasným heslem. Když žádný jiný není: nastavte `ADMIN_EMAIL` a nové `ADMIN_PASSWORD` a spusťte znovu `SEED_DEMO_VEHICLES=0 npm run db:seed` (existující účet dostane nové heslo). **Proti ostré databázi vždy se `SEED_DEMO_VEHICLES=0`**, jinak seed nahraje i demo auta.
 
 Přihlášení je chráněné limitem 5 pokusů za 15 minut z jedné IP.
 
