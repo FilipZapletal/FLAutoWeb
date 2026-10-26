@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { GetForm } from "@/components/ui/GetForm";
 import { CarIcon, PhoneIcon, ShieldIcon, SparkleIcon, WrenchIcon } from "@/components/ui/icons";
@@ -7,6 +8,7 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 import { VehicleGrid } from "@/components/vehicles/VehicleCard";
 import { ABOUT_INTRO } from "@/lib/content";
 import { ownerContacts } from "@/lib/contacts";
+import { businessJsonLd, jsonLdString } from "@/lib/seo";
 import { getSettings } from "@/lib/settings";
 import { getBrandModels, getHomeVehicles } from "@/lib/vehicles/queries";
 
@@ -18,6 +20,10 @@ const QUICK_CATEGORIES = [
   { label: "Do 300 000 Kč", href: "/vozy?priceMax=300000" },
   { label: "Akční nabídky", href: "/vozy?sale=1" },
 ];
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const PRICE_OPTIONS = [200_000, 300_000, 500_000, 800_000, 1_000_000];
 
@@ -33,6 +39,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(businessJsonLd(settings)) }} />
       <section className="card hero relative mb-6 overflow-hidden p-6 sm:p-10 md:p-16">
         <div className="pointer-events-none absolute -right-10 -top-10 h-72 w-72 opacity-20" style={{ background: "radial-gradient(circle, var(--acc), transparent 70%)" }} />
         <div className="hero-logo pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] items-center md:flex" aria-hidden="true">

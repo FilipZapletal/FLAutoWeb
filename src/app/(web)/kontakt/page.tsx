@@ -5,6 +5,7 @@ import { ClockIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon, PinIcon, W
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ownerContacts } from "@/lib/contacts";
 import { phoneDigits, whatsappLink } from "@/lib/format";
+import { businessJsonLd, jsonLdString } from "@/lib/seo";
 import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default async function ContactPage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(businessJsonLd(s)) }} />
       <SectionTitle as="h1" className="mb-6">Kontakt</SectionTitle>
       <div className="grid gap-6 md:grid-cols-2">
         <div className="card space-y-4 p-6">

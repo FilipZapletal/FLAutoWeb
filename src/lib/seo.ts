@@ -2,6 +2,7 @@ import "server-only";
 import { FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/labels";
 import { absoluteUrl, siteUrl } from "@/lib/site";
 import type { PublicService } from "@/lib/services/public";
+import type { SiteSettings } from "@/lib/validation/settings";
 import type { VehicleDetailData } from "@/lib/vehicles/public";
 
 export function vehicleTitle(v: Pick<VehicleDetailData, "brand" | "model" | "version" | "year">) {
@@ -102,4 +103,30 @@ export function serviceJsonLd(s: PublicService) {
       ],
     },
   ];
+}
+
+/** „Frýdecká 652/259, 718 00 Ostrava-Kunčičky“ → části adresy; nerozpoznaný tvar zůstane celý v ulici. */
+function postalAddress(address: string) {
+  const m = address.match(/^(.+),\s*(\d{3}\s?\d{2})\s+(.+)$/);
+  return {
+    "@type": "PostalAddress",
+    ...(m ? { streetAddress: m[1].trim(), postalCode: m[2], addressLocality: m[3].trim() } : { streetAddress: address }),
+    addressCountry: "CZ",
+  };
+}
+
+/** schema.org údaje o firmě (autoservis + autobazar) pro úvodní stránku a Kontakt. */
+export function businessJsonLd(s: SiteSettings) {
+  return {
+    "@context": "https://schema.org",
+    "@type": ["AutoRepair", "AutoDealer"],
+    "@id": siteUrl("/#firma"),
+    name: "FL Auto",
+    url: siteUrl("/"),
+    logo: siteUrl("/logo-light.png"),
+    image: siteUrl("/logo-dark.png"),
+    telephone: s.phone,
+    address: postalAddress(s.address),
+    ...([s.instagramUrl, s.facebookUrl].some(Boolean) && { sameAs: [s.instagramUrl, s.facebookUrl].filter(Boolean) }),
+  };
 }
