@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PremisesPhoto } from "@/components/layout/PremisesPhoto";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ABOUT_INTRO } from "@/lib/content";
 
@@ -40,11 +41,11 @@ export default function AboutPage() {
         ))}
       </div>
       <section className="card mt-4 p-6">
-        <h2 className="mb-2 text-lg">Tým a provozovna</h2>
+        <h2 className="mb-2 text-lg">Provozovna</h2>
         <p className="text-muted">
           Zakládáme si na neformálním a otevřeném jednání. Rádi vás přivítáme u nás, auto vám kompletně ukážeme a umožníme důkladnou prohlídku i zkušební jízdu bez jakéhokoliv tlaku.
         </p>
-        <p className="mt-3 text-sm text-muted">[DOPLNIT: fotografie týmu a provozovny]</p>
+        <PremisesPhoto className="mt-4" />
       </section>
       <div className="mt-8 flex flex-wrap gap-2">
         <Link href="/vozy" className="btn">Prohlédnout nabídku</Link>

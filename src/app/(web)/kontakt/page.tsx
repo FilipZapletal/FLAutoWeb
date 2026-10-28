@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MapEmbed } from "@/components/layout/MapEmbed";
+import { PremisesPhoto } from "@/components/layout/PremisesPhoto";
 import { ClockIcon, FacebookIcon, InstagramIcon, MailIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ownerContacts } from "@/lib/contacts";
@@ -123,8 +124,9 @@ export default async function ContactPage() {
       </section>
 
       <section className="card mt-6 p-6">
-        <h2 className="mb-2 text-lg">Provozovna</h2>
-        <p className="text-muted">[DOPLNIT: fotografie provozovny]</p>
+        <h2 className="mb-3 text-lg">Provozovna</h2>
+        <PremisesPhoto />
+        <p className="mt-3 text-sm text-muted">{s.address}</p>
       </section>
     </>
   );

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ServiceForm } from "@/components/forms/ServiceForm";
 import { ServiceOrderForm } from "@/components/forms/ServiceOrderForm";
+import { BeforeAfterSlider } from "@/components/services/BeforeAfterSlider";
 import { PriceList } from "@/components/services/ServicePrice";
 import { ServiceIconView } from "@/components/services/ServiceIconView";
 import { CheckIcon, PhoneIcon } from "@/components/ui/icons";
@@ -10,6 +11,7 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ownerContacts } from "@/lib/contacts";
 import { phoneDigits } from "@/lib/format";
 import { jsonLdString, serviceJsonLd } from "@/lib/seo";
+import { getServiceComparisons } from "@/lib/services/comparisons";
 import { bookableServices, findServiceSlugRedirect, getPublicServices, getServiceBySlug } from "@/lib/services/public";
 import { getSettings } from "@/lib/settings";
 
@@ -37,6 +39,7 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
     if (newSlug) permanentRedirect(`/servis/${newSlug}`);
     notFound();
   }
+  const comparisons = await getServiceComparisons(s.id);
   const others = services.filter((o) => o.id !== s.id);
   const own = s.contactPhone; // služba s vlastním kontaktem (Crystal Finish): jediný kontakt je tento telefon
   const orderable = !own || s.pickItems; // obecný termínový formulář se pro službu s vlastním kontaktem nenabízí, objednávka z ceníku ano
@@ -109,6 +112,20 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
           )}
         </aside>
       </div>
+
+      {comparisons.length > 0 && (
+        <section className="mb-12" aria-labelledby="pred-a-po">
+          <SectionTitle id="pred-a-po" className="mb-1">Před a po</SectionTitle>
+          <p className="mb-4 text-sm text-muted">Přejeďte prstem nebo myší po fotce a uvidíte rozdíl.</p>
+          <ul className={`grid gap-5 ${comparisons.length > 1 ? "md:grid-cols-2" : "max-w-2xl"}`}>
+            {comparisons.map((c) => (
+              <li key={c.id}>
+                <BeforeAfterSlider before={c.before} after={c.after} width={c.width} height={c.height} caption={c.caption} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {orderable && (
         <section id="objednavka" className="mb-12 scroll-mt-24">

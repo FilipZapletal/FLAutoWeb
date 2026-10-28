@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHead } from "@/components/admin/ui";
 import { ServiceEditForm } from "@/components/admin/ServiceEditForm";
+import { ServiceComparisonsManager } from "@/components/admin/ServiceComparisonsManager";
 import { ServiceManage } from "@/components/admin/ServiceRowControls";
 import { parseId } from "@/lib/api";
 import { getAdminService } from "@/lib/services/admin";
+import { getServiceComparisons } from "@/lib/services/comparisons";
 import { parseServicePrices } from "@/lib/validation/service";
 
 export const metadata = { title: "Upravit službu" };
@@ -13,6 +15,7 @@ export default async function EditServicePage({ params }: PageProps<"/admin/sluz
   const id = parseId((await params).id);
   const s = id ? await getAdminService(id) : null;
   if (!s) notFound();
+  const comparisons = await getServiceComparisons(s.id);
 
   return (
     <>
@@ -43,6 +46,7 @@ export default async function EditServicePage({ params }: PageProps<"/admin/sluz
           prices: parseServicePrices(s.prices),
         }}
       />
+      <ServiceComparisonsManager serviceId={s.id} initial={comparisons.map((c) => ({ id: c.id, caption: c.caption, before: { thumb: c.before.thumb }, after: { thumb: c.after.thumb } }))} />
       <ServiceManage id={s.id} published={s.published} />
     </>
   );

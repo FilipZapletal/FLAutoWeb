@@ -47,7 +47,7 @@ export function describeError(e: unknown) {
  * otočí ho podle EXIF, odstraní metadata a uloží varianty 400/1024/1920 px ve WebP
  * a JPEG pro náhledy při sdílení. Varianty se vytvářejí i ukládají souběžně (rychlejší na serverless).
  */
-export async function processVehicleImage(vehicleId: number, input: Buffer) {
+async function processImage(prefix: string, input: Buffer) {
   if (input.byteLength > MAX_UPLOAD_BYTES) {
     throw new ImageUploadError("Soubor je větší než 15 MB.");
   }
@@ -61,7 +61,7 @@ export async function processVehicleImage(vehicleId: number, input: Buffer) {
     throw new ImageUploadError("Podporované formáty: JPG, PNG, WebP, AVIF.");
   }
 
-  const storageKey = `vehicles/${vehicleId}/${randomUUID()}`;
+  const storageKey = `${prefix}/${randomUUID()}`;
 
   let files: { key: string; body: Buffer; type: string }[];
   let width = 0;
@@ -107,6 +107,11 @@ export async function processVehicleImage(vehicleId: number, input: Buffer) {
     height,
   };
 }
+
+export const processVehicleImage = (vehicleId: number, input: Buffer) => processImage(`vehicles/${vehicleId}`, input);
+
+/** Fotka „před / po“ na stránce služby. */
+export const processServiceImage = (serviceId: number, input: Buffer) => processImage(`services/${serviceId}`, input);
 
 export async function removeVehicleImageFiles(storageKey: string) {
   await getStorage().remove([...IMAGE_WIDTHS.map((w) => variantKey(storageKey, w)), ogKey(storageKey)]);

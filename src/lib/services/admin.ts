@@ -1,5 +1,6 @@
 import "server-only";
 import { db } from "@/lib/db";
+import { listServiceComparisonKeys, removeComparisonFiles } from "@/lib/services/comparisons";
 import { slugify } from "@/lib/slug";
 import type { ServiceInput } from "@/lib/validation/service";
 
@@ -51,7 +52,10 @@ export async function setServicePublished(id: number, published: boolean) {
 }
 
 export async function deleteService(id: number) {
-  return db.service.delete({ where: { id } }).catch(() => null);
+  const keys = await listServiceComparisonKeys(id);
+  const deleted = await db.service.delete({ where: { id } }).catch(() => null);
+  if (deleted) await removeComparisonFiles(keys);
+  return deleted;
 }
 
 export async function getAdminServices() {

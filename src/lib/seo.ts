@@ -124,7 +124,7 @@ export function businessJsonLd(s: SiteSettings) {
     name: "FL Auto",
     url: siteUrl("/"),
     logo: siteUrl("/logo-light.png"),
-    image: siteUrl("/logo-dark.png"),
+    image: [siteUrl("/provozovna.jpg"), siteUrl("/logo-dark.png")],
     telephone: s.phone,
     address: postalAddress(s.address),
     ...([s.instagramUrl, s.facebookUrl].some(Boolean) && { sameAs: [s.instagramUrl, s.facebookUrl].filter(Boolean) }),
