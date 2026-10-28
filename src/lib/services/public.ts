@@ -22,6 +22,8 @@ function toPublicService(s: Service) {
     priceNote: s.priceNote,
     contactPhone: s.contactPhone,
     contactName: s.contactName,
+    contactEmail: s.contactEmail,
+    instagramUrl: s.instagramUrl,
     pickItems: s.pickItems,
     metaTitle: s.metaTitle,
     metaDescription: s.metaDescription,

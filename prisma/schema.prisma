@@ -291,6 +291,10 @@ model Service {
   contactPhone    String?     @map("contact_phone")
   /// Jméno k vlastnímu kontaktu služby, např. „Denis“
   contactName     String?     @map("contact_name")
+  /// E-mail vlastního kontaktu: zobrazuje se na stránce služby a chodí na něj i objednávky této služby
+  contactEmail    String?     @map("contact_email")
+  /// Odkaz na Instagram služby (jen tato služba; profil FL Auto je v nastavení webu)
+  instagramUrl    String?     @map("instagram_url")
   /// Zákazník si na stránce služby vybere položky z ceníku (objednávkový formulář místo obecného termínu)
   pickItems       Boolean     @default(false) @map("pick_items")
   metaTitle       String?     @map("meta_title")

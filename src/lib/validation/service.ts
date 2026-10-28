@@ -43,6 +43,19 @@ const contactPhone = z.preprocess(
     .nullable(),
 );
 
+const contactEmail = z.preprocess(
+  (v) => (typeof v === "string" ? v.trim().toLowerCase() || null : v ?? null),
+  z.email({ error: "Zadejte platný e-mail" }).max(160).nullable(),
+);
+
+const instagramUrl = z.preprocess(
+  (v) => (typeof v === "string" ? v.trim() || null : v ?? null),
+  z
+    .url({ protocol: /^https$/, hostname: /^(www\.)?instagram\.com$/, error: "Zadejte odkaz na Instagram, např. https://www.instagram.com/profil/" })
+    .max(300)
+    .nullable(),
+);
+
 export const serviceSchema = z.object({
   title: requiredText(120),
   tag: optionalText(60),
@@ -54,6 +67,8 @@ export const serviceSchema = z.object({
   priceNote: optionalText(300),
   contactPhone,
   contactName: optionalText(60),
+  contactEmail,
+  instagramUrl,
   pickItems: z.boolean().default(false),
   metaTitle: optionalText(70),
   metaDescription: optionalText(170),

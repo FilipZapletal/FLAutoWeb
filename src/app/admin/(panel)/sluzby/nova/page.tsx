@@ -21,6 +21,8 @@ export default async function NewServicePage() {
           priceNote: "",
           contactPhone: "",
           contactName: "",
+          contactEmail: "",
+          instagramUrl: "",
           pickItems: false,
           metaTitle: "",
           metaDescription: "",

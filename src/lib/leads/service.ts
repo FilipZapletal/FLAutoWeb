@@ -16,7 +16,7 @@ export class LeadVehicleNotFoundError extends Error {}
 export class LeadItemsError extends Error {}
 
 const vehicleSelect = { select: { brand: true, model: true, version: true, slug: true, status: true } } as const;
-const serviceSelect = { select: { id: true, slug: true, title: true } } as const;
+const serviceSelect = { select: { id: true, slug: true, title: true, contactEmail: true } } as const;
 
 export async function createLead(input: LeadInput) {
   let data: Prisma.LeadUncheckedCreateInput;

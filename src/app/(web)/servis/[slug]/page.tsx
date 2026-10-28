@@ -6,7 +6,7 @@ import { ServiceOrderForm } from "@/components/forms/ServiceOrderForm";
 import { BeforeAfterSlider } from "@/components/services/BeforeAfterSlider";
 import { PriceList } from "@/components/services/ServicePrice";
 import { ServiceIconView } from "@/components/services/ServiceIconView";
-import { CheckIcon, PhoneIcon } from "@/components/ui/icons";
+import { CheckIcon, ChevronRightIcon, InstagramIcon, MailIcon, PhoneIcon } from "@/components/ui/icons";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { ownerContacts } from "@/lib/contacts";
 import { phoneDigits } from "@/lib/format";
@@ -85,20 +85,34 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
           )}
         </div>
         <aside>
-          <SectionTitle className="mb-3">Ceník</SectionTitle>
-          <PriceList prices={s.prices} note={s.priceNote} />
+          {!s.pickItems && (
+            <>
+              <SectionTitle className="mb-3">Ceník</SectionTitle>
+              <PriceList prices={s.prices} note={s.priceNote} />
+            </>
+          )}
           {own ? (
-            <div className="card mt-4 p-5">
+            <div className={`card p-5 ${s.pickItems ? "" : "mt-4"}`}>
               <p className="text-sm text-muted">{s.pickItems ? "Objednejte přímo na webu, nebo nám zavolejte:" : "Objednávky a dotazy vyřizujeme telefonicky:"}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {s.pickItems && <a href="#objednavka" className="btn">Objednat</a>}
                 <a href={`tel:${phoneDigits(own)}`} className={s.pickItems ? "btn-outline phone-ring" : "btn phone-ring"}>
                   <PhoneIcon size={16} /> {s.contactName ? `${s.contactName} ` : ""}{own}
                 </a>
+                {s.contactEmail && (
+                  <a href={`mailto:${s.contactEmail}`} className="btn-outline">
+                    <MailIcon size={16} /> {s.contactEmail}
+                  </a>
+                )}
+                {s.instagramUrl && (
+                  <a href={s.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn-outline">
+                    <InstagramIcon size={16} /> Instagram
+                  </a>
+                )}
               </div>
             </div>
           ) : (
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className={`flex flex-wrap gap-2 ${s.pickItems ? "" : "mt-4"}`}>
               <a href="#objednavka" className="btn">Objednat</a>
               {ownerContacts(settings)
                 .slice(s.slug === SERVICE_WITHOUT_FIRST_CONTACT ? 1 : 0)
@@ -110,13 +124,34 @@ export default async function ServiceDetailPage({ params }: PageProps<"/servis/[
                 ))}
             </div>
           )}
+          {s.pickItems && (
+            // Objednávkový formulář už ukazuje všechny položky s cenami, takže samostatný ceník je jen na vyžádání.
+            <details className="group mt-4">
+              <summary className="btn-outline flex w-full cursor-pointer list-none items-center justify-between [&::-webkit-details-marker]:hidden">
+                <span className="group-open:hidden">Zobrazit ceník</span>
+                <span className="hidden group-open:inline">Skrýt ceník</span>
+                <ChevronRightIcon size={16} className="transition-transform group-open:rotate-90" />
+              </summary>
+              <div className="mt-3">
+                <PriceList prices={s.prices} note={s.priceNote} />
+              </div>
+            </details>
+          )}
         </aside>
       </div>
 
       {comparisons.length > 0 && (
         <section className="mb-12" aria-labelledby="pred-a-po">
           <SectionTitle id="pred-a-po" className="mb-1">Před a po</SectionTitle>
-          <p className="mb-4 text-sm text-muted">Přejeďte prstem nebo myší po fotce a uvidíte rozdíl.</p>
+          <p className="mb-4 text-sm text-muted">
+            Přejeďte prstem nebo myší po fotce a uvidíte rozdíl.
+            {s.instagramUrl && (
+              <>
+                {" "}Další práce najdete na{" "}
+                <a href={s.instagramUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-fg">Instagramu</a>.
+              </>
+            )}
+          </p>
           <ul className={`grid gap-5 ${comparisons.length > 1 ? "md:grid-cols-2" : "max-w-2xl"}`}>
             {comparisons.map((c) => (
               <li key={c.id}>

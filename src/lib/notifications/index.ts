@@ -13,7 +13,7 @@ import { sendPush } from "./push";
 
 type LeadWithVehicle = Lead & {
   vehicle: { brand: string; model: string; version: string | null; slug: string } | null;
-  service: { title: string } | null;
+  service: { title: string; contactEmail?: string | null } | null;
 };
 
 /** Upozornění dostávají oba majitelé: hlavní e-mail webu a odpovědná osoba. */
@@ -51,7 +51,8 @@ export async function notifyNewReview(review: { id: number; author: string; rati
 export async function notifyNewLead(lead: LeadWithVehicle) {
   const settings = await getSettings();
   const vehicleName = lead.vehicle ? [lead.vehicle.brand, lead.vehicle.model, lead.vehicle.version].filter(Boolean).join(" ") : null;
-  const adminTo = adminRecipients(settings);
+  // U služby s vlastním kontaktem (Crystal Finish) dostane e-mail o objednávce i tento kontakt.
+  const adminTo = [...new Set([...adminRecipients(settings), ...(lead.service?.contactEmail ? [lead.service.contactEmail] : [])])];
   const wanted = lead.type === "WANTED_CAR";
   const service = lead.service?.title ?? null;
   const booking = formatBooking(lead);

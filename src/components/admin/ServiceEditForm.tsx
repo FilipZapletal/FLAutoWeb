@@ -17,6 +17,8 @@ export type ServiceFormValues = {
   priceNote: string;
   contactPhone: string;
   contactName: string;
+  contactEmail: string;
+  instagramUrl: string;
   pickItems: boolean;
   metaTitle: string;
   metaDescription: string;
@@ -146,8 +148,10 @@ export function ServiceEditForm({ serviceId, initial }: { serviceId?: number; in
         <div className="grid gap-3 sm:grid-cols-2">
           <InputField label="Jméno kontaktu" name="contactName" defaultValue={v.contactName} error={fields.contactName} placeholder="např. Denis" />
           <InputField label="Telefon služby" name="contactPhone" defaultValue={v.contactPhone} error={fields.contactPhone} placeholder="např. +420 773 578 684" />
+          <InputField label="E-mail kontaktu" name="contactEmail" type="email" defaultValue={v.contactEmail} error={fields.contactEmail} placeholder="např. info@firma.cz" className="sm:col-span-2" />
+          <InputField label="Instagram služby" name="instagramUrl" type="url" defaultValue={v.instagramUrl} error={fields.instagramUrl} placeholder="https://www.instagram.com/profil/" hint="Nepovinné. Na stránce služby se ukáže tlačítko Instagram." className="sm:col-span-2" />
         </div>
-        <p className="text-xs text-muted">Nepovinné. Je-li telefon vyplněn, je to na stránce služby jediný kontakt (kontakty majitelů se tam nezobrazí) a obecný formulář s termínem se nenabízí.</p>
+        <p className="text-xs text-muted">Nepovinné. Je-li telefon vyplněn, je to na stránce služby jediný kontakt (kontakty majitelů se tam nezobrazí) a obecný formulář s termínem se nenabízí. E-mail se ukáže na stránce služby a chodí na něj (vedle majitelů) i e-maily o objednávkách této služby.</p>
         <label className="flex items-start gap-2 text-sm">
           <input type="checkbox" name="pickItems" defaultChecked={v.pickItems} className="mt-0.5 accent-[var(--acc)]" />
           <span>
