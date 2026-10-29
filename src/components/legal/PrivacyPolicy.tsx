@@ -99,7 +99,7 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
         <li>účetní, případně daňový poradce.</li>
       </ul>
       <p>
-        Konkrétní poskytovatelé: <span className="text-acc">[DOPLNIT po spuštění webu, např. Vercel Inc. (hosting), Supabase Inc. (databáze a úložiště fotografií), Resend (e-maily)]</span>.
+        Konkrétní poskytovatelé: Vercel Inc. (hosting webu), Supabase Inc. (databáze a úložiště fotografií), Resend (odesílání e-mailů).
       </p>
       <p>Pokud to vyžaduje zákon, předáváme údaje také orgánům veřejné moci (např. registru silničních vozidel při převodu vozu nebo finančnímu úřadu).</p>
       <p>
