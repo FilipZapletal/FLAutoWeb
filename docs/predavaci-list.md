@@ -87,7 +87,7 @@ Pořadí tak, aby se nic nedělalo dvakrát. Postup krok za krokem je v souboru 
 - [x] Doména připojena k webu (DNS u WEDOSu, ve Vercelu „Valid Configuration“)
 - [x] Ve Vercelu `SITE_URL` = `https://www.flauto.cz` a Redeploy (26. 10.)
 - [x] Google Search Console: doména ověřená, odeslaná sitemap (26. 10.)
-- [ ] Google Search Console: objednatel (Jarkův Gmail) přidán jako vlastník
+- [x] Google Search Console: objednatel přidán jako vlastník (29. 10.)
 - [ ] Google firemní profil založen (nebo převzat) a ověřen, s odkazem na web
 - [ ] Po převodu Vercelu zkontrolovat, že doména pořád svítí „Valid Configuration“
 - [ ] Resend (účet na e-mail objednatele): DNS záznamy u WEDOSu, ověřená doména, klíč ve Vercelu, zkušební objednávka došla e-mailem majitelům i zákazníkovi
