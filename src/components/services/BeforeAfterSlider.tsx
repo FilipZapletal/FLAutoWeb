@@ -34,7 +34,8 @@ export function BeforeAfterSlider({ before, after, width, height, caption }: { b
   const label = "absolute top-3 rounded-full bg-black/60 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm";
 
   return (
-    <figure>
+    // Výška posuvníku nesmí přesáhnout okno: u fotek na výšku se zúží šířka (na mobilu je limit zbytečný, tam je šířka menší).
+    <figure style={{ maxWidth: `calc(min(75svh, 680px) * ${width} / ${height})` }}>
       <div
         ref={box}
         className="relative w-full select-none overflow-hidden rounded-inner border border-line bg-card2"
