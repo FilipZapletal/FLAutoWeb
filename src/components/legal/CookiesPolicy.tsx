@@ -79,7 +79,7 @@ export function CookiesPolicy() {
 
       <h2>Další informace</h2>
       <p>
-        Jak zpracováváme osobní údaje, popisujeme na stránce <Link href="/ochrana-osobnich-udaju">Ochrana osobních údajů</Link>. Pokud začneme používat další cookies (například pro měření návštěvnosti), tuto stránku aktualizujeme a předem vás požádáme o souhlas.
+        Jak zpracováváme osobní údaje, popisujeme na stránce <Link href="/ochrana-osobnich-udaju">Ochrana osobních údajů</Link>. Pokud začneme používat další cookies (například analytické nebo reklamní), tuto stránku aktualizujeme a předem vás požádáme o souhlas.
       </p>
     </>
   );
