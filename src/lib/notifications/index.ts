@@ -1,6 +1,6 @@
 import "server-only";
 import type { Lead } from "@/generated/prisma/client";
-import { formatBooking } from "@/lib/booking";
+import { formatBooking, formatConfirmedBooking } from "@/lib/booking";
 import { formatPrice } from "@/lib/format";
 import { LEAD_TYPE_LABELS } from "@/lib/labels";
 import { orderTotal, parseOrderItems } from "@/lib/order-items";
@@ -13,7 +13,7 @@ import { sendPush } from "./push";
 
 type LeadWithVehicle = Lead & {
   vehicle: { brand: string; model: string; version: string | null; slug: string } | null;
-  service: { title: string; contactEmail?: string | null } | null;
+  service: { title: string; contactEmail?: string | null; contactPhone?: string | null; contactName?: string | null } | null;
 };
 
 /** Upozornění dostávají oba majitelé: hlavní e-mail webu a odpovědná osoba. */
@@ -142,4 +142,41 @@ export async function notifyNewLead(lead: LeadWithVehicle) {
 
   const results = await Promise.allSettled(jobs);
   for (const r of results) if (r.status === "rejected") console.error("Notifikace poptávky selhala:", r.reason);
+}
+
+/**
+ * E-mail zákazníkovi, když majitel v administraci potvrdí, změní nebo zruší termín.
+ * Potvrzený termín je závazný, majitel už zákazníkovi volat nemusí. Bez e-mailu zákazníka se nic neposílá.
+ */
+export async function notifyBookingChange(
+  lead: LeadWithVehicle,
+  change: "confirmed" | "changed" | "cancelled",
+  previous: { confirmedDate: Date | null; confirmedSlot: Lead["confirmedSlot"]; confirmedTime: string | null },
+) {
+  if (!lead.email) return;
+  try {
+    const settings = await getSettings();
+    const vehicleName = lead.vehicle ? [lead.vehicle.brand, lead.vehicle.model, lead.vehicle.version].filter(Boolean).join(" ") : null;
+    const what = lead.service?.title ?? (vehicleName ? `prohlídka vozu ${vehicleName}` : null);
+    const booking = formatConfirmedBooking(lead);
+    const before = formatConfirmedBooking({ preferredDate: null, preferredSlot: null, ...previous });
+    // Crystal Finish má vlastní kontakt, ostatní služby a vozy kontakty majitelů.
+    const phone = lead.service?.contactPhone ? `${lead.service.contactName ? `${lead.service.contactName} ` : ""}${lead.service.contactPhone}` : phonesLine(settings);
+    const subject =
+      change === "cancelled" ? "Termín byl zrušen – FL Auto" : change === "changed" ? `Změna termínu: ${booking} – FL Auto` : `Termín potvrzen: ${booking} – FL Auto`;
+    const body =
+      change === "cancelled"
+        ? [`termín${before ? ` ${before}` : ""}${what ? ` (${what})` : ""} jsme zrušili.`, "Pokud si chcete domluvit jiný, zavolejte nám nebo se objednejte znovu na webu."]
+        : change === "changed"
+          ? [`váš termín${what ? ` (${what})` : ""} jsme změnili.`, "", `Nový termín: ${booking}`, before ? `Původní termín: ${before}` : null, "", "Pokud vám nový termín nevyhovuje, zavolejte nám."]
+          : [`potvrzujeme váš termín${what ? ` (${what})` : ""}.`, "", `Termín: ${booking}`, "", "Těšíme se na vás. Pokud vám termín nevyhovuje, zavolejte nám."];
+    await sendEmail({
+      to: lead.email,
+      replyTo: settings.email,
+      subject,
+      text: ["Dobrý den,", "", ...body, "", "FL Auto", settings.address, `Tel.: ${phone}`, settings.email].filter((l) => l !== null).join("\n"),
+    });
+  } catch (e) {
+    console.error("E-mail o změně termínu selhal:", e);
+  }
 }

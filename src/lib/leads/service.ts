@@ -1,6 +1,6 @@
 import "server-only";
-import type { LeadStatus, LeadType, Prisma, TimeSlot, VehicleStatus } from "@/generated/prisma/client";
-import { effectiveBooking, pragueToday } from "@/lib/booking";
+import type { LeadStatus, LeadType, Prisma, VehicleStatus } from "@/generated/prisma/client";
+import { bookingSortKey, effectiveBooking, pragueToday } from "@/lib/booking";
 import { db } from "@/lib/db";
 import { CARS_CATEGORY, SERVICE_KEY_PREFIX, WANTED_CATEGORY, serviceCategory, type LeadCategory } from "@/lib/lead-categories";
 import { getPublicServices, getPublishedService } from "@/lib/services/public";
@@ -16,7 +16,7 @@ export class LeadVehicleNotFoundError extends Error {}
 export class LeadItemsError extends Error {}
 
 const vehicleSelect = { select: { brand: true, model: true, version: true, slug: true, status: true } } as const;
-const serviceSelect = { select: { id: true, slug: true, title: true, contactEmail: true } } as const;
+const serviceSelect = { select: { id: true, slug: true, title: true, contactEmail: true, contactPhone: true, contactName: true } } as const;
 
 export async function createLead(input: LeadInput) {
   let data: Prisma.LeadUncheckedCreateInput;
@@ -31,7 +31,7 @@ export async function createLead(input: LeadInput) {
       type: input.type,
       message: input.message,
       preferredDate: input.preferredDate,
-      preferredSlot: input.preferredDate ? input.preferredSlot : null,
+      preferredTime: input.preferredDate ? input.preferredTime : null,
     };
   } else if (input.kind === "wanted") {
     data = {
@@ -64,7 +64,7 @@ export async function createLead(input: LeadInput) {
       serviceId: service.id,
       items,
       preferredDate: input.preferredDate,
-      preferredSlot: input.preferredDate ? input.preferredSlot : null,
+      preferredTime: input.preferredDate ? input.preferredTime : null,
     };
   } else {
     const service = input.serviceId ? await getPublishedService(input.serviceId) : null;
@@ -78,7 +78,7 @@ export async function createLead(input: LeadInput) {
       car: input.car,
       serviceId: service && !service.contactPhone ? service.id : null,
       preferredDate: input.preferredDate,
-      preferredSlot: input.preferredSlot,
+      preferredTime: input.preferredTime,
     };
   }
   return db.lead.create({ data, include: { vehicle: vehicleSelect, service: serviceSelect } });
@@ -117,18 +117,18 @@ function bookingDateWhere(date: Prisma.DateTimeFilter): Prisma.LeadWhereInput {
   return { OR: [{ confirmedDate: date }, { confirmedDate: null, preferredDate: date }] };
 }
 
-/** Řazení podle platného termínu (den, dopoledne před odpolednem, pak podle vzniku). */
+/** Řazení podle platného termínu (den, čas, pak podle vzniku). */
 function byBooking(a: Parameters<typeof effectiveBooking>[0] & { createdAt: Date }, b: typeof a) {
   const ea = effectiveBooking(a);
   const eb = effectiveBooking(b);
   return (
     (ea.date?.getTime() ?? 0) - (eb.date?.getTime() ?? 0) ||
-    (ea.slot ?? "").localeCompare(eb.slot ?? "") ||
+    bookingSortKey(ea).localeCompare(bookingSortKey(eb)) ||
     a.createdAt.getTime() - b.createdAt.getTime()
   );
 }
 
-/** Objednávky s platným termínem v daný den ("RRRR-MM-DD"), seřazené podle části dne (připomenutí). */
+/** Objednávky s platným termínem v daný den ("RRRR-MM-DD"), seřazené podle času (připomenutí). */
 export async function getBookingsOn(isoDate: string) {
   const rows = await db.lead.findMany({
     where: { status: { notIn: ["SOLD", "LOST"] }, type: { not: "WANTED_CAR" }, ...bookingDateWhere({ equals: utcDay(isoDate) }) },
@@ -157,15 +157,28 @@ export async function getBookingsBetween(fromIso: string, toIso: string) {
  * Uložení termínu posune novou nebo rozjednanou objednávku do stavu Potvrzeno, zrušení ji vrátí na Kontaktováno.
  * Vrací null, když objednávka neexistuje nebo jde o hledané auto (to termín nemá).
  */
-export async function updateLeadBooking(id: number, booking: { date: string | null; slot: TimeSlot | null }) {
-  const lead = await db.lead.findUnique({ where: { id }, select: { type: true, status: true } });
+export type BookingChange = "confirmed" | "changed" | "cancelled" | null;
+
+/**
+ * Uloží (nebo zruší) domluvený termín. Vrací i předchozí potvrzený termín a druh změny,
+ * aby šlo zákazníkovi poslat e-mail o potvrzení, změně nebo zrušení termínu.
+ */
+export async function updateLeadBooking(id: number, booking: { date: string | null; time: string | null }) {
+  const lead = await db.lead.findUnique({ where: { id }, select: { type: true, status: true, confirmedDate: true, confirmedSlot: true, confirmedTime: true } });
   if (!lead || lead.type === "WANTED_CAR") return null;
   const open: LeadStatus[] = ["NEW", "CONTACTED", "NEGOTIATION"];
   const status = booking.date ? (open.includes(lead.status) ? "CONFIRMED" : lead.status) : lead.status === "CONFIRMED" ? "CONTACTED" : lead.status;
-  return db.lead.update({
+  const confirmedDate = booking.date ? utcDay(booking.date) : null;
+  const confirmedTime = booking.date ? booking.time : null;
+  const updated = await db.lead.update({
     where: { id },
-    data: { confirmedDate: booking.date ? utcDay(booking.date) : null, confirmedSlot: booking.date ? booking.slot : null, status },
+    // Starší „část dne“ nahrazuje přesný čas.
+    data: { confirmedDate, confirmedTime, confirmedSlot: null, status },
+    include: { vehicle: vehicleSelect, service: serviceSelect },
   });
+  const same = lead.confirmedDate?.getTime() === confirmedDate?.getTime() && lead.confirmedTime === confirmedTime && !lead.confirmedSlot;
+  const change: BookingChange = same ? null : !confirmedDate ? "cancelled" : lead.confirmedDate ? "changed" : "confirmed";
+  return { ...updated, bookingChange: change, previousBooking: { confirmedDate: lead.confirmedDate, confirmedSlot: lead.confirmedSlot, confirmedTime: lead.confirmedTime } };
 }
 
 export async function getLead(id: number) {

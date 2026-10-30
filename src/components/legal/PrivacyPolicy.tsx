@@ -26,10 +26,10 @@ export function PrivacyPolicy({ s }: { s: SiteSettings }) {
 
       <h2>2. Jaké údaje zpracováváme</h2>
       <ul>
-        <li><strong>Poptávka u vozu</strong> (formulář „Máte zájem o tento vůz?“): jméno, telefon, e-mail (nepovinný), typ zájmu, případně preferovaný den a část dne, text zprávy a vůz, o který máte zájem.</li>
+        <li><strong>Poptávka u vozu</strong> (formulář „Máte zájem o tento vůz?“): jméno, telefon, e-mail (nepovinný), typ zájmu, případně preferovaný den a čas, text zprávy a vůz, o který máte zájem.</li>
         <li><strong>Recenze</strong> (formulář „Napsat recenzi“): jméno (nebo jeho zkrácená podoba), hodnocení a text recenze. Po schválení provozovatelem se zveřejní na webu.</li>
         <li><strong>Hledané auto</strong> (okno „Nenašli jste, co hledáte?“): jméno, telefon, e-mail (nepovinný), popis hledaného vozu a vaše požadavky (např. cena, rok, palivo).</li>
-        <li><strong>Objednávka do servisu</strong>: jméno, značka a model vozu, telefon, e-mail (nepovinný), preferovaný den a část dne, u objednávky z ceníku vybrané položky a poznámka.</li>
+        <li><strong>Objednávka do servisu</strong>: jméno, značka a model vozu, telefon, e-mail (nepovinný), preferovaný den a čas, u objednávky z ceníku vybrané položky a poznámka.</li>
         <li><strong>Koupě vozu nebo servisní zakázka</strong>: údaje potřebné k uzavření a splnění smlouvy, k převodu vozidla v registru silničních vozidel a k vystavení dokladů (např. jméno, adresa, datum narození, číslo dokladu totožnosti, u podnikatelů IČO).</li>
         <li><strong>Komunikace</strong>: obsah e-mailů, zpráv a záznamy o telefonickém a osobním jednání týkajícím se vaší poptávky.</li>
         <li><strong>Údaje v prohlížeči</strong>: vaši volbu v okně Nastavení soukromí a – s vaším souhlasem – světlý či tmavý režim, oblíbená auta a údaj, že jste zavřeli okno „Nenašli jste, co hledáte?“. Zůstávají jen ve vašem zařízení (viz <Link href="/cookies">Cookies</Link>), nikam se neodesílají.</li>

@@ -202,10 +202,15 @@ model Lead {
   car           String?
   serviceId     Int?       @map("service_id")
   preferredDate DateTime?  @map("preferred_date") @db.Date
+  /// Starší objednávky: část dne. Nové mají přesný čas v preferredTime.
   preferredSlot TimeSlot?  @map("preferred_slot")
+  /// Přesný čas přání zákazníka "HH:MM"
+  preferredTime String?    @map("preferred_time")
   /// Termín domluvený majitelem (může se lišit od přání zákazníka). Je-li vyplněn, platí místo preferredDate.
   confirmedDate DateTime?  @map("confirmed_date") @db.Date
   confirmedSlot TimeSlot?  @map("confirmed_slot")
+  /// Přesný čas domluvený majitelem "HH:MM"
+  confirmedTime String?    @map("confirmed_time")
   /// Položky vybrané z ceníku služby (objednávka Crystal Finish): [{ label, price, from }]. Snapshot v době objednávky.
   items         Json       @default("[]")
   createdAt     DateTime   @default(now()) @map("created_at")

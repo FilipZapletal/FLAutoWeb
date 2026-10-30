@@ -3,7 +3,6 @@
 import Link from "next/link";
 import type { FormEvent } from "react";
 import { bookingRange } from "@/lib/booking";
-import { TIME_SLOT_LABELS } from "@/lib/labels";
 import { FormError, Honeypot, InputField, SelectField, TextareaField } from "./Field";
 import { useJsonSubmit } from "./useJsonSubmit";
 
@@ -62,15 +61,10 @@ export function ServiceForm({ services = [], serviceId }: Props) {
         type="date"
         required
         ref={setDateRange}
-        hint="Pracovní dny, nejdříve od zítřka. Sobotu domluvíme telefonicky."
+        hint="Termín vám potvrdíme e-mailem nebo telefonicky."
         error={fields.preferredDate}
       />
-      <SelectField label="Část dne" name="preferredSlot" required defaultValue="" error={fields.preferredSlot}>
-        <option value="" disabled>Vyberte</option>
-        {Object.entries(TIME_SLOT_LABELS).map(([k, l]) => (
-          <option key={k} value={k}>{l}</option>
-        ))}
-      </SelectField>
+      <InputField label="Čas" name="preferredTime" type="time" required error={fields.preferredTime} />
       <InputField label="Značka a model vozu" name="car" required capitalize="words" error={fields.car} />
       <InputField label="Jméno a příjmení" name="name" required autoComplete="name" capitalize="words" error={fields.name} />
       <InputField label="Telefon" name="phone" type="tel" required autoComplete="tel" inputMode="tel" error={fields.phone} />

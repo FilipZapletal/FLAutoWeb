@@ -10,7 +10,7 @@ Veřejný web autobazaru (katalog, detail vozu, poptávky, servis) a administrac
 - Dokud cenu nevyplníte, web ukazuje „Cena na dotaz“.
 
 **Online objednávka do servisu** ([PR #3](https://github.com/FilipZapletal/FLAutoWeb/pull/3))
-- Zákazník na stránce Servis (nebo na stránce služby) vybere službu, den (od zítřka, nejdéle 60 dní dopředu) a **dopoledne** nebo **odpoledne**.
+- Zákazník na stránce Servis (nebo na stránce služby) vybere službu, den (od dneška, nejdéle 60 dní dopředu, i víkendy) a **přesný čas**. Po potvrzení termínu v adminu dostane zákazník e-mail (i při změně a zrušení).
 - Objednávky najdete v administraci na **nástěnce** (tabulka Nadcházející servisní termíny) a v **Poptávkách** (sloupec Termín).
 - O každé objednávce přijde e-mail vám i zákazníkovi, včetně termínu.
 
@@ -175,7 +175,7 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 - Hledané auto na přání: vyskakovací okno „Nenašli jste, co hledáte?“ pro zákazníka, který si z nabídky nevybral (prázdný katalog, návrat zpět z katalogu, odchod ze stránky); poptávka jde e-mailem oběma majitelům. Logika v `src/components/wanted/`.
 - Ochrana dat: poptávky bez obchodu se **30 dní od posledního kontaktu automaticky mažou** (denní úklid přes Vercel Cron + pojistka při každé nové poptávce). Rezervace a Prodáno se nemažou; servisní objednávka s budoucím termínem se nemaže před termínem. Logika v `src/lib/leads/retention.ts`.
 - Poptávky: validace na serveru, uložení leadu, potvrzení na webu, e-mail administraci i zákazníkovi.
-- Servis: služby spravované v administraci (výchozí 4 vytvoří migrace), každá s vlastní stránkou `/servis/[slug]` a ceníkem; online objednávka termínu (služba, den, dopoledne/odpoledne; lead typu `SERVICE`).
+- Servis: služby spravované v administraci (výchozí 4 vytvoří migrace), každá s vlastní stránkou `/servis/[slug]` a ceníkem; online objednávka termínu (služba, den, přesný čas; lead typu `SERVICE`).
 - Kontakt (mapa až po kliknutí, odkaz na navigaci), O nás s texty klienta, právní stránky (návrh, firemní údaje z Nastavení).
 - Administrace: přihlášení, dashboard se statistikami, posledními poptávkami a nadcházejícími servisními termíny, CRUD vozidel, změna statusu přímo v tabulce, doporučené vozy, archiv, správa fotek (drag & drop, pořadí, hlavní fotka, mazání, automatická optimalizace), poptávky se změnou stavu a detailem, služby (texty, odrážky, ceník, pořadí, skrytí, SEO titulek a popis), nastavení kontaktů a otevírací doby, změna vlastního hesla, recenze zákazníků (zobrazení na úvodu pod blokem O autobazaru a/nebo na Servisu, pořadí; karty se listují a delší se rozbalují; recenze napsané návštěvníky na webu se zobrazí až po schválení) a ručně zadané hodnocení na Googlu.
 - SEO: title, meta description, canonical, Open Graph (hlavní fotka), schema.org `Car` + `Offer` a `Service` s ceníkem, `sitemap.xml`, `robots.txt`, 301 přesměrování po změně URL vozu i služby, 404 stránka.

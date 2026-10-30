@@ -21,10 +21,11 @@ export async function sendBookingReminders(now = new Date()) {
   if (!bookings.length) return 0;
   const settings = await getSettings();
   const items = bookings.map((b) => {
-    const { slot, confirmed } = effectiveBooking(b);
+    const booking = effectiveBooking(b);
+    const { confirmed } = booking;
     return {
       id: b.id,
-      when: slot ? TIME_SLOT_LABELS[slot].toLowerCase() : "bez upřesnění",
+      when: booking.time ? `v ${booking.time}` : booking.slot ? TIME_SLOT_LABELS[booking.slot].toLowerCase() : "bez upřesnění",
       confirmed,
       service: b.type === "SERVICE" ? (b.service?.title ?? "Servis") : `${LEAD_TYPE_LABELS[b.type]}${b.vehicle ? `: ${b.vehicle.brand} ${b.vehicle.model}` : ""}`,
       name: b.name,

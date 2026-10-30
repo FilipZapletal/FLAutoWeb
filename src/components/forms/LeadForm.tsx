@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { FormEvent } from "react";
-import { TIME_SLOT_LABELS, VEHICLE_LEAD_TYPE_OPTIONS } from "@/lib/labels";
+import { VEHICLE_LEAD_TYPE_OPTIONS } from "@/lib/labels";
 import { FormError, Honeypot, InputField, SelectField, TextareaField } from "./Field";
 import { setDateRange } from "./ServiceForm";
 import { useJsonSubmit } from "./useJsonSubmit";
@@ -52,15 +52,10 @@ export function LeadForm({ vehicleId }: { vehicleId: number }) {
           name="preferredDate"
           type="date"
           ref={setDateRange}
-          hint="Pracovní dny, nejdříve od zítřka. Přesný termín domluvíme telefonicky."
+          hint="Termín vám potvrdíme e-mailem nebo telefonicky."
           error={fields.preferredDate}
         />
-        <SelectField label="Část dne" name="preferredSlot" defaultValue="" error={fields.preferredSlot}>
-          <option value="">Bez upřesnění</option>
-          {Object.entries(TIME_SLOT_LABELS).map(([k, l]) => (
-            <option key={k} value={k}>{l}</option>
-          ))}
-        </SelectField>
+        <InputField label="Čas (nepovinné)" name="preferredTime" type="time" error={fields.preferredTime} />
       </div>
       <TextareaField label="Zpráva" name="message" rows={3} capitalize="first" error={fields.message} />
       <FormError message={error} />

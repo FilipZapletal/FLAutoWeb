@@ -4,10 +4,9 @@ import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import { groupPrices, priceText } from "@/components/services/ServicePrice";
 import { formatPrice } from "@/lib/format";
-import { TIME_SLOT_LABELS } from "@/lib/labels";
 import { orderTotal } from "@/lib/order-items";
 import type { ServicePrice } from "@/lib/validation/service";
-import { FormError, Honeypot, InputField, SelectField, TextareaField } from "./Field";
+import { FormError, Honeypot, InputField, TextareaField } from "./Field";
 import { setDateRange } from "./ServiceForm";
 import { useJsonSubmit } from "./useJsonSubmit";
 
@@ -99,15 +98,10 @@ export function ServiceOrderForm({ serviceId, prices, contactName }: { serviceId
           name="preferredDate"
           type="date"
           ref={setDateRange}
-          hint="Pracovní dny, nejdříve od zítřka. Přesný termín domluvíme telefonicky."
+          hint="Termín vám potvrdíme e-mailem nebo telefonicky."
           error={fields.preferredDate}
         />
-        <SelectField label="Část dne" name="preferredSlot" defaultValue="" error={fields.preferredSlot}>
-          <option value="">Bez upřesnění</option>
-          {Object.entries(TIME_SLOT_LABELS).map(([k, l]) => (
-            <option key={k} value={k}>{l}</option>
-          ))}
-        </SelectField>
+        <InputField label="Čas (nepovinné)" name="preferredTime" type="time" error={fields.preferredTime} />
         <TextareaField label="Poznámka" name="message" rows={3} capitalize="first" placeholder="Např. stav vozu, zvláštní přání" className="md:col-span-2" error={fields.message} />
       </div>
       <FormError message={error} />

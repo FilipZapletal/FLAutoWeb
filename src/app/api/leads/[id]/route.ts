@@ -1,6 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { after, NextResponse, type NextRequest } from "next/server";
 import { guardAdmin, jsonError, parseId, readJson, validationError } from "@/lib/api";
 import { deleteLead, updateLeadBooking, updateLeadStatus } from "@/lib/leads/service";
+import { notifyBookingChange } from "@/lib/notifications";
 import { leadUpdateSchema } from "@/lib/validation/lead";
 
 export async function PUT(req: NextRequest, ctx: RouteContext<"/api/leads/[id]">) {
@@ -11,8 +12,12 @@ export async function PUT(req: NextRequest, ctx: RouteContext<"/api/leads/[id]">
   if (!parsed.success) return validationError(parsed.error);
   if (!id) return jsonError(404, "Poptávka nenalezena.");
   const data = parsed.data;
-  const lead = "status" in data ? await updateLeadStatus(id, data.status) : await updateLeadBooking(id, { date: data.confirmedDate, slot: data.confirmedSlot });
+  const lead = "status" in data ? await updateLeadStatus(id, data.status) : await updateLeadBooking(id, { date: data.confirmedDate, time: data.confirmedTime });
   if (!lead) return jsonError(404, "Poptávka nenalezena (nebo u hledaného auta termín nejde nastavit).");
+  if ("bookingChange" in lead && lead.bookingChange) {
+    const { bookingChange, previousBooking } = lead;
+    after(() => notifyBookingChange(lead, bookingChange, previousBooking));
+  }
   return NextResponse.json({ id: lead.id, status: lead.status, vehicleStatus: "vehicleStatus" in lead ? lead.vehicleStatus : null });
 }
 
