@@ -37,11 +37,11 @@ Zdrojový kód je v repozitáři GitHub FilipZapletal/FLAutoWeb.
 
 ## Služby a účty
 
-Vercel (běh webu) patří objednateli: vlastní tým na Vercelu s tarifem Pro, placený jeho kartou. Dodavatel je v týmu pozvaný jako placený člen, aby mohl nasazovat úpravy (u soukromého repozitáře Vercel nasadí jen změny od člena týmu). Supabase a Resend jsou zdarma a vede je dodavatel; na požádání je převede na objednatele. Doména a Google patří objednateli. Ceny jsou orientační, aktuální vždy na webu dané služby.
+Technické účty (Vercel, Supabase, Resend) vede dodavatel. Web běží v jeho týmu `fla-uto` na Vercelu s tarifem Pro, který **platí objednatel vlastní kartou**: objednatel má v týmu roli Billing (zdarma), sám spravuje platební kartu a vidí náklady i faktury. Supabase a Resend jsou zdarma. Doména a Google patří objednateli. Pokud si objednatel bude chtít účty vzít k sobě, dodavatel ho ve Vercelu povýší na Ownera a projekty v Supabase a Resendu mu převede. Ceny jsou orientační, aktuální vždy na webu dané služby.
 
 | Služba | K čemu slouží | Vlastník účtu | Tarif a cena |
 | --- | --- | --- | --- |
-| Vercel | běh webu | FL Auto (vlastní tým) | Pro: 20 $ měsíčně bez DPH za první místo + 20 $ za každého dalšího člena, který může nasazovat nebo spravovat (Owner, Member). Role Billing (1×) a Viewer zdarma. |
+| Vercel | běh webu | dodavatel (tým fla-uto), platí objednatel (role Billing) | Pro, 20 $ měsíčně bez DPH (1 placené místo dodavatele, role Billing a Viewer zdarma) |
 | Supabase | databáze a fotky | dodavatel | Free (Pro až při nedostatku místa na fotky, limit 1 GB) |
 | Resend | odesílání e-mailů | dodavatel | Free |
 | Doména flauto.cz | adresa webu, DNS záznamy (web, Resend, Google) | FL Auto, registrátor WEDOS | \[DOPLNIT\] Kč ročně, prodloužení k \[DOPLNIT\] |
@@ -56,7 +56,7 @@ Hesla nejsou v tomto listu ani v žádném e-mailu. Každý si je nastaví sám 
 | Přístup | Kdo | Jak |
 | --- | --- | --- |
 | Administrace webu | Jarek Frejkovský, Lukáš Gvožď | vlastní e-mail a heslo; účty zakládá správce v Administrace → Správci, heslo si každý změní v Administrace → Změna hesla |
-| Vercel | objednatel (Owner), druhý majitel (Viewer nebo Billing), dodavatel (Member) | účet na e-mail objednatele \[DOPLNIT\] |
+| Vercel | dodavatel (Owner), objednatel (Billing a Viewer) | dodavatel pozve objednatele do týmu fla-uto: plátce jako Billing, druhý majitel jako Viewer |
 | Supabase, Resend | dodavatel | objednatel přístup nepotřebuje; převod na jeho účet kdykoli na požádání |
 | Doména | objednatel | klientská sekce WEDOS na jméno objednatele, upomínky na prodloužení chodí na jeho e-mail |
 | Google Search Console | objednatel, dodavatel | objednatel se přihlásí svým Gmailem (přidán jako vlastník) |
@@ -81,9 +81,8 @@ Web běží sám, dokud objednatel platí služby výše. Údržba znamená opra
 
 Pořadí tak, aby se nic nedělalo dvakrát. Postup krok za krokem je v souboru předání webu.
 
-- [ ] Vercel: objednatel založil účet a tým s tarifem Pro, zadal svou kartu a pozval dodavatele (Member)
-- [ ] Vercel: projekt převeden z týmu dodavatele do týmu objednatele (Settings → General → Transfer Project), kontrola, že web běží a nasazuje se z GitHubu
-- [ ] Vercel: druhý majitel pozván jako Viewer (zdarma)
+- [ ] Vercel: tým fla-uto přepnut na Pro (Settings → Billing → Upgrade to Pro)
+- [ ] Vercel: objednatel pozván jako Billing (Settings → Members), zadal svou platební kartu; druhý majitel jako Viewer
 - [ ] Vercel: region funkcí Frankfurt (Settings → Functions → fra1)
 - [x] Objednatel koupí doménu na své jméno (flauto.cz, WEDOS, 26. 10. 2026)
 - [x] Doména připojena k webu (DNS u WEDOSu, ve Vercelu „Valid Configuration“)
@@ -91,7 +90,7 @@ Pořadí tak, aby se nic nedělalo dvakrát. Postup krok za krokem je v souboru 
 - [x] Google Search Console: doména ověřená, odeslaná sitemap (26. 10.)
 - [x] Google Search Console: objednatel přidán jako vlastník (29. 10.)
 - [ ] Google firemní profil založen (nebo převzat) a ověřen, s odkazem na web
-- [ ] Po převodu zkontrolovat, že doména svítí „Valid Configuration“, proměnné a noční úlohy (Cron Jobs) jsou na místě
+- [ ] Po přepnutí na Pro zkontrolovat, že web běží a doména svítí „Valid Configuration“
 - [ ] Resend (účet dodavatele): DNS záznamy u WEDOSu, ověřená doména, klíč ve Vercelu, zkušební objednávka došla e-mailem majitelům i zákazníkovi
 - [ ] Admin účet pro oba majitele (Administrace → Správci), každý si změnil heslo
 - [ ] Smazána zkušební auta a poptávky, vyplněno Nastavení a místa \[DOPLNIT\] na webu
