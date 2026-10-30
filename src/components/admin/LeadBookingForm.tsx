@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { TimeSelect } from "@/components/forms/TimeField";
 import { useAdminAction } from "./useAdminAction";
 
 type Props = {
@@ -32,7 +33,7 @@ export function LeadBookingForm({ id, date, time, confirmed, min }: Props) {
           onChange={(e) => setD(e.target.value)}
           className="field w-auto py-1.5 text-sm"
         />
-        <input type="time" aria-label="Čas termínu" value={t} onChange={(e) => setT(e.target.value)} className="field w-auto py-1.5 text-sm" />
+        <TimeSelect defaultValue={time} onChange={setT} className="field w-auto py-1.5 text-sm" />
       </div>
       <div className="mt-2 flex flex-wrap gap-2">
         <button type="button" disabled={pending || !d} onClick={() => run(`/api/leads/${id}`, "PUT", { confirmedDate: d, confirmedTime: t || null })} className="btn btn-sm">
