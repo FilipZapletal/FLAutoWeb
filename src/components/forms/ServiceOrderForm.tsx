@@ -8,6 +8,7 @@ import { orderTotal } from "@/lib/order-items";
 import type { ServicePrice } from "@/lib/validation/service";
 import { FormError, Honeypot, InputField, TextareaField } from "./Field";
 import { setDateRange } from "./ServiceForm";
+import { TimeField } from "./TimeField";
 import { useJsonSubmit } from "./useJsonSubmit";
 
 /**
@@ -101,7 +102,7 @@ export function ServiceOrderForm({ serviceId, prices, contactName }: { serviceId
           hint="Termín vám potvrdíme e-mailem nebo telefonicky."
           error={fields.preferredDate}
         />
-        <InputField label="Čas (nepovinné)" name="preferredTime" type="time" error={fields.preferredTime} />
+        <TimeField label="Čas (nepovinné)" name="preferredTime" error={fields.preferredTime} />
         <TextareaField label="Poznámka" name="message" rows={3} capitalize="first" placeholder="Např. stav vozu, zvláštní přání" className="md:col-span-2" error={fields.message} />
       </div>
       <FormError message={error} />

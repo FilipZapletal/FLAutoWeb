@@ -5,6 +5,7 @@ import type { FormEvent } from "react";
 import { VEHICLE_LEAD_TYPE_OPTIONS } from "@/lib/labels";
 import { FormError, Honeypot, InputField, SelectField, TextareaField } from "./Field";
 import { setDateRange } from "./ServiceForm";
+import { TimeField } from "./TimeField";
 import { useJsonSubmit } from "./useJsonSubmit";
 
 /** Poptávka u konkrétního vozu. */
@@ -55,7 +56,7 @@ export function LeadForm({ vehicleId }: { vehicleId: number }) {
           hint="Termín vám potvrdíme e-mailem nebo telefonicky."
           error={fields.preferredDate}
         />
-        <InputField label="Čas (nepovinné)" name="preferredTime" type="time" error={fields.preferredTime} />
+        <TimeField label="Čas (nepovinné)" name="preferredTime" error={fields.preferredTime} />
       </div>
       <TextareaField label="Zpráva" name="message" rows={3} capitalize="first" error={fields.message} />
       <FormError message={error} />
