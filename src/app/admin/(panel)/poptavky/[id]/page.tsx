@@ -108,10 +108,10 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/popta
           {lead.type !== "WANTED_CAR" && (
             <div className="border-t border-line pt-4">
               <LeadBookingForm
-                key={`${lead.confirmedDate?.getTime() ?? 0}-${lead.confirmedSlot}`}
+                key={`${lead.confirmedDate?.getTime() ?? 0}-${lead.confirmedTime}`}
                 id={lead.id}
                 date={booking.date ? booking.date.toISOString().slice(0, 10) : null}
-                slot={booking.slot}
+                time={booking.time}
                 confirmed={booking.confirmed}
                 min={pragueToday()}
               />

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { LeadStatusBadge, PageHead } from "@/components/admin/ui";
-import { addDays, effectiveBooking, formatBookingDate, pragueToday } from "@/lib/booking";
+import { addDays, bookingTimeLabel, effectiveBooking, formatBookingDate, pragueToday } from "@/lib/booking";
 import { phoneDigits } from "@/lib/format";
-import { LEAD_TYPE_LABELS, TIME_SLOT_LABELS } from "@/lib/labels";
+import { LEAD_TYPE_LABELS } from "@/lib/labels";
 import { CARS_CATEGORY, WANTED_CATEGORY, leadCategory, serviceCategory } from "@/lib/lead-categories";
 import { getBookingsBetween } from "@/lib/leads/service";
 import { getPublicServices } from "@/lib/services/public";
@@ -91,7 +91,9 @@ export default async function CalendarPage({ searchParams }: PageProps<"/admin/k
                 </span>
                 <span className="hidden flex-col gap-0.5 sm:flex">
                   {items.slice(0, 3).map((b) => {
-                    const { confirmed, slot } = effectiveBooking(b);
+                    const booking = effectiveBooking(b);
+                    const { confirmed } = booking;
+                    const time = booking.time ?? (booking.slot ? (booking.slot === "DOPOLEDNE" ? "dop." : "odp.") : null);
                     const color = leadCategory(b).color;
                     return (
                       <span
@@ -99,7 +101,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/admin/k
                         className={`truncate rounded px-1 text-[11px] leading-5 ${confirmed ? "text-black" : "border border-dashed"}`}
                         style={confirmed ? { background: color } : { borderColor: color, color }}
                       >
-                        {slot ? `${slot === "DOPOLEDNE" ? "dop." : "odp."} ` : ""}
+                        {time ? `${time} ` : ""}
                         {b.name}
                       </span>
                     );
@@ -131,11 +133,13 @@ export default async function CalendarPage({ searchParams }: PageProps<"/admin/k
       <h2 className="mb-3 mt-8 text-lg">{formatBookingDate(selected)}</h2>
       <div className="space-y-2">
         {dayItems.map((b) => {
-          const { confirmed, slot } = effectiveBooking(b);
+          const booking = effectiveBooking(b);
+          const { confirmed } = booking;
+          const time = bookingTimeLabel(booking);
           const cat = leadCategory(b);
           return (
             <div key={b.id} className="card flex flex-col gap-1 p-3 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4" style={{ borderLeft: `4px solid ${cat.color}` }}>
-              <span className="shrink-0 font-semibold sm:w-24">{slot ? TIME_SLOT_LABELS[slot] : "Bez upřesnění"}</span>
+              <span className="shrink-0 font-semibold sm:w-24">{time ?? "Bez upřesnění"}</span>
               <span className="min-w-0 sm:flex-1">
                 <Link href={`/admin/poptavky/${b.id}`} className="font-semibold [overflow-wrap:anywhere] hover:text-acc">{b.name}</Link>
                 <span className="block text-xs text-muted [overflow-wrap:anywhere]">

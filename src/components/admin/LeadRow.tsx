@@ -19,8 +19,10 @@ type LeadLike = {
   createdAt: Date;
   preferredDate: Date | null;
   preferredSlot: Parameters<typeof formatBooking>[0]["preferredSlot"];
+  preferredTime: string | null;
   confirmedDate: Date | null;
   confirmedSlot: Parameters<typeof formatBooking>[0]["preferredSlot"];
+  confirmedTime: string | null;
   vehicle: { brand: string; model: string } | null;
   service: { id: number; slug: string; title: string } | null;
 };

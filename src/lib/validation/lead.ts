@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { BodyType, Fuel, LeadStatus, TimeSlot, Transmission } from "@/generated/prisma/enums";
-import { bookingRange, isWeekend } from "@/lib/booking";
+import { BodyType, Fuel, LeadStatus, Transmission } from "@/generated/prisma/enums";
+import { bookingRange, TIME_PATTERN } from "@/lib/booking";
 import { VEHICLE_LEAD_TYPES } from "@/lib/labels";
 import { optionalEnum, optionalInt, optionalText, personName, requiredSentence, requiredTitleCase } from "./helpers";
 
@@ -18,7 +18,7 @@ const email = z.preprocess(
 /** Honeypot – skryté pole, které vyplní jen roboti. */
 const honeypot = z.string().max(0).optional().or(z.literal(""));
 
-/** Preferovaný den servisu "RRRR-MM-DD" → Date (UTC půlnoc). Pracovní den od zítřka do 60 dní. */
+/** Preferovaný den "RRRR-MM-DD" → Date (UTC půlnoc). Od dneška do 60 dní, i víkendy (termín potvrzuje majitel). */
 const preferredDate = z
   .string({ error: "Vyberte datum" })
   .regex(/^\d{4}-\d{2}-\d{2}$/, { error: "Vyberte datum" })
@@ -27,14 +27,17 @@ const preferredDate = z
     // Neexistující den (např. 30. 2.) by Date tiše posunul na další měsíc.
     const d = new Date(`${s}T00:00:00.000Z`);
     if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== s) ctx.addIssue({ code: "custom", message: "Vyberte platné datum" });
-    else if (s < min) ctx.addIssue({ code: "custom", message: "Vyberte datum nejdříve od zítřka" });
+    else if (s < min) ctx.addIssue({ code: "custom", message: "Vyberte dnešní nebo pozdější datum" });
     else if (s > max) ctx.addIssue({ code: "custom", message: "Termín lze vybrat nejvýše 60 dní dopředu" });
-    else if (isWeekend(s)) ctx.addIssue({ code: "custom", message: "Vyberte pracovní den (sobota jen po telefonické domluvě)" });
   })
   .transform((s) => new Date(`${s}T00:00:00.000Z`));
 
 /** Nepovinný den: prázdné pole → null, jinak stejná pravidla jako u objednávky do servisu. */
 const optionalPreferredDate = z.preprocess((v) => (v === "" || v == null ? null : v), preferredDate.nullable());
+
+/** Přesný čas "HH:MM". */
+const time = z.string({ error: "Vyberte čas" }).regex(TIME_PATTERN, { error: "Vyberte čas" });
+const optionalTime = z.preprocess((v) => (v === "" || v == null ? null : v), time.nullable());
 
 export const vehicleLeadSchema = z.object({
   kind: z.literal("vehicle"),
@@ -43,9 +46,9 @@ export const vehicleLeadSchema = z.object({
   phone,
   email,
   type: z.enum(VEHICLE_LEAD_TYPES, { error: "Vyberte typ zájmu" }),
-  /** Nepovinný preferovaný den a část dne (prohlídka, zavolání) */
+  /** Nepovinný preferovaný den a čas (prohlídka, zavolání) */
   preferredDate: optionalPreferredDate,
-  preferredSlot: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(TimeSlot).nullable()),
+  preferredTime: optionalTime,
   message: optionalText(3000),
   website: honeypot,
 });
@@ -57,7 +60,7 @@ export const serviceLeadSchema = z.object({
   name: personName(120),
   car: requiredTitleCase(120),
   preferredDate,
-  preferredSlot: z.enum(TimeSlot, { error: "Vyberte dopoledne, nebo odpoledne" }),
+  preferredTime: time,
   phone,
   email,
   message: optionalText(3000),
@@ -75,7 +78,7 @@ export const orderLeadSchema = z.object({
   phone,
   email,
   preferredDate: optionalPreferredDate,
-  preferredSlot: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(TimeSlot).nullable()),
+  preferredTime: optionalTime,
   message: optionalText(3000),
   website: honeypot,
 });
@@ -112,5 +115,5 @@ const confirmedDate = z
 
 export const leadUpdateSchema = z.union([
   z.object({ status: z.enum(LeadStatus) }).strict(),
-  z.object({ confirmedDate, confirmedSlot: z.enum(TimeSlot).nullable() }).strict(),
+  z.object({ confirmedDate, confirmedTime: optionalTime }).strict(),
 ]);
