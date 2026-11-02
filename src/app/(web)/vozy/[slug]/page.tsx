@@ -77,6 +77,7 @@ export default async function VehicleDetailPage({ params }: PageProps<"/vozy/[sl
             <Price value={v.price} isSale={v.isSale} className="text-3xl" />
             <StatusBadge status={v.status} />
           </div>
+          <p className="mt-1 text-xs text-muted">Konečná cena včetně DPH. U vozů ve zvláštním režimu pro použité zboží se DPH nevyčleňuje.</p>
           <FavoriteButton vehicleId={v.id} label={title} variant="labeled" className="mt-3" />
           <dl className="mt-4 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
             {facts.map(([label, value]) => (

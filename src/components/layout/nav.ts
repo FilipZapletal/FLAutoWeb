@@ -9,6 +9,7 @@ export const LEGAL_NAV = [
   { href: "/ochrana-osobnich-udaju", label: "Ochrana osobních údajů" },
   { href: "/cookies", label: "Cookies" },
   { href: "/obchodni-udaje", label: "Obchodní údaje" },
+  { href: "/obchodni-podminky", label: "Obchodní podmínky" },
   { href: "/reklamacni-rad", label: "Reklamační řád" },
   { href: "/adr", label: "Informace o ADR" },
 ] as const;

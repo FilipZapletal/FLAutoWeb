@@ -36,6 +36,7 @@ const PAGE_LABELS: Record<string, string> = {
   "/obchodni-udaje": "Obchodní údaje",
   "/ochrana-osobnich-udaju": "Ochrana osobních údajů",
   "/cookies": "Cookies",
+  "/obchodni-podminky": "Obchodní podmínky",
   "/reklamacni-rad": "Reklamační řád",
 };
 

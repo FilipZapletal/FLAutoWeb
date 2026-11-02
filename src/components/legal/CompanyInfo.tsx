@@ -8,7 +8,7 @@ export function CompanyInfo({ s }: { s: SiteSettings }) {
   const rows: [string, React.ReactNode][] = [
     ["Obchodní firma / jméno", <Fill key="n" value={s.companyName} label="obchodní firma / jméno podnikatele" />],
     ["IČO", <Fill key="i" value={s.ico} label="IČO" />],
-    ["DIČ", s.dic || "neplátce DPH / nevyplněno"],
+    ["DIČ", <Fill key="d" value={s.dic} label="DIČ" />],
     ["Sídlo", <Fill key="s" value={s.registeredOffice} label="sídlo / místo podnikání" />],
     ["Zápis v rejstříku", <Fill key="r" value={s.registryEntry} label="zápis v obchodním nebo živnostenském rejstříku" />],
     ["Provozovna", `${s.address}${s.mapNote ? `, ${s.mapNote}` : ""}`],
@@ -21,6 +21,7 @@ export function CompanyInfo({ s }: { s: SiteSettings }) {
       </span>,
     ]),
     ["Otevírací doba", s.openingHours],
+    ["Platba", "na provozovně, hotově nebo QR kódem (přes web se neplatí)"],
   ];
 
   return (
@@ -56,6 +57,7 @@ export function CompanyInfo({ s }: { s: SiteSettings }) {
 
       <h2>Další informace</h2>
       <ul>
+        <li><Link href="/obchodni-podminky">Obchodní podmínky a odstoupení od smlouvy</Link></li>
         <li><Link href="/reklamacni-rad">Reklamační řád</Link></li>
         <li><Link href="/adr">Mimosoudní řešení spotřebitelských sporů (ADR)</Link></li>
         <li><Link href="/ochrana-osobnich-udaju">Ochrana osobních údajů</Link></li>

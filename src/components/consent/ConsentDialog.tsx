@@ -73,20 +73,16 @@ export function ConsentDialog() {
                 .
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <button type="button" className="btn-outline sm:min-w-44" onClick={() => setView("settings")}>
+                <button type="button" className="btn-outline sm:min-w-36" onClick={() => setView("settings")}>
                   Nastavení
                 </button>
-                <button type="button" className="btn sm:min-w-44" onClick={() => decide(true)} autoFocus>
+                <button type="button" className="btn-outline sm:min-w-36" onClick={() => decide(false)}>
+                  Odmítnout
+                </button>
+                <button type="button" className="btn sm:min-w-36" onClick={() => decide(true)} autoFocus>
                   Souhlasím
                 </button>
               </div>
-              <p className="mt-5 text-sm text-muted">
-                Souhlas můžete odmítnout{" "}
-                <button type="button" className="text-acc underline underline-offset-2" onClick={() => decide(false)}>
-                  zde
-                </button>
-                .
-              </p>
             </>
           ) : (
             <>

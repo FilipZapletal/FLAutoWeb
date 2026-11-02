@@ -110,7 +110,7 @@ export function ServiceOrderForm({ serviceId, prices, contactName }: { serviceId
         {sending ? "Odesílám…" : "Odeslat objednávku"}
       </button>
       <p className="text-xs text-muted">
-        Odesláním berete na vědomí <Link href="/ochrana-osobnich-udaju" className="underline">zpracování osobních údajů</Link>.
+        Odesláním berete na vědomí <Link href="/obchodni-podminky" className="underline">obchodní podmínky</Link> a <Link href="/ochrana-osobnich-udaju" className="underline">zpracování osobních údajů</Link>.
       </p>
     </form>
   );

@@ -93,6 +93,7 @@ Pořadí tak, aby se nic nedělalo dvakrát. Postup krok za krokem je v souboru 
 - [ ] Po přepnutí na Pro zkontrolovat, že web běží a doména svítí „Valid Configuration“
 - [ ] Resend (účet dodavatele): DNS záznamy u WEDOSu, ověřená doména, klíč ve Vercelu, zkušební objednávka došla e-mailem majitelům i zákazníkovi
 - [ ] Admin účet pro oba majitele (Administrace → Správci), každý si změnil heslo
+- [ ] Právní kontrola podle `docs/pravni-kontrola.md` (DPA s poskytovateli, zpracovatelská smlouva mezi FL Auto a dodavatelem, údaje v Nastavení)
 - [ ] Smazána zkušební auta a poptávky, vyplněno Nastavení a místa \[DOPLNIT\] na webu
 - [ ] Dohodnuta podpora (varianta A nebo B)
 - [ ] Podepsán tento předávací list

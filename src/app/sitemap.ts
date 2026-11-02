@@ -6,7 +6,7 @@ import { getSitemapVehicles } from "@/lib/vehicles/queries";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPages = ["", "/vozy", "/servis", "/o-nas", "/kontakt", "/ochrana-osobnich-udaju", "/cookies", "/obchodni-udaje", "/reklamacni-rad", "/adr"];
+  const staticPages = ["", "/vozy", "/servis", "/o-nas", "/kontakt", "/ochrana-osobnich-udaju", "/cookies", "/obchodni-udaje", "/obchodni-podminky", "/reklamacni-rad", "/adr"];
   const [vehicles, services] = await Promise.all([getSitemapVehicles(), getSitemapServices()]);
   return [
     ...staticPages.map((p) => ({ url: siteUrl(p || "/"), changeFrequency: "weekly" as const, priority: p === "" || p === "/vozy" ? 1 : 0.5 })),

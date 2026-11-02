@@ -169,7 +169,12 @@ export async function notifyBookingChange(
         ? [`termín${before ? ` ${before}` : ""}${what ? ` (${what})` : ""} jsme zrušili.`, "Pokud si chcete domluvit jiný, zavolejte nám nebo se objednejte znovu na webu."]
         : change === "changed"
           ? [`váš termín${what ? ` (${what})` : ""} jsme změnili.`, "", `Nový termín: ${booking}`, before ? `Původní termín: ${before}` : null, "", "Pokud vám nový termín nevyhovuje, zavolejte nám."]
-          : [`potvrzujeme váš termín${what ? ` (${what})` : ""}.`, "", `Termín: ${booking}`, "", "Těšíme se na vás. Pokud vám termín nevyhovuje, zavolejte nám."];
+          : [`potvrzujeme váš termín${what ? ` (${what})` : ""}.`, "", `Termín: ${booking}`, "", "Těšíme se na vás. Pokud vám termín nevyhovuje, zavolejte nám.",
+            // Smlouva o službě vzniká potvrzením termínu, proto se informace o odstoupení posílá v tomto e-mailu (trvalý nosič).
+            ...(lead.type === "SERVICE"
+              ? ["", `Jako spotřebitel můžete od smlouvy o službě uzavřené na dálku do 14 dnů od jejího uzavření odstoupit bez udání důvodu, stačí napsat na ${settings.email}. Podrobnosti a vzorový formulář: ${siteUrl("/obchodni-podminky")}`]
+              : []),
+          ];
     await sendEmail({
       to: lead.email,
       replyTo: settings.email,
