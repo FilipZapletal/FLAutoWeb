@@ -5,16 +5,17 @@ import { Analytics } from "@/components/analytics/Analytics";
 import { ConsentDialog } from "@/components/consent/ConsentDialog";
 import { WantedCarPrompt } from "@/components/wanted/WantedCarPrompt";
 import { ownerContacts } from "@/lib/contacts";
+import { getPublicServices } from "@/lib/services/public";
 import { getSettings } from "@/lib/settings";
 
 // Veřejné stránky čtou aktuální data z DB při každém požadavku (změny z adminu jsou vidět hned).
 export const dynamic = "force-dynamic";
 
 export default async function WebLayout({ children }: LayoutProps<"/">) {
-  const settings = await getSettings();
+  const [settings, services] = await Promise.all([getSettings(), getPublicServices()]);
   return (
     <>
-      <Header contacts={ownerContacts(settings)} />
+      <Header contacts={ownerContacts(settings)} services={services.map(({ slug, title, icon }) => ({ slug, title, icon }))} />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:py-8">{children}</main>
       <Footer settings={settings} />
       <Analytics />

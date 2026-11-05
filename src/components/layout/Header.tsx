@@ -5,11 +5,11 @@ import { Logo } from "@/components/ui/Logo";
 import { ThemeSwitch } from "@/components/ui/ThemeSwitch";
 import type { OwnerContact } from "@/lib/contacts";
 import { SITE_TAGLINE } from "@/lib/site";
-import { MobileMenu } from "./MobileMenu";
+import { MobileMenu, type MenuService } from "./MobileMenu";
 import { StandaloneBackButton } from "./StandaloneBackButton";
 import { MAIN_NAV } from "./nav";
 
-export function Header({ contacts }: { contacts: OwnerContact[] }) {
+export function Header({ contacts, services }: { contacts: OwnerContact[]; services: MenuService[] }) {
   const callable = contacts.filter((c) => c.tel);
   return (
     <header className="group/hdr sticky top-0 z-30 border-b border-line/50 bg-bg/50 backdrop-blur-xl backdrop-saturate-150 pt-[env(safe-area-inset-top)]">
@@ -61,7 +61,7 @@ export function Header({ contacts }: { contacts: OwnerContact[] }) {
             )
           )}
           <ThemeSwitch />
-          <MobileMenu />
+          <MobileMenu services={services} />
         </div>
       </div>
     </header>

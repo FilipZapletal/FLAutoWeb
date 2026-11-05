@@ -7,8 +7,10 @@ import { Logo } from "@/components/ui/Logo";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { VehicleGrid } from "@/components/vehicles/VehicleCard";
 import { ABOUT_INTRO } from "@/lib/content";
+import { ServiceIconView } from "@/components/services/ServiceIconView";
 import { ownerContacts } from "@/lib/contacts";
 import { businessJsonLd, jsonLdString } from "@/lib/seo";
+import { getPublicServices } from "@/lib/services/public";
 import { getSettings } from "@/lib/settings";
 import { getBrandModels, getHomeVehicles } from "@/lib/vehicles/queries";
 
@@ -28,12 +30,13 @@ export const metadata: Metadata = {
 const PRICE_OPTIONS = [200_000, 300_000, 500_000, 800_000, 1_000_000];
 
 export default async function HomePage() {
-  const [brandModels, featured, newest, sale, settings] = await Promise.all([
+  const [brandModels, featured, newest, sale, settings, services] = await Promise.all([
     getBrandModels(),
     getHomeVehicles("featured", 3),
     getHomeVehicles("newest", 6),
     getHomeVehicles("sale", 3),
     getSettings(),
+    getPublicServices(),
   ]);
   const brands = Object.keys(brandModels);
 
@@ -77,6 +80,21 @@ export default async function HomePage() {
             </select>
             <button className="btn">Hledat vozy</button>
           </GetForm>
+          {services.length > 0 && (
+            <div className="mt-6 max-w-xl border-t border-line pt-4">
+              <p className="mb-2 text-xs uppercase tracking-widest text-muted">Také nabízíme</p>
+              <ul className="flex flex-wrap gap-2">
+                {services.map((s) => (
+                  <li key={s.slug}>
+                    <Link href={`/servis/${s.slug}`} className="btn-outline btn-sm">
+                      <span className="text-acc"><ServiceIconView icon={s.icon} size={16} /></span>
+                      {s.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </section>
 

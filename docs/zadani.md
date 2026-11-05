@@ -51,6 +51,8 @@ SEO URL, např. `/vozy/skoda-octavia-2022` (ne `/car?id=…`). Obsahuje název, 
 
 ## 8. Fotogalerie
 Hlavní foto, thumbnails, fullscreen, šipky, velké foto. Počet fotek není pevně omezen. Architektura připravená na video a 360° prohlídku. Lazy loading na veřejném webu.
+**Služby na úvodní stránce a v menu (změna klienta 11/2026):** hlavním tématem úvodní stránky zůstává autobazar. Služby jsou vidět hned v první obrazovce, a to jako nenápadný řádek „Také nabízíme“ s odkazy na jednotlivé služby pod vyhledáváním aut v úvodním bloku (seznam se bere z publikovaných služeb v administraci). V hamburger menu na telefonu jsou pod položkou Servis jednotlivé služby zvlášť. Dolní blok „Dovoz, servis, mytí i STK“ na úvodní stránce zůstává.
+
 **Změna klienta 10/2026:** na kartě vozu (úvodní stránka i katalog) lze fotky listovat přímo – přejetím prstem nebo šipkami (nejvýše 10 fotek na kartě), bez otevření detailu. V administraci jde pořadí fotek měnit přetažením myší i prstem (na telefonu podržet a táhnout) a také šipkami.
 
 ## 9. Technické údaje (rozdělení)
