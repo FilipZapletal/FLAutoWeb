@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   const uri = totpUri(secret, session.email);
   const svg = await QRCode.toString(uri, { type: "svg", margin: 1, errorCorrectionLevel: "M" });
   return NextResponse.json(
-    { secret, qr: `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}` },
+    { secret, uri, qr: `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}` },
     { headers: { "Cache-Control": "no-store" } },
   );
 }
