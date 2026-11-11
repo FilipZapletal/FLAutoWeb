@@ -16,8 +16,9 @@ export function TwoFactorSettings({ enabled, enabledAt, recoveryLeft }: Props) {
   const enable = useJsonSubmit("/api/auth/2fa");
   const regenerate = useJsonSubmit("/api/auth/2fa", "PUT");
   const disable = useJsonSubmit("/api/auth/2fa", "DELETE");
-  const [pending, setPending] = useState<{ secret: string; qr: string } | null>(null);
+  const [pending, setPending] = useState<{ secret: string; uri: string; qr: string } | null>(null);
   const [codes, setCodes] = useState<string[] | null>(null);
+  const [copied, setCopied] = useState(false);
   const [mode, setMode] = useState<"idle" | "regenerate" | "disable">("idle");
 
   const send = (s: typeof enable) => async (e: FormEvent<HTMLFormElement>) => {
@@ -90,14 +91,35 @@ export function TwoFactorSettings({ enabled, enabledAt, recoveryLeft }: Props) {
             }}
           >
             <ol className="ml-5 list-decimal space-y-1 text-sm">
-              <li>V aplikaci zvolte přidání účtu a naskenujte QR kód.</li>
-              <li>Opište 6místný kód, který aplikace ukáže, a potvrďte heslem.</li>
+              <li>
+                <span className="md:hidden">Ťukněte na „Otevřít v ověřovací aplikaci“ (nebo zkopírujte klíč a vložte ho v aplikaci přes „Zadat klíč“).</span>
+                <span className="max-md:hidden">V aplikaci v telefonu zvolte přidání účtu a naskenujte QR kód.</span>
+              </li>
+              <li>Vraťte se sem, opište 6místný kód, který aplikace ukáže, a potvrďte heslem.</li>
             </ol>
+            <a href={pending.uri} className="btn md:hidden">
+              Otevřít v ověřovací aplikaci
+            </a>
             {/* eslint-disable-next-line @next/next/no-img-element -- QR je data: URL vygenerované serverem */}
-            <img src={pending.qr} alt="QR kód pro ověřovací aplikaci" width={200} height={200} className="rounded-inner bg-white p-2" />
-            <p className="text-xs text-muted">
-              Nejde naskenovat? Zadejte klíč ručně: <code className="break-all font-mono">{pending.secret}</code>
-            </p>
+            <img src={pending.qr} alt="QR kód pro ověřovací aplikaci" width={200} height={200} className="rounded-inner bg-white p-2 max-md:hidden" />
+            <div className="grid gap-2 text-xs text-muted">
+              <span>Klíč pro ruční zadání:</span>
+              <code className="break-all rounded-inner bg-card2 px-3 py-2 font-mono text-sm text-fg">{pending.secret}</code>
+              <button
+                type="button"
+                className="btn-outline btn-sm justify-self-start"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(pending.secret);
+                    setCopied(true);
+                  } catch {
+                    setCopied(false);
+                  }
+                }}
+              >
+                {copied ? "✓ Zkopírováno" : "Kopírovat klíč"}
+              </button>
+            </div>
             <InputField label="Kód z aplikace" {...codeField} autoFocus error={enable.fields.code} />
             <InputField label="Vaše heslo" name="password" type="password" required autoComplete="current-password" error={enable.fields.password} />
             <FormError message={enable.error} />
