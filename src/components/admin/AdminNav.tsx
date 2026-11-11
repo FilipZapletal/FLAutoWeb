@@ -20,7 +20,7 @@ const MORE = [
   { href: "/admin/recenze", label: "Recenze", badge: "pendingReviews" as const },
   { href: "/admin/nastaveni", label: "Nastavení" },
   { href: "/admin/spravci", label: "Správci" },
-  { href: "/admin/heslo", label: "Změna hesla" },
+  { href: "/admin/heslo", label: "Heslo a 2FA" },
 ];
 
 const isActive = (pathname: string, href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));

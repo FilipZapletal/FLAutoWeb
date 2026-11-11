@@ -232,6 +232,13 @@ model Admin {
   passwordHash   String   @map("password_hash")
   /// Zvýší se při změně hesla – všechna dříve vydaná přihlášení (cookies) tím přestanou platit.
   sessionVersion Int      @default(0) @map("session_version")
+  /// Dvoufázové ověření (TOTP): tajný klíč zašifrovaný AES-GCM. Bez totpEnabledAt jde jen o rozpracované nastavení.
+  totpSecret     String?   @map("totp_secret")
+  totpEnabledAt  DateTime? @map("totp_enabled_at")
+  /// Poslední použitý 30s krok kódu – stejný kód nejde použít dvakrát.
+  totpLastStep   Int?      @map("totp_last_step")
+  /// SHA-256 hashe nepoužitých záložních kódů.
+  recoveryCodes  String[]  @default([]) @map("recovery_codes")
   createdAt      DateTime @default(now()) @map("created_at")
 
   pushSubscriptions PushSubscription[]
@@ -391,4 +398,13 @@ model RateLimit {
 
   @@index([resetAt])
   @@map("rate_limits")
+}
+
+/// Odhlášená přihlášení (ID tokenu), aby ukradená cookie po odhlášení už neplatila. Maže se denním úklidem.
+model RevokedSession {
+  jti       String   @id
+  expiresAt DateTime @map("expires_at")
+
+  @@index([expiresAt])
+  @@map("revoked_sessions")
 }

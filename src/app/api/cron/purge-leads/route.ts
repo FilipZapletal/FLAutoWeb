@@ -3,6 +3,7 @@ import { jsonError } from "@/lib/api";
 import { cronAuthorized } from "@/lib/cron-auth";
 import { purgeOldEvents } from "@/lib/analytics/record";
 import { LEAD_RETENTION_DAYS, purgeExpiredLeads } from "@/lib/leads/retention";
+import { purgeRevokedSessions } from "@/lib/auth/session";
 import { purgeRateLimits } from "@/lib/rate-limit";
 
 /**
@@ -14,6 +15,7 @@ export async function GET(req: NextRequest) {
   const deleted = await purgeExpiredLeads();
   const events = await purgeOldEvents();
   await purgeRateLimits();
+  await purgeRevokedSessions();
   console.info(`[úklid poptávek] smazáno: ${deleted} (starší než ${LEAD_RETENTION_DAYS} dní)`);
   return NextResponse.json({ deleted, analyticsEventsDeleted: events });
 }

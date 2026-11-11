@@ -22,7 +22,7 @@ export function AdminCreateForm() {
     <form onSubmit={onSubmit} className="card grid max-w-md gap-3 p-5">
       <h2 className="font-display text-lg">Přidat správce</h2>
       <InputField label="E-mail" name="email" type="email" required autoComplete="off" error={fields.email} />
-      <InputField label="Dočasné heslo" name="password" type="password" required minLength={10} autoComplete="new-password" error={fields.password} hint="Alespoň 10 znaků. Nový správce si ho po přihlášení změní v Změna hesla." />
+      <InputField label="Dočasné heslo" name="password" type="password" required minLength={10} autoComplete="new-password" error={fields.password} hint="Alespoň 10 znaků. Nový správce si ho po přihlášení změní v sekci Heslo a 2FA (tam si zapne i dvoufázové ověření)." />
       <InputField label="Dočasné heslo znovu" name="confirmPassword" type="password" required autoComplete="new-password" error={fields.confirmPassword} />
       <InputField label="Vaše heslo" name="currentPassword" type="password" required autoComplete="current-password" error={fields.currentPassword} hint="Pro potvrzení, že účet zakládáte opravdu vy." />
       <FormError message={error} />

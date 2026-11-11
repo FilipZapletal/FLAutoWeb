@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { jsonError, readJson, sameOrigin } from "@/lib/api";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
-import { createSession } from "@/lib/auth/session";
+import { clearMfaChallenge, createMfaChallenge, createSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { clientIp, rateLimitDb } from "@/lib/rate-limit";
 
@@ -30,6 +30,12 @@ export async function POST(req: NextRequest) {
   const ok = await verifyPassword(admin?.passwordHash ?? (await dummyHash), parsed.data.password);
   if (!admin || !ok) return jsonError(401, "Nesprávný e-mail nebo heslo.");
 
+  // Se zapnutým 2FA se přihlášení dokončí až po zadání kódu (/api/auth/mfa).
+  if (admin.totpEnabledAt) {
+    await createMfaChallenge(admin.id, admin.sessionVersion);
+    return NextResponse.json({ mfa: true });
+  }
+  await clearMfaChallenge();
   await createSession({ adminId: admin.id, email: admin.email, ver: admin.sessionVersion });
   return NextResponse.json({ ok: true });
 }
