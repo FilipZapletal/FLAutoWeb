@@ -34,7 +34,7 @@ DATABASE_URL="…" npm run db:deploy
 | Styly | Tailwind CSS 4, design tokeny jako CSS proměnné (světlý/tmavý režim přes `data-theme`) |
 | Databáze | PostgreSQL + Prisma 7 (ORM, migrace, seed) |
 | Validace | zod (stejná schémata pro API i chybové hlášky formulářů) |
-| Přihlášení | vlastní: heslo jako hash argon2 v tabulce `admins`, podepsaná httpOnly cookie (JWT, `jose`) |
+| Přihlášení | vlastní: heslo jako hash argon2 v tabulce `admins`, podepsaná httpOnly cookie (JWT, `jose`), volitelné 2FA (TOTP, QR kód přes `qrcode`) |
 | Fotky | sharp → WebP varianty 400/1024/1920 px + JPEG pro náhledy při sdílení; úložiště lokální disk nebo S3 (Supabase Storage, R2…) |
 | E-maily | Resend (bez API klíče se e-maily jen vypisují do konzole) |
 
@@ -81,13 +81,15 @@ npm run db:seed     # výbava, první admin a 4 DEMO vozy
 
 Adresa `/admin` – zadává se ručně, na veřejném webu na administraci záměrně nevede žádný odkaz. Přihlašuje se e-mailem a heslem z `ADMIN_EMAIL` / `ADMIN_PASSWORD` v době spuštění seedu. V databázi je uložený jen hash hesla; po seedu lze heslo z `.env` smazat.
 
-**Změna hesla:** přihlášený admin si heslo změní sám v administraci → *Změna hesla* (zadá současné heslo a nové, min. 10 znaků).
+**Změna hesla:** přihlášený admin si heslo změní sám v administraci → *Heslo a 2FA* (zadá současné heslo a nové, min. 10 znaků).
+
+**Dvoufázové ověření (2FA):** administrace → *Heslo a 2FA* → *Zapnout 2FA*. Správce naskenuje QR kód do ověřovací aplikace (Google Authenticator, Microsoft Authenticator, 1Password…), opíše kód a potvrdí heslem. Dostane 8 jednorázových záložních kódů (zobrazí se jen jednou). Při přihlášení pak po hesle zadá 6místný kód z aplikace, nebo záložní kód. Tajný klíč je v DB zašifrovaný (AES-256-GCM, klíč odvozený ze `SESSION_SECRET`); **po změně `SESSION_SECRET` přestanou platit kódy z aplikace** a správci se přihlásí záložním kódem a 2FA si nastaví znovu. Kdo ztratí telefon i záložní kódy: jiný správce ho odebere a založí znovu, nebo v Supabase SQL Editoru `UPDATE admins SET totp_secret = NULL, totp_enabled_at = NULL, totp_last_step = NULL, recovery_codes = '{}' WHERE email = '…';`. Na stránce *Správci* je vidět, kdo má 2FA zapnuté.
 
 **Další admin:** v administraci → *Správci*. Zadá se e-mail a dočasné heslo nového správce a pro potvrzení heslo přihlášeného admina. Tamtéž jde správce odebrat (sebe ani posledního ne); odebraný správce je hned odhlášen.
 
 **Zapomenuté heslo:** jiný správce ho odebere a založí znovu s dočasným heslem. Když žádný jiný není: nastavte `ADMIN_EMAIL` a nové `ADMIN_PASSWORD` a spusťte znovu `SEED_DEMO_VEHICLES=0 npm run db:seed` (existující účet dostane nové heslo). **Proti ostré databázi vždy se `SEED_DEMO_VEHICLES=0`**, jinak seed nahraje i demo auta.
 
-Přihlášení je chráněné limitem 5 pokusů za 15 minut z jedné IP.
+Přihlášení je chráněné limitem 5 pokusů za 15 minut z jedné IP a 10 na účet, kód 2FA 5 pokusy za 15 minut na účet. Odhlášení zneplatní přihlašovací cookie i na serveru.
 
 ## Jak přidat první auto
 
@@ -104,7 +106,7 @@ Demo vozy ze seedu jsou označené „DEMO“ (v popisu i na fotkách). Před sp
 |---|---|---|
 | `DATABASE_URL` | ano | připojení k PostgreSQL |
 | `SITE_URL` | ano (produkce) | veřejná adresa webu – canonical URL, Open Graph, sitemap |
-| `SESSION_SECRET` | ano | klíč pro podpis přihlašovací cookie, min. 32 znaků |
+| `SESSION_SECRET` | ano | klíč pro podpis přihlašovací cookie a šifrování klíčů 2FA, min. 32 znaků (po změně je třeba 2FA nastavit znovu) |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | jen pro seed | první admin |
 | `STORAGE_DRIVER` | ne | `local` (výchozí, složka `./uploads`) nebo `s3` |
 | `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_PUBLIC_URL` | při `s3` | S3-kompatibilní úložiště fotek, `S3_PUBLIC_URL` = veřejná URL bucketu |
@@ -137,7 +139,7 @@ Build databázi nepotřebuje, všechny stránky s daty se renderují při požad
 prisma/              schéma, migrace, seed
 scripts/local-db.mjs lokální PostgreSQL bez Dockeru
 src/app/(web)/       veřejné stránky (homepage, /vozy, /vozy/[slug], /servis, /o-nas, /kontakt, právní stránky)
-src/app/admin/       přihlášení a administrace (dashboard, vozidla, fotky, poptávky, služby, recenze, nastavení, správci, změna hesla)
+src/app/admin/       přihlášení a administrace (dashboard, vozidla, fotky, poptávky, služby, recenze, nastavení, správci, heslo a 2FA)
 src/app/api/         REST API (vehicles, leads, services, reviews, settings, auth, equipment)
 src/app/media/       servírování fotek při lokálním úložišti
 src/components/      UI komponenty (layout, vehicles, forms, admin, ui)
@@ -194,7 +196,7 @@ Veřejné odpovědi nikdy neobsahují celý VIN, původní cenu u akce ani konta
 
 ## Známé limity
 
-- **Rate limit** (poptávky, přihlášení) běží v paměti jedné instance serveru. Na Vercelu tedy platí pro každou instanci zvlášť; pro přísnější ochranu by se nahradil např. Upstash Redis.
+- **Rate limit** u přihlášení, 2FA, poptávek a recenzí je v DB (platí pro všechny instance). Méně citlivé věci (statistika, oblíbené) mají limit jen v paměti instance.
 - Stránky se renderují při každém požadavku (bez cache). Pro desítky vozů je to rychlé; při vyšší návštěvnosti lze doplnit cache s revalidací po změně v adminu.
 - **Fotky HEIC** (iPhone): Safari je před nahráním převede na JPEG. Chrome na počítači HEIC neumí a server takový soubor odmítne – je potřeba nahrát JPG.
 - Adresa provozovny je bez města a PSČ. Doplňte je v **Nastavení → Upřesnění k adrese**, nebo přímo do adresy.

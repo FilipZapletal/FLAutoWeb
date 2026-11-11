@@ -5,7 +5,7 @@ import { useState } from "react";
 type State = { status: "idle" | "sending" | "done"; error: string | null; fields: Record<string, string> };
 
 /** Odeslání JSON na API s chybami polí ze serverové validace. */
-export function useJsonSubmit(url: string, method: "POST" | "PUT" = "POST") {
+export function useJsonSubmit(url: string, method: "POST" | "PUT" | "DELETE" = "POST") {
   const [state, setState] = useState<State>({ status: "idle", error: null, fields: {} });
 
   async function submit(body: unknown) {
